@@ -1,4 +1,4 @@
-{% extends 'nautobot_bgp_models/abstractpeeringinfo.html' %}
+{% extends 'base.html' %}
 {% load buttons %}
 {% load custom_links %}
 {% load helpers %}
@@ -39,32 +39,113 @@
     </ul>
 {% endblock %}
 
-{% block pre_left_panel %}
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <strong>BGP Peer Group</strong>
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>BGP Peer Group</strong>
+                </div>
+                <table class="table table-hover panel-body attr-table">
+                    <tr>
+                        <td>Name</td>
+                        <td>{{ object.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Device</td>
+                        {% if object.routing_instance and object.routing_instance.device %}
+                            <td><a href="{% url 'dcim:device' pk=object.routing_instance.device.pk %}">{{ object.routing_instance.device }}</a></td>
+                        {% else %}
+                            <td><span class="text-muted">None</span></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td>Routing Instance</td>
+                        <td><a href="{% url 'plugins:nautobot_bgp_models:bgproutinginstance' pk=object.routing_instance.pk %}">{{ object.routing_instance }}</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Peer Group Template</strong>
+                </div>
+                <table class="table table-hover panel-body attr-table">
+                    <tr>
+                        <td>Template</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/native_property.html" with property=object.template %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            {% include 'inc/custom_fields_panel.html' %}
+            {% include 'inc/relationships_panel.html' %}
+            {% include 'extras/inc/tags_panel.html' with tags=object.tags.all url='plugins:nautobot_bgp_models:peerendpoint_list' %}
+            {% plugin_left_page object %}
         </div>
-        <table class="table table-hover panel-body attr-table">
-            <tr>
-                <td>Device</td>
-                <td>
-                    <a href="{{ object.device.get_absolute_url }}">{{ object.device }}</a>
-                </td>
-            </tr>
-            <tr>
-                <td>Name</td>
-                <td>{{ object.name }}</td>
-            </tr>
-            <tr>
-                <td>Role</td>
-                <td>
-                    <a href="{% url 'plugins:nautobot_bgp_models:peeringrole' pk=object.role.pk %}">
-                        <label class="label" style="color: {{ object.role.color|fgcolor }}; background-color: #{{ object.role.color }}">
-                            {{ object.role }}
-                        </label>
-                    </a>
-                </td>
-            </tr>
-        </table>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Attributes</strong>
+                </div>
+                <table class="table table-hover panel-body attr-table">
+                    <tr>
+                        <td>Source IP Address</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/native_property.html" with property=object.source_ip %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Source Interface</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/native_property.html" with property=object.source_interface %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/inheritable_property.html" with property=object_fields.description %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Enabled</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/inheritable_property.html" with property=object_fields.enabled %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Autonomous System</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/inheritable_property.html" with property=object_fields.autonomous_system %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Policy</strong>
+                </div>
+                <table class="table table-hover panel-body attr-table">
+                    <tr>
+                        <td>Import Policy</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/inheritable_property.html" with property=object_fields.import_policy %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Export Policy</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/inheritable_property.html" with property=object_fields.export_policy %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            {% plugin_right_page object %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% plugin_full_width_page object %}
+        </div>
     </div>
 {% endblock %}

@@ -78,7 +78,7 @@ class PeerGroupAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.PeerGroup
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = ["device_content_type", "device_object_id", "display", "enabled", "id", "name", "role", "url"]
+    brief_fields = ["display", "enabled", "id", "name", "role", "url"]
     bulk_update_data = {
         "description": "Glenn was here",
         "enabled": True,
@@ -113,14 +113,12 @@ class PeerGroupAPITestCase(APIViewTestCases.APIViewTestCase):
         cls.create_data = [
             {
                 "name": "Group B",
-                "device_content_type": "dcim.device",
-                "device_object_id": device.pk,
                 "role": peeringrole.pk,
                 "description": "Telephone sanitizers",
                 "enabled": True,
                 "vrf": vrf.pk,
-                "update_source_content_type": "dcim.interface",
-                "update_source_object_id": interface.pk,
+                "source_interface_content_type": "dcim.interface",
+                "source_interface_object_id": interface.pk,
                 "router_id": cls.address.pk,
                 "autonomous_system": cls.asn.pk,
                 "maximum_paths_ibgp": 6,
@@ -135,14 +133,10 @@ class PeerGroupAPITestCase(APIViewTestCases.APIViewTestCase):
             },
             {
                 "name": "Group A",
-                "device_content_type": "dcim.device",
-                "device_object_id": device.pk,
                 "role": peeringrole.pk,
             },
             {
                 "name": "Group C",
-                "device_content_type": "dcim.device",
-                "device_object_id": device.pk,
                 "role": peeringrole.pk,
                 "enabled": False,
             },
@@ -154,9 +148,9 @@ class PeerGroupAPITestCase(APIViewTestCases.APIViewTestCase):
         asn_relation = Relationship.objects.get(slug="bgp_asn")
         RelationshipAssociation.objects.create(relationship=asn_relation, source=cls.asn, destination=device)
 
-        models.PeerGroup.objects.create(name="Group 1", device=device, role=peeringrole)
-        models.PeerGroup.objects.create(name="Group 2", device=device, role=peeringrole)
-        models.PeerGroup.objects.create(name="Group 3", device=device, role=peeringrole)
+        models.PeerGroup.objects.create(name="Group 1", role=peeringrole)
+        models.PeerGroup.objects.create(name="Group 2", role=peeringrole)
+        models.PeerGroup.objects.create(name="Group 3", role=peeringrole)
 
         cls.maxDiff = None
 
@@ -175,26 +169,10 @@ class PeerGroupAPITestCase(APIViewTestCases.APIViewTestCase):
         obj_perm.users.add(self.user)
         obj_perm.object_types.add(ContentType.objects.get_for_model(self.model))
 
-        # Retrieve without inheritance
         url = self._get_detail_url(instance)
         response = self.client.get(url, **self.header)
         self.assertHttpStatus(response, status.HTTP_200_OK)
         # Properties not set on the instance
-        self.assertIsNone(response.data["autonomous_system"])
-        self.assertIsNone(response.data["router_id"])
-
-        # Retrieve with inheritance
-        url = self._get_detail_url(instance)
-        response = self.client.get(f"{url}?include_inherited", **self.header)
-        self.assertHttpStatus(response, status.HTTP_200_OK)
-        # Properties not set on the instance but inheritable from the parent device
-        self.assertEqual(self.asn.pk, response.data["autonomous_system"])
-        self.assertEqual(self.address.pk, response.data["router_id"])
-
-        # Retrieve with explictly excluded inheritance
-        url = self._get_detail_url(instance)
-        response = self.client.get(f"{url}?include_inherited=false", **self.header)
-        self.assertHttpStatus(response, status.HTTP_200_OK)
         self.assertIsNone(response.data["autonomous_system"])
         self.assertIsNone(response.data["router_id"])
 
@@ -223,20 +201,20 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
     def setUpTestData(cls):
         cls.status_active = Status.objects.get(slug="active")
         cls.status_active.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
-        cls.status_active.content_types.add(ContentType.objects.get_for_model(models.PeerSession))
+        cls.status_active.content_types.add(ContentType.objects.get_for_model(models.Peering))
 
         cls.peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="333333")
 
-        cls.session = (
-            models.PeerSession.objects.create(
+        cls.peering = (
+            models.Peering.objects.create(
                 role=cls.peeringrole,
                 status=cls.status_active,
             ),
-            models.PeerSession.objects.create(
+            models.Peering.objects.create(
                 role=cls.peeringrole,
                 status=cls.status_active,
             ),
-            models.PeerSession.objects.create(
+            models.Peering.objects.create(
                 role=cls.peeringrole,
                 status=cls.status_active,
             ),
@@ -282,26 +260,25 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
 
         peergroup = models.PeerGroup.objects.create(
             name="Group 1",
-            device=device,
             role=cls.peeringrole,
             vrf=cls.vrf,
             router_id=cls.addresses[3],
             autonomous_system=cls.asn,
         )
 
-        models.PeerEndpoint.objects.create(local_ip=cls.addresses[0], peer_group=peergroup, session=cls.session[0])
-        models.PeerEndpoint.objects.create(local_ip=cls.addresses[1], peer_group=peergroup, session=cls.session[0])
-        models.PeerEndpoint.objects.create(local_ip=cls.addresses[2], peer_group=peergroup, session=cls.session[1])
+        models.PeerEndpoint.objects.create(local_ip=cls.addresses[0], peer_group=peergroup, peering=cls.peering[0])
+        models.PeerEndpoint.objects.create(local_ip=cls.addresses[1], peer_group=peergroup, peering=cls.peering[0])
+        models.PeerEndpoint.objects.create(local_ip=cls.addresses[2], peer_group=peergroup, peering=cls.peering[1])
 
         cls.create_data = [
             {
-                "session": cls.session[1].pk,
+                "peering": cls.peering[1].pk,
                 "local_ip": cls.addresses[3].pk,
                 "description": "Telephone sanitizers",
                 "enabled": True,
                 "vrf": cls.vrf.pk,
-                "update_source_content_type": "dcim.interface",
-                "update_source_object_id": interface.pk,
+                "source_interface_content_type": "dcim.interface",
+                "source_interface_object_id": interface.pk,
                 "router_id": cls.addresses[3].pk,
                 "autonomous_system": cls.asn.pk,
                 "maximum_paths_ibgp": 6,
@@ -314,8 +291,8 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
                 "enforce_first_as": True,
                 "send_community_ebgp": True,
             },
-            {"local_ip": cls.addresses[4].pk, "peer_group": peergroup.pk, "session": cls.session[2].pk},
-            {"local_ip": cls.addresses[5].pk, "session": cls.session[2].pk},
+            {"local_ip": cls.addresses[4].pk, "peer_group": peergroup.pk, "peering": cls.peering[2].pk},
+            {"local_ip": cls.addresses[5].pk, "peering": cls.peering[2].pk},
         ]
 
         cls.maxDiff = None
@@ -365,31 +342,16 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
         obj_perm.users.add(self.user)
         obj_perm.object_types.add(ContentType.objects.get_for_model(self.model))
 
-        other_device = Device.objects.create(
-            device_type=self.devicetype,
-            device_role=self.devicerole,
-            name="Device 2",
-            site=self.site,
-            status=self.status_active,
-        )
-        other_peergroup = models.PeerGroup.objects.create(name="Group 2", device=other_device, role=self.peeringrole)
-
         for data, error_key, error_str in (
             (
                 # Mismatch between local IP's assigned VRF and the explicitly specified VRF
                 {
                     "local_ip": self.addresses[0].pk,
                     "vrf": VRF.objects.create(name="other_vrf").pk,
-                    "session": self.session[2].pk,
+                    "peering": self.peering[2].pk,
                 },
                 "__all__",
                 "VRF other_vrf was specified, but one or more attributes refer instead to Ark B",
-            ),
-            (
-                # Mismatch between assigned device and assigned peer-group's device
-                {"local_ip": self.addresses[0].pk, "peer_group": other_peergroup.pk, "session": self.session[2].pk},
-                "__all__",
-                "Various attributes refer to different devices and/or virtual machines",
             ),
         ):
             response = self.client.post(self._get_list_url(), data, format="json", **self.header)
@@ -400,10 +362,10 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
         # TODO: lots more negative test possibilities here...
 
 
-class PeerSessionAPITestCase(APIViewTestCases.APIViewTestCase):
-    """Test the PeerSession API."""
+class PeeringAPITestCase(APIViewTestCases.APIViewTestCase):
+    """Test the Peering API."""
 
-    model = models.PeerSession
+    model = models.Peering
     view_namespace = "plugins-api:nautobot_bgp_models"
     brief_fields = ["display", "id", "role", "status", "url"]
     choices_fields = ["status"]
@@ -415,7 +377,7 @@ class PeerSessionAPITestCase(APIViewTestCases.APIViewTestCase):
     @classmethod
     def setUpTestData(cls):
         status_active = Status.objects.get(slug="active")
-        status_active.content_types.add(ContentType.objects.get_for_model(models.PeerSession))
+        status_active.content_types.add(ContentType.objects.get_for_model(models.Peering))
 
         addresses = (
             IPAddress.objects.create(address="10.1.1.1/24", status=status_active),
@@ -430,25 +392,25 @@ class PeerSessionAPITestCase(APIViewTestCases.APIViewTestCase):
         peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="333333")
         peeringrole_external = models.PeeringRole.objects.create(name="External", slug="external", color="0000ff")
 
-        session_1 = models.PeerSession.objects.create(
+        peering_1 = models.Peering.objects.create(
             role=peeringrole_internal,
             status=status_active,
         )
-        session_2 = models.PeerSession.objects.create(
+        peering_2 = models.Peering.objects.create(
             role=peeringrole_internal,
             status=status_active,
         )
-        session_3 = models.PeerSession.objects.create(
+        peering_3 = models.Peering.objects.create(
             role=peeringrole_internal,
             status=status_active,
         )
         peerendpoints = (
-            models.PeerEndpoint.objects.create(local_ip=addresses[0], session=session_1),
-            models.PeerEndpoint.objects.create(local_ip=addresses[1], session=session_1),
-            models.PeerEndpoint.objects.create(local_ip=addresses[2], session=session_2),
-            models.PeerEndpoint.objects.create(local_ip=addresses[3], session=session_2),
-            models.PeerEndpoint.objects.create(local_ip=addresses[4], session=session_3),
-            models.PeerEndpoint.objects.create(local_ip=addresses[5], session=session_3),
+            models.PeerEndpoint.objects.create(local_ip=addresses[0], peering=peering_1),
+            models.PeerEndpoint.objects.create(local_ip=addresses[1], peering=peering_1),
+            models.PeerEndpoint.objects.create(local_ip=addresses[2], peering=peering_2),
+            models.PeerEndpoint.objects.create(local_ip=addresses[3], peering=peering_2),
+            models.PeerEndpoint.objects.create(local_ip=addresses[4], peering=peering_3),
+            models.PeerEndpoint.objects.create(local_ip=addresses[5], peering=peering_3),
         )
 
         peerendpoints[0].peer = peerendpoints[1]
@@ -489,8 +451,6 @@ class AddressFamilyAPITestCase(APIViewTestCases.APIViewTestCase):
     view_namespace = "plugins-api:nautobot_bgp_models"
     brief_fields = [
         "afi_safi",
-        "device_content_type",
-        "device_object_id",
         "display",
         "id",
         "peer_endpoint",
@@ -517,29 +477,29 @@ class AddressFamilyAPITestCase(APIViewTestCases.APIViewTestCase):
         )
 
         peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="333333")
-        peergroup = models.PeerGroup.objects.create(name="Group 1", device=device, role=peeringrole)
+        peergroup = models.PeerGroup.objects.create(name="Group 1", role=peeringrole)
 
-        peersession = models.PeerSession.objects.create(role=peeringrole, status=status_active)
-        peerendpoint_1 = models.PeerEndpoint.objects.create(local_ip=addresses[0], session=peersession)
-        peerendpoint_2 = models.PeerEndpoint.objects.create(local_ip=addresses[1], session=peersession)
+        peering = models.Peering.objects.create(role=peeringrole, status=status_active)
+        peerendpoint_1 = models.PeerEndpoint.objects.create(
+            local_ip=addresses[0], peer_group=peergroup, peering=peering
+        )
+        peerendpoint_2 = models.PeerEndpoint.objects.create(local_ip=addresses[1], peering=peering)
 
         models.AddressFamily.objects.create(
-            device=device,
             afi_safi=choices.AFISAFIChoices.AFI_IPV4,
             export_policy="EXPORT_POLICY",
             import_policy="IMPORT_POLICY",
         )
         models.AddressFamily.objects.create(
-            device=device, afi_safi=choices.AFISAFIChoices.AFI_IPV4, peer_group=peergroup
+            afi_safi=choices.AFISAFIChoices.AFI_IPV4,
+            peer_group=peergroup,
+            export_policy="EXPORT_POLICY",
+            import_policy="IMPORT_POLICY",
         )
-        models.AddressFamily.objects.create(
-            device=device, afi_safi=choices.AFISAFIChoices.AFI_IPV4, peer_endpoint=peerendpoint_1
-        )
+        models.AddressFamily.objects.create(afi_safi=choices.AFISAFIChoices.AFI_IPV4, peer_endpoint=peerendpoint_1)
 
         cls.create_data = [
             {
-                "device_content_type": "dcim.device",
-                "device_object_id": device.pk,
                 "afi_safi": choices.AFISAFIChoices.AFI_IPV4_FLOWSPEC,
                 "peer_group": None,
                 "peer_endpoint": None,
@@ -550,15 +510,11 @@ class AddressFamilyAPITestCase(APIViewTestCases.APIViewTestCase):
                 "multipath": True,
             },
             {
-                "device_content_type": "dcim.device",
-                "device_object_id": device.pk,
                 "afi_safi": choices.AFISAFIChoices.AFI_VPNV4,
                 "peer_group": peergroup.pk,
                 "peer_endpoint": None,
             },
             {
-                "device_content_type": "dcim.device",
-                "device_object_id": device.pk,
                 "afi_safi": choices.AFISAFIChoices.AFI_IPV4,
                 "peer_group": None,
                 "peer_endpoint": peerendpoint_2.pk,

@@ -8,17 +8,17 @@
     <div class="row">
         <div class="col">
             <ol class="breadcrumb">
-                <li><a href="{% url 'plugins:nautobot_bgp_models:peersession_list' %}">BGP Peer Sessions</a></li>
+                <li><a href="{% url 'plugins:nautobot_bgp_models:bgproutinginstance_list' %}">BGP Routing Instances</a></li>
                 <li>{{ object }}</li>
             </ol>
         </div>
     </div>
     <div class="pull-right noprint">
         {% plugin_buttons object %}
-        {% if perms.nautobot_bgp_models.change_peersession %}
+        {% if perms.nautobot_bgp_models.change_bgproutinginstance %}
             {% edit_button object %}
         {% endif %}
-        {% if perms.nautobot_bgp_models.delete_peersession %}
+        {% if perms.nautobot_bgp_models.delete_bgproutinginstance %}
             {% delete_button object %}
         {% endif %}
     </div>
@@ -29,11 +29,11 @@
     </div>
     <ul class="nav nav-tabs">
         <li role="presentation"{% if not active_tab %} class="active"{% endif %}>
-            <a href="{{ object.get_absolute_url }}">Peer Session</a>
+            <a href="{{ object.get_absolute_url }}">BGP Routing Instance</a>
         </li>
         {% if perms.extras.view_objectchange %}
             <li role="presentation"{% if active_tab == 'changelog' %} class="active"{% endif %}>
-                <a href="{% url 'plugins:nautobot_bgp_models:peersession_changelog' pk=object.pk %}">Change Log</a>
+                <a href="{% url 'plugins:nautobot_bgp_models:bgproutinginstance_changelog' pk=object.pk %}">Change Log</a>
             </li>
         {% endif %}
     </ul>
@@ -44,48 +44,42 @@
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <strong>BGP Peer Session</strong>
+                    <strong>BGP Routing Instance</strong>
                 </div>
                 <table class="table table-hover panel-body attr-table">
                     <tr>
-                        <td>Role</td>
+                        <td>Device</td>
+                        <td><a href="{{ object.peer_group.get_absolute_url }}">{{ object.device }}</a></td>
+                    </tr>
+                    <tr>
+                        <td>Router ID</td>
                         <td>
-                            <a href="{% url 'plugins:nautobot_bgp_models:peeringrole' pk=object.role.pk %}">
-                                <label class="label" style="color: {{ object.role.color|fgcolor }}; background-color: #{{ object.role.color }}">
-                                    {{ object.role }}
-                                </label>
-                            </a>
+                            {% if object.router_id %}
+                                <a href="{{ object.router_id.get_absolute_url }}">{{ object.router_id }}</a>
+                            {% else %}
+                                <span class="text-muted">None</span>
+                            {% endif %}
                         </td>
                     </tr>
                     <tr>
-                        <td>Status</td>
+                        <td>Autonomous System</td>
                         <td>
-                            <span class="label" style="color: {{ object.status.color|fgcolor }}; background-color: #{{ object.status.color }}">
-                                {{ object.get_status_display }}
-                            </span>
+                            {% if object.autonomous_system %}
+                                <a href="{{ object.autonomous_system.get_absolute_url }}">{{ object.autonomous_system }}</a>
+                            {% else %}
+                                <span class="text-muted">None</span>
+                            {% endif %}
                         </td>
                     </tr>
                     <!-- TODO fill in other fields here -->
                 </table>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <strong>Configuration</strong>
-                </div>
-                <table class="table table-hover panel-body attr-table">
-                    <tr>
-                        <td>Authentication Key</td>
-                        <td>{{ object.authentication_key|placeholder }}</td>
-                    </tr>
-                </table>
-            </div>
             {% include 'inc/custom_fields_panel.html' %}
             {% include 'inc/relationships_panel.html' %}
+            {% include 'extras/inc/tags_panel.html' with tags=object.tags.all url='plugins:nautobot_bgp_models:bgproutinginstance_list' %}
             {% plugin_left_page object %}
         </div>
         <div class="col-md-6">
-            {% include 'nautobot_bgp_models/inc/peerendpoint.html' with endpoint=object.endpoint_a side='A' %}
-            {% include 'nautobot_bgp_models/inc/peerendpoint.html' with endpoint=object.endpoint_z side='Z' %}
             {% plugin_right_page object %}
         </div>
     </div>

@@ -108,29 +108,15 @@ class PeerGroupTestCase(
     @classmethod
     def setUpTestData(cls):
         """One-time class data setup."""
-        status_active = Status.objects.get(slug="active")
-
-        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-        site = Site.objects.create(name="Site 1", slug="site-1")
-        devicerole = DeviceRole.objects.create(name="Router", slug="router", color="ff0000")
-        device = Device.objects.create(
-            device_type=devicetype,
-            device_role=devicerole,
-            name="Device 1",
-            site=site,
-            status=status_active,
-        )
 
         peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
 
-        models.PeerGroup.objects.create(name="Group A", device=device, role=peeringrole)
-        models.PeerGroup.objects.create(name="Group B", device=device, role=peeringrole)
-        models.PeerGroup.objects.create(name="Group C", device=device, role=peeringrole)
+        models.PeerGroup.objects.create(name="Group A", role=peeringrole)
+        models.PeerGroup.objects.create(name="Group B", role=peeringrole)
+        models.PeerGroup.objects.create(name="Group C", role=peeringrole)
 
         cls.form_data = {
             "name": "Group D",
-            "device_device": device.pk,
             "role": peeringrole.pk,
             # TODO: other attributes
         }
@@ -139,7 +125,7 @@ class PeerGroupTestCase(
 class PeerEndpointTestCase(
     ViewTestCases.GetObjectViewTestCase,
     ViewTestCases.GetObjectChangelogViewTestCase,
-    # TODO Investigate how to enable tests that requires additional parameters (session)
+    # TODO Investigate how to enable tests that requires additional parameters (peering)
     # ViewTestCases.CreateObjectViewTestCase,
     # ViewTestCases.EditObjectViewTestCase,
     ViewTestCases.DeleteObjectViewTestCase,
@@ -184,17 +170,17 @@ class PeerEndpointTestCase(
 
         peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
 
-        peergroup = models.PeerGroup.objects.create(name="Group A", device=device, role=peeringrole, vrf=vrf)
+        peergroup = models.PeerGroup.objects.create(name="Group A", role=peeringrole, vrf=vrf)
 
-        session1 = models.PeerSession.objects.create(
+        peering1 = models.Peering.objects.create(
             role=peeringrole,
             status=status_active,
         )
-        session2 = models.PeerSession.objects.create(
+        peering2 = models.Peering.objects.create(
             role=peeringrole,
             status=status_active,
         )
-        session3 = models.PeerSession.objects.create(
+        peering3 = models.Peering.objects.create(
             role=peeringrole,
             status=status_active,
         )
@@ -203,17 +189,17 @@ class PeerEndpointTestCase(
             local_ip=address_1,
             peer_group=peergroup,
             vrf=vrf,
-            update_source=interface,
+            source_interface=interface,
             router_id=address_1,
-            session=session1,
+            peering=peering1,
         )
-        models.PeerEndpoint.objects.create(local_ip=address_2, vrf=vrf, session=session2)
-        models.PeerEndpoint.objects.create(local_ip=address_3, vrf=vrf, session=session3)
+        models.PeerEndpoint.objects.create(local_ip=address_2, vrf=vrf, peering=peering2)
+        models.PeerEndpoint.objects.create(local_ip=address_3, vrf=vrf, peering=peering3)
         cls.form_data = {
             "local_ip": address_4.pk,
             "peer_group": peergroup.pk,
             "vrf": vrf.pk,
-            "update_source_interface": interface_2.pk,
+            "source_interface_interface": interface_2.pk,
             "router_id": address_4.pk,
             "maximum_paths_ibgp": 4,
             "maximum_paths_ebgp": 8,
@@ -227,11 +213,11 @@ class PeerEndpointTestCase(
             "export_policy": "",
             "enforce_first_as": None,
             "send_community": False,
-            "session": session2.pk,
+            "peering": peering2.pk,
         }
 
 
-class PeerSessionTestCase(
+class PeeringTestCase(
     ViewTestCases.GetObjectViewTestCase,
     ViewTestCases.GetObjectChangelogViewTestCase,
     ViewTestCases.CreateObjectViewTestCase,
@@ -239,9 +225,9 @@ class PeerSessionTestCase(
     ViewTestCases.DeleteObjectViewTestCase,
     ViewTestCases.ListObjectsViewTestCase,
 ):
-    """Test views related to the PeerSession model."""
+    """Test views related to the Peering model."""
 
-    model = models.PeerSession
+    model = models.Peering
     maxDiff = None
 
     def _get_base_url(self):
@@ -251,14 +237,14 @@ class PeerSessionTestCase(
     def setUpTestData(cls):
         """One-time class data setup."""
         status_active = Status.objects.get(slug="active")
-        status_active.content_types.add(ContentType.objects.get_for_model(models.PeerSession))
+        status_active.content_types.add(ContentType.objects.get_for_model(models.Peering))
 
         peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="000000")
         peeringrole_customer = models.PeeringRole.objects.create(name="Customer", slug="customer", color="ffffff")
 
-        models.PeerSession.objects.create(status=status_active, role=peeringrole_internal)
-        models.PeerSession.objects.create(status=status_active, role=peeringrole_internal)
-        models.PeerSession.objects.create(status=status_active, role=peeringrole_internal)
+        models.Peering.objects.create(status=status_active, role=peeringrole_internal)
+        models.Peering.objects.create(status=status_active, role=peeringrole_internal)
+        models.Peering.objects.create(status=status_active, role=peeringrole_internal)
 
         cls.form_data = {
             "status": status_active.pk,
@@ -305,23 +291,22 @@ class AddressFamilyTestCase(
 
         peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
 
-        peergroup = models.PeerGroup.objects.create(name="Group A", device=device, role=peeringrole)
-        peersession = models.PeerSession.objects.create(status=status_active, role=peeringrole)
+        peergroup = models.PeerGroup.objects.create(name="Group A", role=peeringrole)
+        peering = models.Peering.objects.create(status=status_active, role=peeringrole)
 
         peerendpoint = models.PeerEndpoint.objects.create(
             local_ip=address,
             peer_group=peergroup,
-            update_source=interface,
+            source_interface=interface,
             router_id=address,
-            session=peersession,
+            peering=peering,
         )
 
-        models.AddressFamily.objects.create(device=device, afi_safi=AFISAFIChoices.AFI_IPV4)
-        models.AddressFamily.objects.create(device=device, peer_group=peergroup, afi_safi=AFISAFIChoices.AFI_IPV4)
-        models.AddressFamily.objects.create(device=device, peer_endpoint=peerendpoint, afi_safi=AFISAFIChoices.AFI_IPV4)
+        models.AddressFamily.objects.create(afi_safi=AFISAFIChoices.AFI_IPV4)
+        models.AddressFamily.objects.create(peer_group=peergroup, afi_safi=AFISAFIChoices.AFI_IPV4)
+        models.AddressFamily.objects.create(peer_endpoint=peerendpoint, afi_safi=AFISAFIChoices.AFI_IPV4)
 
         cls.form_data = {
-            "device_device": device.pk,
             "afi_safi": AFISAFIChoices.AFI_VPNV4,
             "peer_group": None,
             "peer_endpoint": peerendpoint.pk,
