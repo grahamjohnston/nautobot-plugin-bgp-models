@@ -119,6 +119,7 @@ class BGPRoutingInstanceFilterForm(
     utilities_forms.BootstrapMixin, extras_forms.CustomFieldFilterForm
 ):
     """Form for filtering BGPRoutingInstance records in combination with BGPRoutingInstanceFilterSet."""
+    q = forms.CharField(required=False, label="Search")
 
     model = models.BGPRoutingInstance
 
@@ -133,6 +134,7 @@ class BGPRoutingInstanceFilterForm(
     tag = utilities_forms.TagFilterField(model)
 
     field_order = [
+        "q",
         "device",
         "role",
         "router_id",

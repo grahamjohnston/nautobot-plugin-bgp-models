@@ -31,6 +31,10 @@ class BGPRoutingInstanceFilterSet(
     BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, StatusModelFilterSetMixin
 ):
     """Filtering of BGPRoutingInstance records."""
+    q = django_filters.CharFilter(
+        method="search",
+        label="Search",
+    )
 
     tag = TagFilter()
 
@@ -56,6 +60,13 @@ class BGPRoutingInstanceFilterSet(
     class Meta:
         model = models.BGPRoutingInstance
         fields = ["id", "autonomous_system"]
+
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        return queryset.filter(
+            Q(device__name__icontains=value)
+        ).distinct()
 
 
 class PeeringRoleFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, NameSlugSearchFilterSet):
@@ -126,6 +137,7 @@ class PeerGroupTemplateFilterSet(BaseFilterSet):
         method="search",
         label="Search",
     )
+
     autonomous_system = django_filters.ModelMultipleChoiceFilter(
         field_name="autonomous_system__asn",
         queryset=models.AutonomousSystem.objects.all(),
@@ -148,11 +160,15 @@ class PeerGroupTemplateFilterSet(BaseFilterSet):
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
-        return queryset.filter(Q(name__icontains=value) | Q(description__icontains=value)).distinct()
+        return queryset.filter(Q(name__icontains=value)| Q(description__icontains=value)).distinct()
 
 
 class PeerEndpointFilterSet(BaseFilterSet):
     """Filtering of PeerEndpoint records."""
+    q = django_filters.CharFilter(
+        method="search",
+        label="Search",
+    )
 
     device = django_filters.ModelMultipleChoiceFilter(
         field_name="routing_instance__device__name",
@@ -176,6 +192,15 @@ class PeerEndpointFilterSet(BaseFilterSet):
     class Meta:
         model = models.PeerEndpoint
         fields = ["id", "enabled"]
+
+    def search(self, queryset, name, value):  # pylint: disable=unused-argument,no-self-use
+        """Free-text search method implementation."""
+        if not value.strip():
+            return queryset
+        return queryset.filter(
+            Q(routing_instance__device__name=value)
+            | Q(description__icontains=value)
+        ).distinct()
 
 
 class PeeringFilterSet(
