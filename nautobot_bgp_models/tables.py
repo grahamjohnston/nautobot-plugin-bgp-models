@@ -58,7 +58,7 @@ class PeeringRoleTable(BaseTable):
     pk = ToggleColumn()
     name = tables.LinkColumn()
     color = ColorColumn()
-    actions = ButtonsColumn(model=models.PeeringRole)
+    actions = ButtonsColumn(model=models.PeeringRole, pk_field="slug")
 
     class Meta(BaseTable.Meta):
         model = models.PeeringRole
