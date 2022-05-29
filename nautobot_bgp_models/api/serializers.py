@@ -58,8 +58,23 @@ class InheritableFieldsSerializerMixin:
         return super().to_representation(instance)
 
 
+class ExtraAttributesSerializerMixin(serializers.Serializer):
+    """Common mixin for BGP Extra Attributes."""
+    extra_attributes = serializers.SerializerMethodField(read_only=True)
+
+    def get_extra_attributes(self, instance):
+        """
+        Return either the `display` property of the instance or `str(instance)`
+        """
+        req = self.context["request"]
+        if hasattr(req, "query_params") and is_truthy(req.query_params.get("include_inherited", False)):
+            return instance.get_extra_attributes()
+        else:
+            return instance.extra_attributes
+
+
 class PeerGroupTemplateSerializer(
-    CustomFieldModelSerializer,
+    CustomFieldModelSerializer, ExtraAttributesSerializerMixin
 ):
     """REST API serializer for PeerGroup records."""
 
@@ -85,7 +100,7 @@ class PeerGroupTemplateSerializer(
 
 
 class PeerGroupSerializer(
-    InheritableFieldsSerializerMixin, CustomFieldModelSerializer
+    InheritableFieldsSerializerMixin, CustomFieldModelSerializer, ExtraAttributesSerializerMixin
 ):
     """REST API serializer for PeerGroup records."""
 
@@ -115,6 +130,7 @@ class PeerGroupSerializer(
             "routing_instance",
             "template",
             "secret",
+            "extra_attributes",
         ]
 
 
@@ -122,6 +138,7 @@ class PeerEndpointSerializer(
     InheritableFieldsSerializerMixin,
     TaggedObjectSerializer,
     CustomFieldModelSerializer,
+    ExtraAttributesSerializerMixin,
 ):
     """REST API serializer for PeerEndpoint records."""
 
@@ -173,7 +190,7 @@ class PeerEndpointSerializer(
         return result
 
 
-class BGPRoutingInstanceSerializer(CustomFieldModelSerializer):
+class BGPRoutingInstanceSerializer(CustomFieldModelSerializer, ExtraAttributesSerializerMixin):
     """REST API serializer for Peering records."""
 
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:bgproutinginstance-detail")
