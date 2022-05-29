@@ -52,7 +52,7 @@ class InheritableFieldsSerializerMixin:
         return super().to_representation(instance)
 
 
-class ExtraAttributesSerializerMixin(serializers.Serializer):
+class ExtraAttributesSerializerMixin(serializers.Serializer):  # pylint: disable=abstract-method
     """Common mixin for BGP Extra Attributes."""
     extra_attributes = serializers.SerializerMethodField(read_only=True)
 
@@ -61,10 +61,11 @@ class ExtraAttributesSerializerMixin(serializers.Serializer):
         Return either the `display` property of the instance or `str(instance)`
         """
         req = self.context["request"]
+
         if hasattr(req, "query_params") and is_truthy(req.query_params.get("include_inherited", False)):
             return instance.get_extra_attributes()
-        else:
-            return instance.extra_attributes
+
+        return instance.extra_attributes
 
 
 class PeerGroupTemplateSerializer(
