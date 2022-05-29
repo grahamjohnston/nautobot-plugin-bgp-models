@@ -27,7 +27,7 @@ def rgetattr(obj, attr, *args):
     def _getattr(obj, attr):
         return getattr(obj, attr, *args)
 
-    return functools.reduce(_getattr, [obj] + attr.split('.'))
+    return functools.reduce(_getattr, [obj] + attr.split("."))
 
 
 class InheritanceMixin(models.Model):
@@ -67,8 +67,8 @@ class InheritanceMixin(models.Model):
             result[field_name] = {
                 "value": inheritance_result[0],
                 "inherited": inheritance_result[1],
-                "source": inheritance_result[2]
-                }
+                "source": inheritance_result[2],
+            }
 
         return result
 
@@ -675,7 +675,7 @@ class AddressFamily(OrganizationalModel):
 
     def clean(self):
         if self.vrf is None and self.__class__.objects.filter(
-                afi_safi=self.afi_safi, routing_instance=self.routing_instance, vrf=None
+            afi_safi=self.afi_safi, routing_instance=self.routing_instance, vrf=None
         ):
             raise ValidationError("Duplicated AFI/SAFI for Routing Instance.")
 
@@ -736,26 +736,26 @@ class PeerEndpointContext(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixi
         "address_family",
         "peer_endpoint",
         "peer_endpoint.peer_group",
-        "peer_endpoint.peer_group.template"
+        "peer_endpoint.peer_group.template",
     ]
     property_inheritance = {
         "export_policy": [
             "address_family",
             "peer_endpoint",
             "peer_endpoint.peer_group",
-            "peer_endpoint.peer_group.template"
+            "peer_endpoint.peer_group.template",
         ],
         "import_policy": [
             "address_family",
             "peer_endpoint",
             "peer_endpoint.peer_group",
-            "peer_endpoint.peer_group.template"
+            "peer_endpoint.peer_group.template",
         ],
         "maximum_prefix": [
             "address_family",
             "peer_endpoint",
             "peer_endpoint.peer_group",
-            "peer_endpoint.peer_group.template"
+            "peer_endpoint.peer_group.template",
         ],
     }
 

@@ -115,9 +115,7 @@ class BGPRoutingInstanceForm(
         fields = ("device", "autonomous_system", "description", "router_id", "template", "tags", "extra_attributes")
 
 
-class BGPRoutingInstanceFilterForm(
-    utilities_forms.BootstrapMixin, extras_forms.CustomFieldFilterForm
-):
+class BGPRoutingInstanceFilterForm(utilities_forms.BootstrapMixin, extras_forms.CustomFieldFilterForm):
     """Form for filtering BGPRoutingInstance records in combination with BGPRoutingInstanceFilterSet."""
 
     q = forms.CharField(required=False, label="Search")
@@ -209,6 +207,7 @@ class PeerGroupForm(
     utilities_forms.BootstrapMixin, extras_forms.CustomFieldModelForm, extras_forms.RelationshipModelForm
 ):
     """Form for creating/updating PeerGroup records."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -448,6 +447,7 @@ class PeeringForm(
     utilities_forms.BootstrapMixin, extras_forms.CustomFieldModelForm, extras_forms.RelationshipModelForm
 ):
     """Form for creating/updating Peering records."""
+
     role = utilities_forms.DynamicModelChoiceField(queryset=models.PeeringRole.objects.all(), required=False)
 
     class Meta:

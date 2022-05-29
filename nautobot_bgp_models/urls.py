@@ -113,7 +113,7 @@ urlpatterns = [
     path(
         "peer-group-templates/<uuid:pk>/delete/",
         views.PeerGroupTemplateDeleteView.as_view(),
-        name="peergrouptemplate_delete"
+        name="peergrouptemplate_delete",
     ),
     path(
         "peer-group-templates/<uuid:pk>/changelog/",
