@@ -6,6 +6,10 @@ from nautobot.dcim.models import Device, Interface
 from nautobot.virtualization.models import VirtualMachine, VMInterface
 
 from . import filters, forms, models, tables
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import View
+from django.contrib.contenttypes.models import ContentType
+from django import template
 
 
 class AutonomousSystemListView(generic.ObjectListView):
@@ -386,3 +390,77 @@ class AddressFamilyBulkDeleteView(generic.BulkDeleteView):
     queryset = models.AddressFamily.objects.all()
     filterset = filters.AddressFamilyFilterSet
     table = tables.AddressFamilyTable
+
+
+class BgpExtraAttributesView(View):
+    """
+    Present a history of changes made to a particular object.
+    base_template: The name of the template to extend. If not provided, "<app>/<model>.html" will be used.
+    """
+
+    base_template = None
+
+    def get(self, request, model, **kwargs):
+
+        # Handle QuerySet restriction of parent object if needed
+        if hasattr(model.objects, "restrict"):
+            obj = get_object_or_404(model.objects.restrict(request.user, "view"), **kwargs)
+        else:
+            obj = get_object_or_404(model, **kwargs)
+
+        # # # Gather all changes for this object (and its related objects)
+        # content_type = ContentType.objects.get_for_model(model)
+        #
+        # objectchanges = (
+        #     ObjectChange.objects.restrict(request.user, "view")
+        #     .prefetch_related("user", "changed_object_type")
+        #     .filter(
+        #         Q(changed_object_type=content_type, changed_object_id=obj.pk)
+        #         | Q(related_object_type=content_type, related_object_id=obj.pk)
+        #     )
+        # )
+        # objectchanges_table = tables.ObjectChangeTable(data=objectchanges, orderable=False)
+        #
+        # # # Apply the request context
+        # # paginate = {
+        # #     "paginator_class": EnhancedPaginator,
+        # #     "per_page": get_paginate_count(request),
+        # # }
+        # # RequestConfig(request, paginate).configure(objectchanges_table)
+
+        # Default to using "<app>/<model>.html" as the template, if it exists. Otherwise,
+        # fall back to using base.html.
+        if self.base_template is None:
+            self.base_template = f"{model._meta.app_label}/{model._meta.model_name}.html"
+            # TODO: This can be removed once an object view has been established for every model.
+            try:
+                template.loader.get_template(self.base_template)
+            except template.TemplateDoesNotExist:
+                self.base_template = "base.html"
+
+        # Determine user's preferred output format
+        if request.GET.get("format") in ["json", "yaml"]:
+            _format = request.GET.get("format")
+            if request.user.is_authenticated:
+                request.user.set_config("nautobot_bgp_models.extraattributes.format", _format, commit=True)
+        elif request.user.is_authenticated:
+            _format = request.user.get_config("nautobot_bgp_models.extraattributes.format", "json")
+        else:
+            _format = "json"
+
+        print (obj)
+
+        return render(
+            request,
+            "nautobot_bgp_models/extra_attributes.html",
+            {
+                "object": obj,
+                "rendered_context": obj.get_extra_attributes(),
+                "verbose_name": obj._meta.verbose_name,
+                "verbose_name_plural": obj._meta.verbose_name_plural,
+                # "table": objectchanges_table,
+                "format": _format,
+                "base_template": self.base_template,
+                "active_tab": "extraattributes"
+            },
+        )

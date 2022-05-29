@@ -131,3 +131,9 @@
                 </table>
             </div>
 {% endblock content_right_page %}
+
+{% block extra_nav_tabs %}
+        <li role="presentation" {% if active_tab == 'extraattributes' %} class="active"{% endif %}>
+            <a href="{% url 'plugins:nautobot_bgp_models:peerendpoint_extraattributes' pk=object.pk %}">Extra Attributes</a>
+        </li>
+{% endblock extra_nav_tabs %}

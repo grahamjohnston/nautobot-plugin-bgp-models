@@ -112,7 +112,7 @@ class BGPRoutingInstanceForm(
 
     class Meta:
         model = models.BGPRoutingInstance
-        fields = ("device", "autonomous_system", "description", "router_id", "template", "tags", "bgp_context_data")
+        fields = ("device", "autonomous_system", "description", "router_id", "template", "tags", "extra_attributes")
 
 
 class BGPRoutingInstanceFilterForm(
@@ -262,7 +262,7 @@ class PeerGroupForm(utilities_forms.BootstrapMixin, extras_forms.CustomFieldMode
             "import_policy",
             "export_policy",
             "secret",
-            "bgp_context_data",
+            "extra_attributes",
         )
 
 
@@ -309,7 +309,7 @@ class PeerGroupTemplateForm(utilities_forms.BootstrapMixin, extras_forms.CustomF
             "autonomous_system",
             "import_policy",
             "export_policy",
-            "bgp_context_data",
+            "extra_attributes",
         )
 
 
@@ -434,7 +434,7 @@ class PeerEndpointForm(utilities_forms.BootstrapMixin, extras_forms.CustomFieldM
             "import_policy",
             "export_policy",
             "secret",
-            "bgp_context_data",
+            "extra_attributes",
         )
 
     def save(self, commit=True):

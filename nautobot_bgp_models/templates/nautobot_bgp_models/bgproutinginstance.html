@@ -34,3 +34,9 @@
                 </table>
             </div>
 {% endblock content_left_page %}
+
+{% block extra_nav_tabs %}
+        <li role="presentation" {% if active_tab == 'extraattributes' %} class="active"{% endif %}>
+            <a href="{% url 'plugins:nautobot_bgp_models:bgproutinginstance_extraattributes' pk=object.pk %}">Extra Attributes</a>
+        </li>
+{% endblock extra_nav_tabs %}

@@ -13,6 +13,7 @@ from nautobot.extras.utils import extras_features
 from nautobot.utilities.choices import ColorChoices
 from nautobot.utilities.fields import ColorField
 from nautobot.ipam.models import IPAddress
+from nautobot.core.fields import AutoSlugField
 
 from nautobot_bgp_models.choices import AFISAFIChoices
 from django.core.serializers.json import DjangoJSONEncoder
@@ -77,36 +78,36 @@ class InheritanceMixin(models.Model):
         abstract = True
 
 
-class BGPConfigContextMixin(models.Model):
-    bgp_context_data = models.JSONField(
+class BGPExtraAttributesMixin(models.Model):
+    extra_attributes = models.JSONField(
         encoder=DjangoJSONEncoder,
         blank=True,
         null=True,
-        verbose_name="BGP Config Context",
+        verbose_name="Extra Attributes",
     )
 
     @property
-    def get_context_paths(self):
-        if hasattr(self, "bgp_context_inheritance"):
-            paths = self.bgp_context_inheritance
+    def get_extra_attributes_paths(self):
+        if hasattr(self, "extra_attributes_inheritance"):
+            paths = self.extra_attributes_inheritance
         else:
             paths = []
 
-        return [rgetattr(self, f"{x}.bgp_context_data", None) for x in paths]
+        return [rgetattr(self, f"{x}.extra_attributes", None) for x in paths]
 
-    def get_config_context(self):
-        # always manually query for config contexts
-        config_context_data = [x for x in self.get_context_paths if x]
+    def get_extra_attributes(self):
+        # always manually query for extra attributes
+        extra_attributes_data = [x for x in self.get_extra_attributes_paths if x]
 
-        # Compile all config data, overwriting lower-weight values with higher-weight values where a collision occurs
+        # Compile all extra attributes, overwriting lower-weight values with higher-weight values where a collision occurs
         data = OrderedDict()
 
-        for context in config_context_data:
-            data = deepmerge(data, context)
+        for extra_attributes in extra_attributes_data:
+            data = deepmerge(data, extra_attributes)
 
-        # If the object has local config context data defined, merge it last
-        if self.bgp_context_data:
-            data = deepmerge(data, self.bgp_context_data)
+        # If the object has local extra attributes data defined, merge it last
+        if self.extra_attributes:
+            data = deepmerge(data, self.extra_attributes)
         return data
 
     class Meta:
@@ -158,11 +159,11 @@ class AutonomousSystem(PrimaryModel, StatusModel):
     "relationships",
     "webhooks",
 )
-class PeeringRole(OrganizationalModel):  # TODO(mzb): consider renaming to `BGPRole`
+class PeeringRole(OrganizationalModel):
     """Role definition for use with a PeerGroup or PeerEndpoint."""
 
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = AutoSlugField(populate_from="name")
     color = ColorField(default=ColorChoices.COLOR_GREY)
     description = models.CharField(max_length=200, blank=True)
 
@@ -177,7 +178,7 @@ class PeeringRole(OrganizationalModel):  # TODO(mzb): consider renaming to `BGPR
 
     def get_absolute_url(self):
         """Get the URL for a detailed view of a single PeeringRole."""
-        return reverse("plugins:nautobot_bgp_models:peeringrole", args=[self.pk])
+        return reverse("plugins:nautobot_bgp_models:peeringrole", args=[self.slug])
 
     def to_csv(self):
         """Render a PeeringRole record to CSV fields."""
@@ -194,7 +195,7 @@ class PeeringRole(OrganizationalModel):  # TODO(mzb): consider renaming to `BGPR
     "statuses",
     "webhooks",
 )
-class BGPRoutingInstance(PrimaryModel, BGPConfigContextMixin):
+class BGPRoutingInstance(PrimaryModel, BGPExtraAttributesMixin):
     """BGP instance definition."""
 
     description = models.CharField(max_length=200, blank=True)
@@ -242,7 +243,7 @@ class BGPRoutingInstance(PrimaryModel, BGPConfigContextMixin):
     "statuses",
     "webhooks",
 )
-class PeerGroupTemplate(PrimaryModel, BGPConfigContextMixin):
+class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
     """Model for Peer Group templates."""
 
     name = models.CharField(max_length=100, unique=True, blank=False)
@@ -295,10 +296,10 @@ class PeerGroupTemplate(PrimaryModel, BGPConfigContextMixin):
     "statuses",
     "webhooks",
 )
-class PeerGroup(PrimaryModel, InheritanceMixin, BGPConfigContextMixin):
+class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     """BGP peer group information."""
 
-    bgp_context_inheritance = ["template", "routing_instance"]
+    extra_attributes_inheritance = ["template", "routing_instance"]
     property_inheritance = {
         "autonomous_system": ["template", "routing_instance"],
         "description": ["template"],
@@ -399,10 +400,10 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPConfigContextMixin):
     "statuses",
     "webhooks",
 )
-class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPConfigContextMixin):
+class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     """BGP information about single endpoint of a peering."""
 
-    bgp_context_inheritance = ["peer_group", "peer_group.template", "routing_instance"]
+    extra_attributes_inheritance = ["peer_group", "peer_group.template", "routing_instance"]
     property_inheritance = {
         "autonomous_system": ["peer_group", "peer_group.template", "routing_instance"],
         "description": ["peer_group", "peer_group.template"],
@@ -674,8 +675,10 @@ class AddressFamily(OrganizationalModel):
     "relationships",
     "webhooks",
 )
-class PeerGroupContext(PrimaryModel, InheritanceMixin):
+class PeerGroupContext(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     """Peer Endpoint's Address Family Context."""
+
+    extra_attributes_inheritance = ["address_family", "peer_group", "peer_group.template"]
     property_inheritance = {
         "export_policy": ["address_family", "peer_group", "peer_group.template"],
         "import_policy": ["address_family", "peer_group", "peer_group.template"],
@@ -712,9 +715,10 @@ class PeerGroupContext(PrimaryModel, InheritanceMixin):
     "relationships",
     "webhooks",
 )
-class PeerEndpointContext(PrimaryModel, InheritanceMixin):
+class PeerEndpointContext(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     """Peer Endpoint's Address Family Context."""
 
+    extra_attributes_inheritance = ["address_family", "peer_endpoint", "peer_endpoint.peer_group", "peer_endpoint.peer_group.template"]
     property_inheritance = {
         "export_policy": ["address_family", "peer_endpoint", "peer_endpoint.peer_group", "peer_endpoint.peer_group.template"],
         "import_policy": ["address_family", "peer_endpoint", "peer_endpoint.peer_group", "peer_endpoint.peer_group.template"],

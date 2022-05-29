@@ -18,7 +18,7 @@
                     <tr>
                         <td>Role</td>
                         <td>
-                            <a href="{% url 'plugins:nautobot_bgp_models:peeringrole' pk=object.role.pk %}">
+                            <a href="{% url 'plugins:nautobot_bgp_models:peeringrole' slug=object.role.slug %}">
                                 <label class="label" style="color: {{ object.role.color|fgcolor }}; background-color: #{{ object.role.color }}">
                                     {{ object.role }}
                                 </label>
