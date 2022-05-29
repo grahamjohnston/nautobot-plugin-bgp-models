@@ -54,6 +54,7 @@ class InheritableFieldsSerializerMixin:
 
 class ExtraAttributesSerializerMixin(serializers.Serializer):  # pylint: disable=abstract-method
     """Common mixin for BGP Extra Attributes."""
+
     extra_attributes = serializers.SerializerMethodField(read_only=True)
 
     def get_extra_attributes(self, instance):
@@ -68,9 +69,7 @@ class ExtraAttributesSerializerMixin(serializers.Serializer):  # pylint: disable
         return instance.extra_attributes
 
 
-class PeerGroupTemplateSerializer(
-    CustomFieldModelSerializer, ExtraAttributesSerializerMixin
-):
+class PeerGroupTemplateSerializer(CustomFieldModelSerializer, ExtraAttributesSerializerMixin):
     """REST API serializer for PeerGroup records."""
 
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:peergrouptemplate-detail")
@@ -94,9 +93,7 @@ class PeerGroupTemplateSerializer(
         ]
 
 
-class PeerGroupSerializer(
-    InheritableFieldsSerializerMixin, CustomFieldModelSerializer, ExtraAttributesSerializerMixin
-):
+class PeerGroupSerializer(InheritableFieldsSerializerMixin, CustomFieldModelSerializer, ExtraAttributesSerializerMixin):
     """REST API serializer for PeerGroup records."""
 
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:peergroup-detail")
@@ -188,7 +185,9 @@ class PeerEndpointSerializer(
 class BGPRoutingInstanceSerializer(CustomFieldModelSerializer, ExtraAttributesSerializerMixin):
     """REST API serializer for Peering records."""
 
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:bgproutinginstance-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_bgp_models-api:bgproutinginstance-detail"
+    )
 
     endpoints = NestedPeerEndpointSerializer(required=False, many=True)  # noqa: F405
 

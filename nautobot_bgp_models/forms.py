@@ -119,16 +119,21 @@ class BGPRoutingInstanceFilterForm(
     utilities_forms.BootstrapMixin, extras_forms.CustomFieldFilterForm
 ):
     """Form for filtering BGPRoutingInstance records in combination with BGPRoutingInstanceFilterSet."""
+
     q = forms.CharField(required=False, label="Search")
 
     model = models.BGPRoutingInstance
 
     device = utilities_forms.DynamicModelMultipleChoiceField(
-        queryset=Device.objects.all(), required=False, to_field_name="name",
+        queryset=Device.objects.all(),
+        required=False,
+        to_field_name="name",
     )
 
     autonomous_system = utilities_forms.DynamicModelMultipleChoiceField(
-        queryset=models.AutonomousSystem.objects.all(), required=False, to_field_name="asn",
+        queryset=models.AutonomousSystem.objects.all(),
+        required=False,
+        to_field_name="asn",
     )
 
     tag = utilities_forms.TagFilterField(model)
@@ -200,7 +205,9 @@ class PeeringRoleBulkEditForm(utilities_forms.BootstrapMixin, extras_forms.Custo
         ]
 
 
-class PeerGroupForm(utilities_forms.BootstrapMixin, extras_forms.CustomFieldModelForm, extras_forms.RelationshipModelForm):
+class PeerGroupForm(
+    utilities_forms.BootstrapMixin, extras_forms.CustomFieldModelForm, extras_forms.RelationshipModelForm
+):
     """Form for creating/updating PeerGroup records."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -235,17 +242,11 @@ class PeerGroupForm(utilities_forms.BootstrapMixin, extras_forms.CustomFieldMode
         label="Autonomous System",
     )
 
-    role = utilities_forms.DynamicModelChoiceField(
-        queryset=models.PeeringRole.objects.all(), required=False
-    )
+    role = utilities_forms.DynamicModelChoiceField(queryset=models.PeeringRole.objects.all(), required=False)
 
-    template = utilities_forms.DynamicModelChoiceField(
-        queryset=models.PeerGroupTemplate.objects.all(), required=False
-    )
+    template = utilities_forms.DynamicModelChoiceField(queryset=models.PeerGroupTemplate.objects.all(), required=False)
 
-    secret = utilities_forms.DynamicModelChoiceField(
-        queryset=Secret.objects.all(), required=False
-    )
+    secret = utilities_forms.DynamicModelChoiceField(queryset=Secret.objects.all(), required=False)
 
     class Meta:
         model = models.PeerGroup
@@ -282,7 +283,9 @@ class PeerGroupBulkEditForm(
         ]
 
 
-class PeerGroupTemplateForm(utilities_forms.BootstrapMixin, extras_forms.CustomFieldModelForm, extras_forms.RelationshipModelForm):
+class PeerGroupTemplateForm(
+    utilities_forms.BootstrapMixin, extras_forms.CustomFieldModelForm, extras_forms.RelationshipModelForm
+):
     """Form for creating/updating PeerGroup records."""
 
     autonomous_system = utilities_forms.DynamicModelChoiceField(
@@ -291,13 +294,9 @@ class PeerGroupTemplateForm(utilities_forms.BootstrapMixin, extras_forms.CustomF
         label="Autonomous System",
     )
 
-    role = utilities_forms.DynamicModelChoiceField(
-        queryset=models.PeeringRole.objects.all(), required=False
-    )
+    role = utilities_forms.DynamicModelChoiceField(queryset=models.PeeringRole.objects.all(), required=False)
 
-    secret = utilities_forms.DynamicModelChoiceField(
-        queryset=Secret.objects.all(), required=False
-    )
+    secret = utilities_forms.DynamicModelChoiceField(queryset=Secret.objects.all(), required=False)
 
     class Meta:
         model = models.PeerGroupTemplate
@@ -369,7 +368,9 @@ class PeerGroupTemplateFilterForm(utilities_forms.BootstrapMixin, extras_forms.C
     )
 
 
-class PeerEndpointForm(utilities_forms.BootstrapMixin, extras_forms.CustomFieldModelForm, extras_forms.RelationshipModelForm):
+class PeerEndpointForm(
+    utilities_forms.BootstrapMixin, extras_forms.CustomFieldModelForm, extras_forms.RelationshipModelForm
+):
     """Form for creating/updating PeerEndpoint records."""
 
     def __init__(self, *args, **kwargs):
@@ -412,13 +413,9 @@ class PeerEndpointForm(utilities_forms.BootstrapMixin, extras_forms.CustomFieldM
         query_params={"routing_instance": "$routing_instance"},
     )
 
-    role = utilities_forms.DynamicModelChoiceField(
-        queryset=models.PeeringRole.objects.all(), required=False
-    )
+    role = utilities_forms.DynamicModelChoiceField(queryset=models.PeeringRole.objects.all(), required=False)
 
-    secret = utilities_forms.DynamicModelChoiceField(
-        queryset=Secret.objects.all(), required=False
-    )
+    secret = utilities_forms.DynamicModelChoiceField(queryset=Secret.objects.all(), required=False)
 
     class Meta:
         model = models.PeerEndpoint
@@ -451,9 +448,7 @@ class PeeringForm(
     utilities_forms.BootstrapMixin, extras_forms.CustomFieldModelForm, extras_forms.RelationshipModelForm
 ):
     """Form for creating/updating Peering records."""
-    role = utilities_forms.DynamicModelChoiceField(
-        queryset=models.PeeringRole.objects.all(), required=False
-    )
+    role = utilities_forms.DynamicModelChoiceField(queryset=models.PeeringRole.objects.all(), required=False)
 
     class Meta:
         model = models.Peering
@@ -534,8 +529,7 @@ class AddressFamilyBulkEditForm(
     )
 
     class Meta:
-        nullable_fields = [
-        ]
+        nullable_fields = []
 
 
 class AddressFamilyFilterForm(utilities_forms.BootstrapMixin, extras_forms.CustomFieldFilterForm):
@@ -554,6 +548,4 @@ class AddressFamilyFilterForm(utilities_forms.BootstrapMixin, extras_forms.Custo
         widget=utilities_forms.StaticSelect2Multiple(),
     )
 
-    vrf = utilities_forms.DynamicModelMultipleChoiceField(
-        queryset=VRF.objects.all(), required=False
-    )
+    vrf = utilities_forms.DynamicModelMultipleChoiceField(queryset=VRF.objects.all(), required=False)

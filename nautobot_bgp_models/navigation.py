@@ -44,7 +44,7 @@ menu_items = (
                             ),
                         ),
                     ),
-                )
+                ),
             ),
             NavMenuGroup(
                 name="BGP - Instances",

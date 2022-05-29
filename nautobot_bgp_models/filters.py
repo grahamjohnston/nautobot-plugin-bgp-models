@@ -28,6 +28,7 @@ class BGPRoutingInstanceFilterSet(
     BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, StatusModelFilterSetMixin
 ):
     """Filtering of BGPRoutingInstance records."""
+
     q = django_filters.CharFilter(
         method="search",
         label="Search",
@@ -62,9 +63,7 @@ class BGPRoutingInstanceFilterSet(
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
-        return queryset.filter(
-            Q(device__name__icontains=value)
-        ).distinct()
+        return queryset.filter(Q(device__name__icontains=value)).distinct()
 
 
 class PeeringRoleFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, NameSlugSearchFilterSet):
@@ -158,11 +157,12 @@ class PeerGroupTemplateFilterSet(BaseFilterSet):
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
-        return queryset.filter(Q(name__icontains=value)| Q(description__icontains=value)).distinct()
+        return queryset.filter(Q(name__icontains=value) | Q(description__icontains=value)).distinct()
 
 
 class PeerEndpointFilterSet(BaseFilterSet):
     """Filtering of PeerEndpoint records."""
+
     q = django_filters.CharFilter(
         method="search",
         label="Search",
@@ -195,15 +195,10 @@ class PeerEndpointFilterSet(BaseFilterSet):
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
-        return queryset.filter(
-            Q(routing_instance__device__name=value)
-            | Q(description__icontains=value)
-        ).distinct()
+        return queryset.filter(Q(routing_instance__device__name=value) | Q(description__icontains=value)).distinct()
 
 
-class PeeringFilterSet(
-    BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, StatusModelFilterSetMixin
-):
+class PeeringFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, StatusModelFilterSetMixin):
     """Filtering of Peering records."""
 
     # TODO(mzb): Add proper filtering for Provider, ASN, IP Address, ...
@@ -249,4 +244,9 @@ class AddressFamilyFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomField
 
     class Meta:
         model = models.AddressFamily
-        fields = ["id", "routing_instance", "afi_safi", "vrf",]
+        fields = [
+            "id",
+            "routing_instance",
+            "afi_safi",
+            "vrf",
+        ]

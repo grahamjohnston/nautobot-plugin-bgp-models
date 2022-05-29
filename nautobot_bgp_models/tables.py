@@ -49,7 +49,14 @@ class BGPRoutingInstanceTable(StatusTableMixin, BaseTable):
     class Meta(BaseTable.Meta):
         model = models.BGPRoutingInstance
         fields = ("pk", "routing_instance", "device", "autonomous_system", "router_id", "tags")
-        default_columns = ("pk", "routing_instance", "device", "autonomous_system", "router_id", "actions", )
+        default_columns = (
+            "pk",
+            "routing_instance",
+            "device",
+            "autonomous_system",
+            "router_id",
+            "actions",
+        )
 
 
 class PeeringRoleTable(BaseTable):
@@ -221,13 +228,11 @@ class PeeringTable(BaseTable):
     role = ColoredLabelColumn()
 
     endpoint_a = tables.LinkColumn(
-        verbose_name="Endpoint",
-        text=lambda x: str(x.endpoint_a.local_ip) if x.endpoint_a else None
+        verbose_name="Endpoint", text=lambda x: str(x.endpoint_a.local_ip) if x.endpoint_a else None
     )
 
     endpoint_z = tables.LinkColumn(
-        verbose_name="Endpoint",
-        text=lambda x: str(x.endpoint_z.local_ip) if x.endpoint_z else None
+        verbose_name="Endpoint", text=lambda x: str(x.endpoint_z.local_ip) if x.endpoint_z else None
     )
     actions = ButtonsColumn(model=models.Peering)
 

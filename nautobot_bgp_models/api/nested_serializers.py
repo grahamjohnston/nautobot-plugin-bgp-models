@@ -71,7 +71,9 @@ class NestedPeerEndpointSerializer(WritableNestedSerializer):
 class NestedRoutingInstanceSerializer(WritableNestedSerializer):
     """Nested/brief serializer for PeerEndpoint."""
 
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:bgproutinginstance-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_bgp_models-api:bgproutinginstance-detail"
+    )
 
     class Meta:
         model = models.PeerEndpoint

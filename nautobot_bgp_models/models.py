@@ -23,15 +23,18 @@ from nautobot_bgp_models.choices import AFISAFIChoices
 
 def rgetattr(obj, attr, *args):
     """Recursive getattr helper."""
+
     def _getattr(obj, attr):
         return getattr(obj, attr, *args)
+
     return functools.reduce(_getattr, [obj] + attr.split('.'))
 
 
 class InheritanceMixin(models.Model):
     """BGP common mixin class."""
+
     def get_inherited_field(self, field_name, inheritance_path=None):
-        """returns value, inheritance_indicator, inheritance_source. """
+        """Returns value, inheritance_indicator, inheritance_source."""
 
         field_value = getattr(self, field_name, None)
         if field_value:
@@ -40,12 +43,12 @@ class InheritanceMixin(models.Model):
         if inheritance_path is None and field_name in getattr(self, "property_inheritance", {}):
             inheritance_path = self.property_inheritance[field_name]
 
-        for path_element in (inheritance_path or []):
+        for path_element in inheritance_path or []:
             _path_element = f"{path_element}.{field_name}"  # Append the field name to each path element.
             field_value = rgetattr(self, _path_element, None)
 
             if field_value:
-                obj = rgetattr(self, ".".join(_path_element.split('.')[:-1]), None)
+                obj = rgetattr(self, ".".join(_path_element.split(".")[:-1]), None)
                 return field_value, True, obj
 
         return None, False, None
@@ -62,9 +65,9 @@ class InheritanceMixin(models.Model):
             inheritance_path = field_inheritance if include_inherited else []
             inheritance_result = self.get_inherited_field(field_name=field_name, inheritance_path=inheritance_path)
             result[field_name] = {
-                    "value": inheritance_result[0],
-                    "inherited": inheritance_result[1],
-                    "source": inheritance_result[2]
+                "value": inheritance_result[0],
+                "inherited": inheritance_result[1],
+                "source": inheritance_result[2]
                 }
 
         return result
@@ -82,6 +85,7 @@ class InheritanceMixin(models.Model):
 
 class BGPExtraAttributesMixin(models.Model):
     """BGP Extra Attributes Mixin."""
+
     extra_attributes = models.JSONField(
         encoder=DjangoJSONEncoder,
         blank=True,
@@ -255,8 +259,9 @@ class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
 
     enabled = models.BooleanField(default=True)
 
-    role = models.ForeignKey(to=PeeringRole, on_delete=models.PROTECT, related_name="peer_group_templates", blank=True,
-                             null=True)
+    role = models.ForeignKey(
+        to=PeeringRole, on_delete=models.PROTECT, related_name="peer_group_templates", blank=True, null=True
+    )
 
     description = models.CharField(max_length=200, blank=True)
 
@@ -316,9 +321,13 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
     name = models.CharField(max_length=100)
 
-    template = models.ForeignKey(to=PeerGroupTemplate, on_delete=models.PROTECT, related_name="peer_groups", blank=True, null=True)
+    template = models.ForeignKey(
+        to=PeerGroupTemplate, on_delete=models.PROTECT, related_name="peer_groups", blank=True, null=True
+    )
 
-    role = models.ForeignKey(to=PeeringRole, on_delete=models.PROTECT, related_name="peer_groups", blank=True, null=True)
+    role = models.ForeignKey(
+        to=PeeringRole, on_delete=models.PROTECT, related_name="peer_groups", blank=True, null=True
+    )
 
     description = models.CharField(max_length=200, blank=True)
 
@@ -416,7 +425,7 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         "export_policy": ["peer_group", "peer_group.template"],
         "import_policy": ["peer_group", "peer_group.template"],
         "source_ip": ["peer_group"],
-        "source_interface": ["peer_group"]
+        "source_interface": ["peer_group"],
     }
 
     description = models.CharField(max_length=200, blank=True)
@@ -553,7 +562,6 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         # Ensure IP related to the routing instance
         if self.routing_instance:
             if local_ip_value not in IPAddress.objects.filter(interface__device_id=self.routing_instance.device.id):
-                print(local_ip_value)
                 raise ValidationError("Peer IP not associated with Routing Instance")
 
         # Ensure Peer Group's routing instance is our routing instance:
@@ -666,9 +674,9 @@ class AddressFamily(OrganizationalModel):
         return reverse("plugins:nautobot_bgp_models:addressfamily", args=[self.pk])
 
     def clean(self):
-        if self.vrf is None and self.__class__.objects.filter(afi_safi=self.afi_safi,
-                                         routing_instance=self.routing_instance,
-                                         vrf=None):
+        if self.vrf is None and self.__class__.objects.filter(
+                afi_safi=self.afi_safi, routing_instance=self.routing_instance, vrf=None
+        ):
             raise ValidationError("Duplicated AFI/SAFI for Routing Instance.")
 
 
@@ -724,11 +732,31 @@ class PeerGroupContext(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 class PeerEndpointContext(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     """Peer Endpoint's Address Family Context."""
 
-    extra_attributes_inheritance = ["address_family", "peer_endpoint", "peer_endpoint.peer_group", "peer_endpoint.peer_group.template"]
+    extra_attributes_inheritance = [
+        "address_family",
+        "peer_endpoint",
+        "peer_endpoint.peer_group",
+        "peer_endpoint.peer_group.template"
+    ]
     property_inheritance = {
-        "export_policy": ["address_family", "peer_endpoint", "peer_endpoint.peer_group", "peer_endpoint.peer_group.template"],
-        "import_policy": ["address_family", "peer_endpoint", "peer_endpoint.peer_group", "peer_endpoint.peer_group.template"],
-        "maximum_prefix": ["address_family", "peer_endpoint", "peer_endpoint.peer_group", "peer_endpoint.peer_group.template"],
+        "export_policy": [
+            "address_family",
+            "peer_endpoint",
+            "peer_endpoint.peer_group",
+            "peer_endpoint.peer_group.template"
+        ],
+        "import_policy": [
+            "address_family",
+            "peer_endpoint",
+            "peer_endpoint.peer_group",
+            "peer_endpoint.peer_group.template"
+        ],
+        "maximum_prefix": [
+            "address_family",
+            "peer_endpoint",
+            "peer_endpoint.peer_group",
+            "peer_endpoint.peer_group.template"
+        ],
     }
 
     peer_endpoint = models.ForeignKey(

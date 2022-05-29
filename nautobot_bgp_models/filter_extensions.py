@@ -7,6 +7,7 @@ from nautobot.utilities.filters import MultiValueCharFilter
 
 class IPAddressFilterExtension(PluginFilterExtension):
     """IP Address Filter Extension."""
+
     model = "ipam.ipaddress"
 
     filterset_fields = {
@@ -23,6 +24,7 @@ class IPAddressFilterExtension(PluginFilterExtension):
 
 class InterfaceFilterExtension(PluginFilterExtension):
     """Interface filter extension."""
+
     model = "dcim.interface"
 
     filterset_fields = {
@@ -33,7 +35,9 @@ class InterfaceFilterExtension(PluginFilterExtension):
     }
 
     filterform_fields = {
-        "nautobot_bgp_models_interfaces_bgp_routing_instance": forms.CharField(required=False, label="Routing Instance UUID"),
+        "nautobot_bgp_models_interfaces_bgp_routing_instance": forms.CharField(
+            required=False, label="Routing Instance UUID"
+        ),
     }
 
 

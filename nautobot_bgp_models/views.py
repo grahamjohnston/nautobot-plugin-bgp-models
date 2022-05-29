@@ -426,8 +426,6 @@ class BgpExtraAttributesView(View):
         else:
             _format = "json"
 
-        print (obj)
-
         return render(
             request,
             "nautobot_bgp_models/extra_attributes.html",
@@ -439,6 +437,6 @@ class BgpExtraAttributesView(View):
                 # "table": objectchanges_table,
                 "format": _format,
                 "base_template": self.base_template,
-                "active_tab": "extraattributes"
+                "active_tab": "extraattributes",
             },
         )

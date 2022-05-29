@@ -30,14 +30,18 @@ urlpatterns = [
     ),
     path("routing-instances/", views.BGPRoutingInstanceListView.as_view(), name="bgproutinginstance_list"),
     path("routing-instances/add/", views.BGPRoutingInstanceEditView.as_view(), name="bgproutinginstance_add"),
-    path("routing-instances/edit/", views.BGPRoutingInstanceBulkEditView.as_view(), name="bgproutinginstance_bulk_edit"),
+    path(
+        "routing-instances/edit/", views.BGPRoutingInstanceBulkEditView.as_view(), name="bgproutinginstance_bulk_edit"
+    ),
     path(
         "routing-instances/delete/",
         views.BGPRoutingInstanceBulkDeleteView.as_view(),
         name="bgproutinginstance_bulk_delete",
     ),
     path("routing-instances/<uuid:pk>/", views.BGPRoutingInstanceView.as_view(), name="bgproutinginstance"),
-    path("routing-instances/<uuid:pk>/edit/", views.BGPRoutingInstanceEditView.as_view(), name="bgproutinginstance_edit"),
+    path(
+        "routing-instances/<uuid:pk>/edit/", views.BGPRoutingInstanceEditView.as_view(), name="bgproutinginstance_edit"
+    ),
     path(
         "routing-instances/<uuid:pk>/delete/",
         views.BGPRoutingInstanceDeleteView.as_view(),
@@ -71,8 +75,7 @@ urlpatterns = [
     ),
     path("peer-groups/", views.PeerGroupListView.as_view(), name="peergroup_list"),
     path("peer-groups/add/", views.PeerGroupEditView.as_view(), name="peergroup_add"),
-    path("peer-group/edit/", views.PeerGroupBulkEditView.as_view(),
-         name="peergroup_bulk_edit"),
+    path("peer-group/edit/", views.PeerGroupBulkEditView.as_view(), name="peergroup_bulk_edit"),
     path(
         "peer-group/delete/",
         views.PeerGroupBulkDeleteView.as_view(),
@@ -95,16 +98,23 @@ urlpatterns = [
     ),
     path("peer-group-templates/", views.PeerGroupTemplateListView.as_view(), name="peergrouptemplate_list"),
     path("peer-group-templates/add/", views.PeerGroupTemplateEditView.as_view(), name="peergrouptemplate_add"),
-    path("peer-group-templates/edit/", views.PeerGroupTemplateBulkEditView.as_view(), name="peergrouptemplate_bulk_edit"),
+    path(
+        "peer-group-templates/edit/", views.PeerGroupTemplateBulkEditView.as_view(), name="peergrouptemplate_bulk_edit"
+    ),
     path(
         "peer-group-templates/delete/",
         views.PeerGroupTemplateBulkDeleteView.as_view(),
         name="peergrouptemplate_bulk_delete",
     ),
     path("peer-group-templates/<uuid:pk>/", views.PeerGroupTemplateView.as_view(), name="peergrouptemplate"),
-    path("peer-group-templates/<uuid:pk>/edit/", views.PeerGroupTemplateEditView.as_view(), name="peergrouptemplate_edit"),
-    path("peer-group-templates/<uuid:pk>/delete/", views.PeerGroupTemplateDeleteView.as_view(), name="peergrouptemplate_delete"),
-
+    path(
+        "peer-group-templates/<uuid:pk>/edit/", views.PeerGroupTemplateEditView.as_view(), name="peergrouptemplate_edit"
+    ),
+    path(
+        "peer-group-templates/<uuid:pk>/delete/",
+        views.PeerGroupTemplateDeleteView.as_view(),
+        name="peergrouptemplate_delete"
+    ),
     path(
         "peer-group-templates/<uuid:pk>/changelog/",
         ObjectChangeLogView.as_view(),
