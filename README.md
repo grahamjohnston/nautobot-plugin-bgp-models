@@ -38,7 +38,7 @@ This model represents a network-wide description of a BGP autonomous system (AS)
 This model represents a device specific BGP process. It has a mandatory FK to a Nautobot `Device`, mandatory FK to a `AutonomousSystem` and following fields: 
 
 - Router ID (optional, FK to Nautobot `IPAddress`,
-- description (optional, string)
+- Description (optional, string)
 - Extra Attributes (optional, JSON)
 
 ### PeerEndpoint
@@ -159,25 +159,25 @@ Following is the complete documentation of the field inheritance pattern:
 
 **PeerEndpoint**:
 ```angular2html
-- autonomous_system: PeerGroup, PeerGroupTemplate, BGPRoutingInstance
-- description: PeerGroup, PeerGroupTemplate
-- enabled: PeerGroup, PeerGroupTemplate
-- export_policy: PeerGroup, PeerGroupTemplate
-- import_policy: PeerGroup, PeerGroupTemplate
-- source_ip: PeerGroup
-- source_interface: PeerGroup
-- extra_attributes: PeerGroup, PeerGroupTemplate, BGPRoutingInstance
+autonomous_system: PeerGroup, PeerGroupTemplate, BGPRoutingInstance
+description: PeerGroup, PeerGroupTemplate
+enabled: PeerGroup, PeerGroupTemplate
+export_policy: PeerGroup, PeerGroupTemplate
+import_policy: PeerGroup, PeerGroupTemplate
+source_ip: PeerGroup
+source_interface: PeerGroup
+extra_attributes: PeerGroup, PeerGroupTemplate, BGPRoutingInstance
 ```
 
 **PeerGroup**:
 ```angular2html
-- autonomous_system: PeerGroupTemplate
-- description: PeerGroupTemplate
-- enabled: PeerGroupTemplate
-- export_policy: PeerGroupTemplate
-- import_policy: PeerGroupTemplate
-- role: PeerGroupTemplate
-- extra_attributes: PeerGroupTemplate, BGPRoutingInstance
+autonomous_system: PeerGroupTemplate
+description: PeerGroupTemplate
+enabled: PeerGroupTemplate
+export_policy: PeerGroupTemplate
+import_policy: PeerGroupTemplate
+role: PeerGroupTemplate
+extra_attributes: PeerGroupTemplate, BGPRoutingInstance
 ```
 
 ## Installation
@@ -188,7 +188,7 @@ The plugin is available as a Python package in PyPI and can be installed with `p
 pip install nautobot-bgp-models
 ```
 
-> The plugin is compatible with Nautobot 1.0.2 and higher
+> The plugin is compatible with Nautobot 1.3 and higher
 
 To ensure Nautobot BGP Models Plugin is automatically re-installed during future upgrades, create a file named `local_requirements.txt` (if not already existing) in the Nautobot root directory (alongside `requirements.txt`) and list the `nautobot-bgp-models` package:
 
@@ -220,9 +220,9 @@ In the `default_statuses` section, you can define a list of default statuses to 
 
 ![Autonomous System](https://github.com/nautobot/nautobot-plugin-bgp-models/blob/main/docs/images/autonomous_system_01.png)
 
-![Peer Session List](https://github.com/nautobot/nautobot-plugin-bgp-models/blob/main/docs/images/peer_session_list.png)
+![Peering List](https://github.com/nautobot/nautobot-plugin-bgp-models/blob/main/docs/images/peer_session_list.png)
 
-![Peer Session](https://github.com/nautobot/nautobot-plugin-bgp-models/blob/main/docs/images/peer_session_01.png)
+![Peering](https://github.com/nautobot/nautobot-plugin-bgp-models/blob/main/docs/images/peering_01.png)
 
 ![Peer Endpoint](https://github.com/nautobot/nautobot-plugin-bgp-models/blob/main/docs/images/peer_endpoint_01.png)
 
