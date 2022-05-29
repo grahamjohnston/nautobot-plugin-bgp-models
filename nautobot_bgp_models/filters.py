@@ -4,13 +4,10 @@ import django_filters
 
 from django.db.models import Q
 
-from django.core.exceptions import ValidationError
-
 from nautobot.dcim.models import Device
-from nautobot.extras.models import Relationship, RelationshipAssociation
 from nautobot.extras.filters import StatusModelFilterSetMixin, CreatedUpdatedFilterSet, CustomFieldModelFilterSet
-from nautobot.ipam.models import VRF, IPAddress
-from nautobot.utilities.filters import BaseFilterSet, MultiValueCharFilter, NameSlugSearchFilterSet, TagFilter
+from nautobot.ipam.models import VRF
+from nautobot.utilities.filters import BaseFilterSet, NameSlugSearchFilterSet, TagFilter
 
 from . import choices, models
 
@@ -61,7 +58,8 @@ class BGPRoutingInstanceFilterSet(
         model = models.BGPRoutingInstance
         fields = ["id", "autonomous_system"]
 
-    def search(self, queryset, name, value):
+    def search(self, queryset, name, value):  # pylint: disable=unused-argument,no-self-use
+        """Free-text search method implementation."""
         if not value.strip():
             return queryset
         return queryset.filter(

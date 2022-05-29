@@ -1,27 +1,28 @@
 """Django model definitions for nautobot_bgp_models."""
 
 import functools
-from django.core.exceptions import ValidationError
+from collections import OrderedDict
 
+from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.urls import reverse
 from nautobot.circuits.models import Provider
+from nautobot.core.fields import AutoSlugField
 from nautobot.core.models.generics import PrimaryModel, OrganizationalModel
 from nautobot.dcim.fields import ASNField
 from nautobot.extras.models import StatusModel
 from nautobot.extras.utils import extras_features
+from nautobot.ipam.models import IPAddress
 from nautobot.utilities.choices import ColorChoices
 from nautobot.utilities.fields import ColorField
-from nautobot.ipam.models import IPAddress
-from nautobot.core.fields import AutoSlugField
+from nautobot.utilities.utils import deepmerge
 
 from nautobot_bgp_models.choices import AFISAFIChoices
-from django.core.serializers.json import DjangoJSONEncoder
-from collections import OrderedDict
-from nautobot.utilities.utils import deepmerge
 
 
 def rgetattr(obj, attr, *args):
+    """Recursive getattr helper."""
     def _getattr(obj, attr):
         return getattr(obj, attr, *args)
     return functools.reduce(_getattr, [obj] + attr.split('.'))
@@ -35,18 +36,19 @@ class InheritanceMixin(models.Model):
         field_value = getattr(self, field_name, None)
         if field_value:
             return field_value, False, None
-        else:
-            if inheritance_path is None and field_name in getattr(self, "property_inheritance", {}):
-                inheritance_path = self.property_inheritance[field_name]
-            for path_element in (inheritance_path or []):
-                _path_element = f"{path_element}.{field_name}"  # Append the field name to each path element.
-                field_value = rgetattr(self, _path_element, None)
 
-                if field_value:
-                    obj = rgetattr(self, ".".join(_path_element.split('.')[:-1]), None)
-                    return field_value, True, obj
-            else:
-                return None, False, None
+        if inheritance_path is None and field_name in getattr(self, "property_inheritance", {}):
+            inheritance_path = self.property_inheritance[field_name]
+
+        for path_element in (inheritance_path or []):
+            _path_element = f"{path_element}.{field_name}"  # Append the field name to each path element.
+            field_value = rgetattr(self, _path_element, None)
+
+            if field_value:
+                obj = rgetattr(self, ".".join(_path_element.split('.')[:-1]), None)
+                return field_value, True, obj
+
+        return None, False, None
 
     def get_fields(self, include_inherited=False):
         """
@@ -79,6 +81,7 @@ class InheritanceMixin(models.Model):
 
 
 class BGPExtraAttributesMixin(models.Model):
+    """BGP Extra Attributes Mixin."""
     extra_attributes = models.JSONField(
         encoder=DjangoJSONEncoder,
         blank=True,
@@ -88,6 +91,7 @@ class BGPExtraAttributesMixin(models.Model):
 
     @property
     def get_extra_attributes_paths(self):
+        """Get all object paths of inheritable extra attributes."""
         if hasattr(self, "extra_attributes_inheritance"):
             paths = self.extra_attributes_inheritance
         else:
@@ -96,6 +100,7 @@ class BGPExtraAttributesMixin(models.Model):
         return [rgetattr(self, f"{x}.extra_attributes", None) for x in paths]
 
     def get_extra_attributes(self):
+        """Render extra attributes for an object."""
         # always manually query for extra attributes
         extra_attributes_data = [x for x in self.get_extra_attributes_paths if x]
 
@@ -493,10 +498,11 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
         if inherited_source_ip:
             return inherited_source_ip
-        elif inherited_source_interface and inherited_source_interface.ip_addresses.count() == 1:
+
+        if inherited_source_interface and inherited_source_interface.ip_addresses.count() == 1:
             return inherited_source_interface.ip_addresses.first()
-        else:
-            return None
+
+        return None
 
     import_policy = models.CharField(max_length=100, default="", blank=True)
 
@@ -513,8 +519,8 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     def __str__(self):
         if self.routing_instance and self.routing_instance.device:
             return f"{self.routing_instance.device}"
-        else:
-            return f"{self.local_ip} ({self.autonomous_system})"
+
+        return f"{self.local_ip} ({self.autonomous_system})"
 
     def get_absolute_url(self):
         """Get the URL for detailed view of a single PeerEndpoint."""
@@ -652,8 +658,8 @@ class AddressFamily(OrganizationalModel):
         """String representation of a single AddressFamily."""
         if self.vrf:
             return f"{self.afi_safi} AF (VRF {self.vrf}) {self.routing_instance.device}"
-        else:
-            return f"{self.afi_safi} AF - {self.routing_instance.device}"
+
+        return f"{self.afi_safi} AF - {self.routing_instance.device}"
 
     def get_absolute_url(self):
         """Get the URL for a detailed view of a single AddressFamily."""

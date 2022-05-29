@@ -101,7 +101,7 @@ class BGPRoutingInstanceForm(
         if commit:
             # Initiate local templates as indicated in the creation form.
             # Templates are only created during object creation.
-            for t in self.cleaned_data.get("template", []):
+            for t in self.cleaned_data.get("template", []):  # pylint: disable=invalid-name
                 models.PeerGroup.objects.create(
                     name=t.name,
                     template=t,

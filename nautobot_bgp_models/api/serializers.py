@@ -1,17 +1,11 @@
 """REST API serializers for nautobot_bgp_models models."""
 
-from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
-
-from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers
 
-from nautobot.core.api import ContentTypeField
 from nautobot.dcim.api.serializers import NestedDeviceSerializer, NestedInterfaceSerializer
 from nautobot.ipam.api.serializers import NestedVRFSerializer, NestedIPAddressSerializer
 from nautobot.extras.api.customfields import CustomFieldModelSerializer
 from nautobot.extras.api.serializers import TaggedObjectSerializer, StatusModelSerializerMixin, NestedSecretSerializer
-from nautobot.utilities.api import get_serializer_for_model
 from nautobot.core.settings_funcs import is_truthy
 
 from nautobot.circuits.api.serializers import NestedProviderSerializer

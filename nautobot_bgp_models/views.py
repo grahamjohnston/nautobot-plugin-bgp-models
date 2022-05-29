@@ -1,15 +1,13 @@
 """View classes for nautobot_bgp_models."""
 
-from django.shortcuts import get_object_or_404
+
+from django import template
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import View
+
 from nautobot.core.views import generic
-from nautobot.dcim.models import Device, Interface
-from nautobot.virtualization.models import VirtualMachine, VMInterface
 
 from . import filters, forms, models, tables
-from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import View
-from django.contrib.contenttypes.models import ContentType
-from django import template
 
 
 class AutonomousSystemListView(generic.ObjectListView):
@@ -400,33 +398,13 @@ class BgpExtraAttributesView(View):
 
     base_template = None
 
-    def get(self, request, model, **kwargs):
+    def get(self, request, model, **kwargs):  # pylint: disable=missing-function-docstring
 
         # Handle QuerySet restriction of parent object if needed
         if hasattr(model.objects, "restrict"):
             obj = get_object_or_404(model.objects.restrict(request.user, "view"), **kwargs)
         else:
             obj = get_object_or_404(model, **kwargs)
-
-        # # # Gather all changes for this object (and its related objects)
-        # content_type = ContentType.objects.get_for_model(model)
-        #
-        # objectchanges = (
-        #     ObjectChange.objects.restrict(request.user, "view")
-        #     .prefetch_related("user", "changed_object_type")
-        #     .filter(
-        #         Q(changed_object_type=content_type, changed_object_id=obj.pk)
-        #         | Q(related_object_type=content_type, related_object_id=obj.pk)
-        #     )
-        # )
-        # objectchanges_table = tables.ObjectChangeTable(data=objectchanges, orderable=False)
-        #
-        # # # Apply the request context
-        # # paginate = {
-        # #     "paginator_class": EnhancedPaginator,
-        # #     "per_page": get_paginate_count(request),
-        # # }
-        # # RequestConfig(request, paginate).configure(objectchanges_table)
 
         # Default to using "<app>/<model>.html" as the template, if it exists. Otherwise,
         # fall back to using base.html.

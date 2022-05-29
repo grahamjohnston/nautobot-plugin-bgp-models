@@ -1,11 +1,6 @@
 """Nautobot signal handler functions for nautobot_bgp_models."""
 
 from django.conf import settings
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
-
-from nautobot.extras.choices import CustomFieldTypeChoices
-from nautobot.extras.choices import RelationshipTypeChoices
 
 PLUGIN_SETTINGS = settings.PLUGINS_CONFIG["nautobot_bgp_models"]
 

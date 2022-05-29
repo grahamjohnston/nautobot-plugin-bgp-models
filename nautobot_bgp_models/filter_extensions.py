@@ -1,3 +1,4 @@
+"""Filter Extensions definitions for nautobot_bgp_models."""
 from django import forms
 
 from nautobot.extras.plugins import PluginFilterExtension
@@ -5,6 +6,7 @@ from nautobot.utilities.filters import MultiValueCharFilter
 
 
 class IPAddressFilterExtension(PluginFilterExtension):
+    """IP Address Filter Extension."""
     model = "ipam.ipaddress"
 
     filterset_fields = {
@@ -20,6 +22,7 @@ class IPAddressFilterExtension(PluginFilterExtension):
 
 
 class InterfaceFilterExtension(PluginFilterExtension):
+    """Interface filter extension."""
     model = "dcim.interface"
 
     filterset_fields = {
