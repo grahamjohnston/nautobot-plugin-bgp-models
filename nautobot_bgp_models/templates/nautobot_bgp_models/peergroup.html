@@ -43,6 +43,19 @@
 {% block content_right_page %}
             <div class="panel panel-default">
                 <div class="panel-heading">
+                    <strong>Authentication</strong>
+                </div>
+                <table class="table table-hover panel-body attr-table">
+                    <tr>
+                        <td>Secrets</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/native_property.html" with property=object.secret %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
                     <strong>Attributes</strong>
                 </div>
                 <table class="table table-hover panel-body attr-table">

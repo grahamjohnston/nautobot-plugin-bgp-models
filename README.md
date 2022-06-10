@@ -29,7 +29,7 @@ All the data models introduced by the BGP plugin support the following Nautobot 
 - Custom data validation logic
 - Webhooks
 
-> The data model defined by this plugin takes inspiration from the Openconfig BGP data model (https://yangcatalog.org/api/services/tree/openconfig-bgp@2021-06-16.yang).
+> The data model defined by this plugin takes inspirations from the Openconfig BGP data model (https://yangcatalog.org/api/services/tree/openconfig-bgp@2021-06-16.yang) and the RFC 9234 (https://datatracker.ietf.org/doc/rfc9234/)
 
 ### AutonomousSystem
 This model represents a network-wide description of a BGP autonomous system (AS). It has fields including the actual AS number (ASN), a description field, foreign key (FK) to a Nautobot `Provider` object, and a FK to a Nautobot `Status` object.
@@ -102,7 +102,7 @@ Extra attributes follow the inheritance pattern, thus allowing for merging the i
 
 Examples of the extra attributes might include:
 ```angular2html
-{"ttl-security": 1, timers: [6, 20] }
+{"ttl-security": 1, "timers": [6, 20] }
 ```
 
 Extra Attributes are available for following models:
@@ -166,6 +166,7 @@ export_policy: PeerGroup, PeerGroupTemplate
 import_policy: PeerGroup, PeerGroupTemplate
 source_ip: PeerGroup
 source_interface: PeerGroup
+role: PeerGroup, PeerGroupTemplate,
 extra_attributes: PeerGroup, PeerGroupTemplate, BGPRoutingInstance
 ```
 

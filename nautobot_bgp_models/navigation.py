@@ -86,7 +86,7 @@ menu_items = (
                 ),
             ),
             NavMenuGroup(
-                name="Peerings",
+                name="BGP - Peerings",
                 weight=100,
                 items=(
                     NavMenuItem(

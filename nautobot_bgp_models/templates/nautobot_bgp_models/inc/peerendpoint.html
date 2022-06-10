@@ -34,7 +34,9 @@
                     <td><a href="{% url 'dcim:device' pk=endpoint.routing_instance.device.pk %}">{{ endpoint.routing_instance.device }}</a></td>
                 {% elif not endpoint.routing_instance %}
                     <td>Provider</td>
-                    <td><a href="{% url 'circuits:provider' slug=endpoint.autonomous_system.provider.slug %}">{{ endpoint.autonomous_system.provider }}</a></td>
+                    <td>
+                        {% include "nautobot_bgp_models/inc/native_property.html" with property=endpoint.autonomous_system.provider %}
+                    </td>
                 {% endif %}
             </tr>
             <tr>
@@ -55,11 +57,7 @@
             </tr>
             <tr>
                 <td>Peer Group</td>
-                {% if endpoint.peer_group %}
-                    <td><a href="{% url 'plugins:nautobot_bgp_models:peergroup' pk=endpoint.peer_group.pk %}">{{ endpoint.peer_group }}</a></td>
-                {% else %}
-                    <td><span class="text-muted">None</span></td>
-                {% endif %}
+                <td>{% include "nautobot_bgp_models/inc/native_property.html" with property=endpoint.peer_group %}</td>
             </tr>
         </table>
     {% else %}

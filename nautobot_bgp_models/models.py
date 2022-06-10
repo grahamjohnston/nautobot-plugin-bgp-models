@@ -57,7 +57,7 @@ class InheritanceMixin(models.Model):
         """
         Class Fields Getter.
 
-        Traverse field_name_inheritance list contained in self.field to inherit BGP attributes as declared in inheritance path.
+        Get object's inherited fields as defined in self.property_inheritance.
         """
         result = {}
 
@@ -426,6 +426,7 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         "import_policy": ["peer_group", "peer_group.template"],
         "source_ip": ["peer_group"],
         "source_interface": ["peer_group"],
+        "role": ["peer_group.role", "peer_group.template.role"],
     }
 
     description = models.CharField(max_length=200, blank=True)
@@ -563,6 +564,9 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         if self.routing_instance:
             if local_ip_value not in IPAddress.objects.filter(interface__device_id=self.routing_instance.device.id):
                 raise ValidationError("Peer IP not associated with Routing Instance")
+        else:
+            if not asn_value.provider:
+                raise ValidationError("ASN requires a specified Provider")
 
         # Ensure Peer Group's routing instance is our routing instance:
         if self.peer_group and self.routing_instance:

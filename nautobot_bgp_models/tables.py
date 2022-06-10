@@ -243,6 +243,8 @@ class PeeringTable(BaseTable):
             "peering",
             "role",
             "endpoint_a",
+            "endpoint_z",
+            "status",
         )
 
 

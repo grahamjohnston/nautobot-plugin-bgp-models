@@ -46,11 +46,7 @@
                     <tr>
                         <td>Secrets</td>
                         <td>
-                            {% if object.secret %}
-                                <a href="{{ object.secret.get_absolute_url }}">{{ object.secret }}</a>
-                            {% else %}
-                                <span class="text-muted">None</span>
-                            {% endif %}
+                            {% include "nautobot_bgp_models/inc/native_property.html" with property=object.secret %}
                         </td>
                     </tr>
                 </table>
