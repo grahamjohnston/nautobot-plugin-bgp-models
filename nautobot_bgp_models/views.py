@@ -2,7 +2,8 @@
 
 
 from django import template
-from django.shortcuts import get_object_or_404, render
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import View
 
 from nautobot.core.views import generic
@@ -328,6 +329,57 @@ class PeeringEditView(generic.ObjectEditView):
 
     queryset = models.Peering.objects.all()
     model_form = forms.PeeringForm
+
+
+class PeeringAddView(generic.ObjectEditView):
+    """Create/edit view for a Peering."""
+
+    queryset = models.Peering.objects.all()
+    template_name = "nautobot_bgp_models/peering_create.html"
+
+    def post(self, request, *args, **kwargs):
+        peering_form = forms.PeeringForm(request.POST, prefix="peering")
+        peerendpoint_a_form = forms.PeerEndpointForm(request.POST, prefix="peerendpoint_a")
+        peerendpoint_z_form = forms.PeerEndpointForm(request.POST, prefix="peerendpoint_z")
+
+        if peering_form.is_valid() and peerendpoint_a_form.is_valid() and peerendpoint_z_form.is_valid():
+            with transaction.atomic():
+                peering = peering_form.save()
+
+                endpoint_a = peerendpoint_a_form.save(commit=False)
+                endpoint_z = peerendpoint_z_form.save(commit=False)
+
+                for endpoint in [endpoint_a, endpoint_z]:
+                    endpoint.peering = peering
+                    endpoint.save()
+
+            return redirect(peering.get_absolute_url())
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "peering_form": peering_form,
+                "peerendpoint_a_form": peerendpoint_a_form,
+                "peerendpoint_z_form": peerendpoint_z_form,
+                "forms": [peering_form, peerendpoint_a_form, peerendpoint_z_form],
+            },
+        )
+
+    def get(self, request, *args, **kwargs):
+        peering_form = forms.PeeringForm(prefix="peering")
+        peerendpoint_a_form = forms.PeerEndpointForm(prefix="peerendpoint_a")
+        peerendpoint_z_form = forms.PeerEndpointForm(prefix="peerendpoint_z")
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "peering_form": peering_form,
+                "peerendpoint_a_form": peerendpoint_a_form,
+                "peerendpoint_z_form": peerendpoint_z_form,
+            },
+        )
 
 
 class PeeringDeleteView(generic.ObjectDeleteView):

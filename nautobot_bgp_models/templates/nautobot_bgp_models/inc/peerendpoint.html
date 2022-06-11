@@ -13,14 +13,9 @@
                     <span class="mdi mdi-dots-vertical-circle" aria-hidden="true"></span> Detail
                 </a>
             {% endif %}
-            {% if endpoint and perms.nautobot_bgp_models.change_peerendpoint  %}
+            {% if endpoint and perms.nautobot_bgp_models.change_peerendpoint %}
                 <a href="{% url 'plugins:nautobot_bgp_models:peerendpoint_edit' pk=endpoint.pk %}" class="btn btn-xs btn-warning">
                     <span class="mdi mdi-pencil" aria-hidden="true"></span> Edit
-                </a>
-            {% endif %}
-            {% if endpoint and perms.nautobot_bgp_models.delete_peerendpoint %}
-                <a href="{% url 'plugins:nautobot_bgp_models:peerendpoint_delete' pk=endpoint.pk %}?return_url={{ object.get_absolute_url }}" class="btn btn-xs btn-danger">
-                    <span class="mdi mdi-trash-can-outline" aria-hidden="true"></span> Delete
                 </a>
             {% endif %}
         </div>

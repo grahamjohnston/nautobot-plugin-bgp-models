@@ -145,7 +145,7 @@ urlpatterns = [
         kwargs={"model": models.PeerEndpoint},
     ),
     path("peerings/", views.PeeringListView.as_view(), name="peering_list"),
-    path("peerings/add/", views.PeeringEditView.as_view(), name="peering_add"),
+    path("peerings/add/", views.PeeringAddView.as_view(), name="peering_add"),
     path("peerings/delete/", views.PeeringBulkDeleteView.as_view(), name="peering_bulk_delete"),
     path("peerings/<uuid:pk>/", views.PeeringView.as_view(), name="peering"),
     path("peerings/<uuid:pk>/edit/", views.PeeringEditView.as_view(), name="peering_edit"),
