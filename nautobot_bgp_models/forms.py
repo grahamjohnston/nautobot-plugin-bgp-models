@@ -378,6 +378,11 @@ class PeerEndpointForm(
         if self.initial.get("routing_instance"):
             self.fields["routing_instance"].disabled = True
 
+        _prefix = f"{self.prefix}-" if self.prefix else ""
+        self.fields["source_ip"].widget.add_query_param("nautobot_bgp_models_ips_bgp_routing_instance", f"${_prefix}routing_instance")
+        self.fields["source_interface"].widget.add_query_param("nautobot_bgp_models_interfaces_bgp_routing_instance", f"${_prefix}routing_instance")
+        self.fields["peer_group"].widget.add_query_param("routing_instance", f"${_prefix}routing_instance")
+
     routing_instance = utilities_forms.DynamicModelChoiceField(
         queryset=models.BGPRoutingInstance.objects.all(),
         required=False,
@@ -395,21 +400,21 @@ class PeerEndpointForm(
         queryset=IPAddress.objects.all(),
         required=False,
         label="Source IP Address",
-        query_params={"nautobot_bgp_models_ips_bgp_routing_instance": "$routing_instance"},
+        # query_params={"nautobot_bgp_models_ips_bgp_routing_instance": "$routing_instance"},
     )
 
     source_interface = utilities_forms.DynamicModelChoiceField(
         queryset=Interface.objects.all(),
         required=False,
         label="Source Interface",
-        query_params={"nautobot_bgp_models_interfaces_bgp_routing_instance": "$routing_instance"},
+        # query_params={"nautobot_bgp_models_interfaces_bgp_routing_instance": "$routing_instance"},
     )
 
     peer_group = utilities_forms.DynamicModelChoiceField(
         queryset=models.PeerGroup.objects.all(),
         required=False,
         label="Peer Group",
-        query_params={"routing_instance": "$routing_instance"},
+        # query_params={"routing_instance": "$routing_instance"},
     )
 
     role = utilities_forms.DynamicModelChoiceField(queryset=models.PeeringRole.objects.all(), required=False)
