@@ -421,6 +421,8 @@ class PeerEndpointForm(
 
     secret = utilities_forms.DynamicModelChoiceField(queryset=Secret.objects.all(), required=False)
 
+    peering = utilities_forms.DynamicModelChoiceField(queryset=models.Peering.objects.all(), widget=forms.MultipleHiddenInput, required=False)
+
     class Meta:
         model = models.PeerEndpoint
         fields = (
@@ -436,6 +438,7 @@ class PeerEndpointForm(
             "export_policy",
             "secret",
             "extra_attributes",
+            "peering",
         )
 
     def save(self, commit=True):
