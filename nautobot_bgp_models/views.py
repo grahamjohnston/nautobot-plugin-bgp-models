@@ -118,7 +118,7 @@ class PeeringRoleListView(generic.ObjectListView):
     table = tables.PeeringRoleTable
     filterset = filters.PeeringRoleFilterSet
     filterset_form = forms.PeeringRoleFilterForm
-    action_buttons = ("add", "import", "export")
+    action_buttons = ("add")
 
 
 class PeeringRoleView(generic.ObjectView):
