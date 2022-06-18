@@ -8,7 +8,8 @@ from nautobot.dcim.models import Device, DeviceRole, DeviceType, Interface, Manu
 from nautobot.extras.models import Status
 from nautobot.ipam.models import IPAddress
 
-from nautobot_bgp_models import filters, models
+
+from nautobot_bgp_models import filters, models, choices
 
 
 class AutonomousSystemTestCase(TestCase):
@@ -343,9 +344,6 @@ class PeeringTestCase(TestCase):
         #     Interface.objects.create(device=device2, name="Loopback2"),
         # ]
 
-        # rel = Relationship.objects.get(slug="bgp_asn")
-        # RelationshipAssociation.objects.create(relationship=rel, source=asn2, destination=device2)
-
         addresses = [
             IPAddress.objects.create(
                 address="10.1.1.1/24",
@@ -435,11 +433,11 @@ class PeeringTestCase(TestCase):
 
     def test_device(self):
         """Test filtering by device name."""
-        params = {"device": ["device1"]}
+        params = {"device": "device1"}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
 
-        params = {"device": ["device2"]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
+        # params = {"device": "device2"}
+        # self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
 
         params = {"device": ["device1", "device2"]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
@@ -474,62 +472,74 @@ class PeeringTestCase(TestCase):
     #     self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
 
-# class AddressFamilyTestCase(TestCase):
-#     """Test filtering of AddressFamily records."""
-#
-#     queryset = models.AddressFamily.objects.all()
-#     filterset = filters.AddressFamilyFilterSet
-#
-#     @classmethod
-#     def setUpTestData(cls):
-#         status_active = Status.objects.get(slug="active")
-#
-#         manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-#         devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-#         site = Site.objects.create(name="Site 1", slug="site-1")
-#         devicerole = DeviceRole.objects.create(name="Router", slug="router", color="ff0000")
-#         device = Device.objects.create(
-#             device_type=devicetype, device_role=devicerole, name="Device 1", site=site, status=status_active
-#         )
-#         interface = Interface.objects.create(device=device, name="Loopback1")
-#         address = IPAddress.objects.create(address="1.1.1.1/32", status=status_active, assigned_object=interface)
-#
-#         peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
-#         cls.peergroup = models.PeerGroup.objects.create(name="Group B", role=peeringrole)
-#
-#         peering = models.Peering.objects.create(status=status_active, role=peeringrole)
-#         cls.endpoint = models.PeerEndpoint.objects.create(local_ip=address, peering=peering)
-#
-#         models.AddressFamily.objects.create(
-#             afi_safi=choices.AFISAFIChoices.AFI_IPV4,
-#         )
-#         models.AddressFamily.objects.create(
-#             afi_safi=choices.AFISAFIChoices.AFI_IPV4_FLOWSPEC,
-#             peer_group=cls.peergroup,
-#         )
-#         models.AddressFamily.objects.create(
-#             afi_safi=choices.AFISAFIChoices.AFI_VPNV4,
-#             peer_endpoint=cls.endpoint,
-#         )
-#
-#     def test_id(self):
-#         """Test filtering by id."""
-#         params = {"id": self.queryset.values_list("pk", flat=True)[:2]}
-#         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-#
-#     def test_afi_safi(self):
-#         """Test filtering by AFI-SAFI."""
-#         params = {"afi_safi": ["ipv4", "vpnv4"]}
-#         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
-#
-#     # TODO filtering by device/virtualmachine
-#
-#     def test_peer_group(self):
-#         """Test filtering by peer-group."""
-#         params = {"peer_group": [self.peergroup.pk]}
-#         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
-#
-#     def test_peer_endpoint(self):
-#         """Test filtering by peer endpoint."""
-#         params = {"peer_endpoint": [self.endpoint.pk]}
-#         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+class AddressFamilyTestCase(TestCase):
+    """Test filtering of AddressFamily records."""
+
+    queryset = models.AddressFamily.objects.all()
+    filterset = filters.AddressFamilyFilterSet
+
+    @classmethod
+    def setUpTestData(cls):
+        status_active = Status.objects.get(slug="active")
+
+        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
+        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
+        site = Site.objects.create(name="Site 1", slug="site-1")
+        devicerole = DeviceRole.objects.create(name="Router", slug="router", color="ff0000")
+        device1 = Device.objects.create(
+            device_type=devicetype, device_role=devicerole, name="Device 1", site=site, status=status_active
+        )
+        interface = Interface.objects.create(device=device1, name="Loopback1")
+        address = IPAddress.objects.create(address="1.1.1.1/32", status=status_active, assigned_object=interface)
+
+        peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
+
+        asn1 = models.AutonomousSystem.objects.create(asn=65000, status=status_active)
+
+        cls.bgp_routing_instance = models.BGPRoutingInstance.objects.create(
+            description="Hello World!",
+            autonomous_system=asn1,
+            device=device1,
+        )
+
+        cls.peergroup = models.PeerGroup.objects.create(
+            routing_instance=cls.bgp_routing_instance,
+            name="Group B",
+            role=peeringrole
+        )
+
+        peering = models.Peering.objects.create(status=status_active, role=peeringrole)
+        cls.endpoint = models.PeerEndpoint.objects.create(
+            routing_instance=cls.bgp_routing_instance,
+            source_ip=address,
+            peering=peering,
+        )
+
+        models.AddressFamily.objects.create(
+            routing_instance=cls.bgp_routing_instance,
+            afi_safi=choices.AFISAFIChoices.AFI_IPV4_UNICAST,
+        )
+
+        models.AddressFamily.objects.create(
+            routing_instance=cls.bgp_routing_instance,
+            afi_safi=choices.AFISAFIChoices.AFI_IPV4_FLOWSPEC,
+        )
+
+        models.AddressFamily.objects.create(
+            routing_instance=cls.bgp_routing_instance,
+            afi_safi=choices.AFISAFIChoices.AFI_VPNV4_UNICAST,
+        )
+
+    def test_id(self):
+        """Test filtering by id."""
+        params = {"id": self.queryset.values_list("pk", flat=True)[:2]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_afi_safi(self):
+        """Test filtering by AFI-SAFI."""
+        params = {"afi_safi": ["ipv4_unicast", "vpnv4_unicast"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    # TODO filtering by device/virtualmachine
+    def test_device(self):
+        pass
