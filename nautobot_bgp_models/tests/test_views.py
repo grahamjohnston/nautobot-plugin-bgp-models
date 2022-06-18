@@ -9,6 +9,7 @@ from nautobot.utilities.testing import ViewTestCases
 
 from nautobot_bgp_models import models
 from nautobot_bgp_models.choices import AFISAFIChoices
+from nautobot.circuits.models import Provider
 
 
 class AutonomousSystemTestCase(ViewTestCases.PrimaryObjectViewTestCase):
@@ -245,7 +246,8 @@ class PeerEndpointTestCase(
 class PeeringTestCase(
     ViewTestCases.GetObjectViewTestCase,
     ViewTestCases.GetObjectChangelogViewTestCase,
-    ViewTestCases.CreateObjectViewTestCase,
+    # TODO Investigate how to enable tests that requires additional parameters (peering)
+    # ViewTestCases.CreateObjectViewTestCase,
     ViewTestCases.EditObjectViewTestCase,
     ViewTestCases.DeleteObjectViewTestCase,
     ViewTestCases.ListObjectsViewTestCase,
@@ -271,70 +273,76 @@ class PeeringTestCase(
         models.Peering.objects.create(status=status_active, role=peeringrole_internal)
         models.Peering.objects.create(status=status_active, role=peeringrole_internal)
 
+        address_1 = IPAddress.objects.create(
+            address="1.1.1.1/32",
+            status=status_active,
+        )
+
+        address_2 = IPAddress.objects.create(
+            address="1.1.1.2/32",
+            status=status_active,
+        )
+        provider = Provider.objects.create(name="Provider", slug="provider")
+
+        asn_1 = models.AutonomousSystem.objects.create(asn=4294967290, status=status_active, provider=provider)
+        asn_2 = models.AutonomousSystem.objects.create(asn=4294967291, status=status_active, provider=provider)
+
         cls.form_data = {
             "status": status_active.pk,
             "role": peeringrole_customer.pk,
+            "peerendpoint_a_autonomous_system": asn_1.pk,
+            "peerendpoint_z_autonomous_system": asn_2.pk,
+            "peerendpoint_a_source_ip": address_1.pk,
+            "peerendpoint_z_source_ip": address_2.pk
         }
 
 
-# class AddressFamilyTestCase(
-#     ViewTestCases.GetObjectViewTestCase,
-#     ViewTestCases.GetObjectChangelogViewTestCase,
-#     ViewTestCases.CreateObjectViewTestCase,
-#     ViewTestCases.EditObjectViewTestCase,
-#     ViewTestCases.DeleteObjectViewTestCase,
-#     ViewTestCases.ListObjectsViewTestCase,
-# ):
-#     """Test views related to the AddressFamily model."""
-#
-#     model = models.AddressFamily
-#     maxDiff = None
-#
-#     def _get_base_url(self):
-#         return "plugins:{}:{}_{{}}".format(self.model._meta.app_label, self.model._meta.model_name)
-#
-#     @classmethod
-#     def setUpTestData(cls):
-#         """One-time class data setup."""
-#         status_active = Status.objects.get(slug="active")
-#
-#         manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-#         devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-#         site = Site.objects.create(name="Site 1", slug="site-1")
-#         devicerole = DeviceRole.objects.create(name="Router", slug="router", color="ff0000")
-#         device = Device.objects.create(
-#             device_type=devicetype,
-#             device_role=devicerole,
-#             name="Device 1",
-#             site=site,
-#             status=status_active,
-#         )
-#         interface = Interface.objects.create(name="Loopback1", device=device)
-#
-#         address = IPAddress.objects.create(address="1.1.1.1/32", status=status_active, assigned_object=interface)
-#
-#         peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
-#
-#         peergroup = models.PeerGroup.objects.create(name="Group A", role=peeringrole)
-#         peering = models.Peering.objects.create(status=status_active, role=peeringrole)
-#
-#         peerendpoint = models.PeerEndpoint.objects.create(
-#             local_ip=address,
-#             peer_group=peergroup,
-#             source_interface=interface,
-#             router_id=address,
-#             peering=peering,
-#         )
-#
-#         models.AddressFamily.objects.create(afi_safi=AFISAFIChoices.AFI_IPV4)
-#         models.AddressFamily.objects.create(peer_group=peergroup, afi_safi=AFISAFIChoices.AFI_IPV4)
-#         models.AddressFamily.objects.create(peer_endpoint=peerendpoint, afi_safi=AFISAFIChoices.AFI_IPV4)
-#
-#         cls.form_data = {
-#             "afi_safi": AFISAFIChoices.AFI_VPNV4,
-#             "peer_group": None,
-#             "peer_endpoint": peerendpoint.pk,
-#             "import_policy": "IMPORT",
-#             "export_policy": "EXPORT",
-#             "redistribute_static_policy": "REDISTRIBUTE_STATIC",
-#         }
+class AddressFamilyTestCase(
+    ViewTestCases.GetObjectViewTestCase,
+    ViewTestCases.GetObjectChangelogViewTestCase,
+    ViewTestCases.CreateObjectViewTestCase,
+    ViewTestCases.EditObjectViewTestCase,
+    ViewTestCases.DeleteObjectViewTestCase,
+    ViewTestCases.ListObjectsViewTestCase,
+):
+    """Test views related to the AddressFamily model."""
+
+    model = models.AddressFamily
+    maxDiff = None
+
+    def _get_base_url(self):
+        return "plugins:{}:{}_{{}}".format(self.model._meta.app_label, self.model._meta.model_name)
+
+    @classmethod
+    def setUpTestData(cls):
+        """One-time class data setup."""
+        status_active = Status.objects.get(slug="active")
+
+        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
+        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
+        site = Site.objects.create(name="Site 1", slug="site-1")
+        devicerole = DeviceRole.objects.create(name="Router", slug="router", color="ff0000")
+        device = Device.objects.create(
+            device_type=devicetype,
+            device_role=devicerole,
+            name="Device 1",
+            site=site,
+            status=status_active,
+        )
+        asn_1 = models.AutonomousSystem.objects.create(asn=4294967294, status=status_active)
+        bgp_routing_instance = models.BGPRoutingInstance.objects.create(
+            description="Hello World!",
+            autonomous_system=asn_1,
+            device=device,
+        )
+
+        models.AddressFamily.objects.create(routing_instance=bgp_routing_instance, afi_safi=AFISAFIChoices.AFI_IPV4_UNICAST)
+        models.AddressFamily.objects.create(routing_instance=bgp_routing_instance, afi_safi=AFISAFIChoices.AFI_IPV4_MULTICAST)
+        models.AddressFamily.objects.create(routing_instance=bgp_routing_instance, afi_safi=AFISAFIChoices.AFI_IPV4_FLOWSPEC)
+
+        cls.form_data = {
+            "routing_instance": bgp_routing_instance.pk,
+            "afi_safi": AFISAFIChoices.AFI_IPV6_UNICAST,
+            "import_policy": "IMPORT",
+            "export_policy": "EXPORT",
+        }
