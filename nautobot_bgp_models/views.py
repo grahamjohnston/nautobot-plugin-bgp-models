@@ -40,12 +40,12 @@ class AutonomousSystemDeleteView(generic.ObjectDeleteView):
     queryset = models.AutonomousSystem.objects.all()
 
 
-class AutonomousSystemBulkImportView(generic.BulkImportView):
-    """Bulk-importing view for multiple AutonomousSystems."""
-
-    queryset = models.AutonomousSystem.objects.all()
-    model_form = forms.AutonomousSystemCSVForm
-    table = tables.AutonomousSystemTable
+# class AutonomousSystemBulkImportView(generic.BulkImportView):
+#     """Bulk-importing view for multiple AutonomousSystems."""
+#
+#     queryset = models.AutonomousSystem.objects.all()
+#     model_form = forms.AutonomousSystemCSVForm
+#     table = tables.AutonomousSystemTable
 
 
 class AutonomousSystemBulkEditView(generic.BulkEditView):
@@ -140,12 +140,12 @@ class PeeringRoleDeleteView(generic.ObjectDeleteView):
     queryset = models.PeeringRole.objects.all()
 
 
-class PeeringRoleBulkImportView(generic.BulkImportView):
-    """Bulk-importing view for multiple PeeringRoles."""
-
-    queryset = models.PeeringRole.objects.all()
-    model_form = forms.PeeringRoleCSVForm
-    table = tables.PeeringRoleTable
+# class PeeringRoleBulkImportView(generic.BulkImportView):
+#     """Bulk-importing view for multiple PeeringRoles."""
+#
+#     queryset = models.PeeringRole.objects.all()
+#     model_form = forms.PeeringRoleCSVForm
+#     table = tables.PeeringRoleTable
 
 
 class PeeringRoleBulkEditView(generic.BulkEditView):

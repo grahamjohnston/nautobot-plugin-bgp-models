@@ -61,7 +61,7 @@ urlpatterns = [
     ),
     path("peering-roles/", views.PeeringRoleListView.as_view(), name="peeringrole_list"),
     path("peering-roles/add/", views.PeeringRoleEditView.as_view(), name="peeringrole_add"),
-    path("peering-roles/import/", views.PeeringRoleBulkImportView.as_view(), name="peeringrole_import"),
+    # path("peering-roles/import/", views.PeeringRoleBulkImportView.as_view(), name="peeringrole_import"),
     path("peering-roles/edit/", views.PeeringRoleBulkEditView.as_view(), name="peeringrole_bulk_edit"),
     path("peering-roles/delete/", views.PeeringRoleBulkDeleteView.as_view(), name="peeringrole_bulk_delete"),
     path("peering-roles/<slug:slug>/", views.PeeringRoleView.as_view(), name="peeringrole"),

@@ -34,12 +34,12 @@ class AutonomousSystemFilterForm(
     tag = utilities_forms.TagFilterField(model)
 
 
-class AutonomousSystemCSVForm(extras_forms.StatusModelCSVFormMixin, extras_forms.CustomFieldModelCSVForm):
-    """Form for importing AutonomousSystems from CSV data."""
-
-    class Meta:
-        model = models.AutonomousSystem
-        fields = models.AutonomousSystem.csv_headers
+# class AutonomousSystemCSVForm(extras_forms.StatusModelCSVFormMixin, extras_forms.CustomFieldModelCSVForm):
+#     """Form for importing AutonomousSystems from CSV data."""
+#
+#     class Meta:
+#         model = models.AutonomousSystem
+#         fields = models.AutonomousSystem.csv_headers
 
 
 class AutonomousSystemBulkEditForm(
