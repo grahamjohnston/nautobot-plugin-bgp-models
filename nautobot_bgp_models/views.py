@@ -18,7 +18,7 @@ class AutonomousSystemListView(generic.ObjectListView):
     table = tables.AutonomousSystemTable
     filterset = filters.AutonomousSystemFilterSet
     filterset_form = forms.AutonomousSystemFilterForm
-    action_buttons = ("add", "import", "export")
+    action_buttons = ("add")
 
 
 class AutonomousSystemView(generic.ObjectView):

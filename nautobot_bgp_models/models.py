@@ -662,7 +662,6 @@ class AddressFamily(OrganizationalModel):
 
     class Meta:
         ordering = ["-routing_instance", "-vrf"]
-        unique_together = [("afi_safi", "routing_instance", "vrf")]
         verbose_name = "BGP address family"
         verbose_name_plural = "BGP Address Families"
 
@@ -677,11 +676,14 @@ class AddressFamily(OrganizationalModel):
         """Get the URL for a detailed view of a single AddressFamily."""
         return reverse("plugins:nautobot_bgp_models:addressfamily", args=[self.pk])
 
-    def clean(self):
-        if self.vrf is None and self.__class__.objects.filter(
-            afi_safi=self.afi_safi, routing_instance=self.routing_instance, vrf=None
-        ):
-            raise ValidationError("Duplicated AFI/SAFI for Routing Instance.")
+    def validate_unique(self, exclude=None):
+        if not self.vrf and self.__class__.objects.exclude(id=self.id).filter(routing_instance=self.routing_instance, afi_safi=self.afi_safi, vrf__isnull=True).exists():
+            raise ValidationError("Duplicate Address Family")
+
+        if self.vrf and self.__class__.objects.exclude(id=self.id).filter(routing_instance=self.routing_instance, afi_safi=self.afi_safi, vrf=self.vrf).exists():
+            raise ValidationError("Duplicate Address Family")
+
+        super().validate_unique(exclude)
 
 
 @extras_features(

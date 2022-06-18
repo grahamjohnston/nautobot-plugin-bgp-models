@@ -100,7 +100,7 @@ class PeerGroupSerializer(InheritableFieldsSerializerMixin, CustomFieldModelSeri
     source_ip = NestedIPAddressSerializer(required=False, allow_null=True)  # noqa: F405
     source_interface = NestedInterfaceSerializer(required=False, allow_null=True)  # noqa: F405
 
-    routing_instance = NestedRoutingInstanceSerializer()
+    routing_instance = NestedRoutingInstanceSerializer(required=True)
 
     autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)
 
@@ -123,6 +123,7 @@ class PeerGroupSerializer(InheritableFieldsSerializerMixin, CustomFieldModelSeri
             "template",
             "secret",
             "extra_attributes",
+            "role",
         ]
 
 
@@ -160,6 +161,7 @@ class PeerEndpointSerializer(
             "peering",
             "secret",
             "tags",
+            "enabled",
         ]
 
     def create(self, validated_data):
@@ -191,7 +193,7 @@ class BGPRoutingInstanceSerializer(CustomFieldModelSerializer, ExtraAttributesSe
 
     endpoints = NestedPeerEndpointSerializer(required=False, many=True)  # noqa: F405
 
-    device = NestedDeviceSerializer(read_only=True)
+    device = NestedDeviceSerializer()
 
     autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)
 
@@ -233,9 +235,9 @@ class AddressFamilySerializer(CustomFieldModelSerializer):
 
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:addressfamily-detail")
 
-    routing_instance = NestedRoutingInstanceSerializer(read_only=True)
+    routing_instance = NestedRoutingInstanceSerializer(required=True)
 
-    vrf = NestedVRFSerializer(read_only=True)
+    vrf = NestedVRFSerializer(required=False, allow_null=True)
 
     class Meta:
         model = models.AddressFamily

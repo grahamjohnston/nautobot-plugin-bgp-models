@@ -76,7 +76,7 @@ class NestedRoutingInstanceSerializer(WritableNestedSerializer):
     )
 
     class Meta:
-        model = models.PeerEndpoint
+        model = models.BGPRoutingInstance
         fields = ["id", "url"]
 
 

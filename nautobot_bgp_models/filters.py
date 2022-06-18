@@ -195,13 +195,13 @@ class PeerEndpointFilterSet(BaseFilterSet):
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
-        return queryset.filter(Q(routing_instance__device__name=value) | Q(description__icontains=value)).distinct()
+        return queryset.filter(Q(routing_instance__device__name__iexact=value) | Q(description__icontains=value)).distinct()
 
 
 class PeeringFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, StatusModelFilterSetMixin):
     """Filtering of Peering records."""
 
-    # TODO(mzb): Add proper filtering for Provider, ASN, IP Address, ...
+    # TODO(mzb): Add in-memory filtering for Provider, ASN, IP Address, ...
     #  this requires to consider inheritance methods.
 
     role = django_filters.ModelMultipleChoiceFilter(

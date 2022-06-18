@@ -8,7 +8,7 @@ from . import models, views
 urlpatterns = [
     path("autonomous-systems/", views.AutonomousSystemListView.as_view(), name="autonomoussystem_list"),
     path("autonomous-systems/add/", views.AutonomousSystemEditView.as_view(), name="autonomoussystem_add"),
-    path("autonomous-systems/import/", views.AutonomousSystemBulkImportView.as_view(), name="autonomoussystem_import"),
+    # path("autonomous-systems/import/", views.AutonomousSystemBulkImportView.as_view(), name="autonomoussystem_import"),
     path("autonomous-systems/edit/", views.AutonomousSystemBulkEditView.as_view(), name="autonomoussystem_bulk_edit"),
     path(
         "autonomous-systems/delete/",
