@@ -618,10 +618,19 @@ class Peering(OrganizationalModel, StatusModel):
 
         endpoints[0].peer = endpoints[1]
         endpoints[1].peer = endpoints[0]
+
         endpoints[0].validated_save()
         endpoints[1].validated_save()
 
         return True
+
+    def validate_peers(self):
+        """Peer Sanity Checks."""
+        if self.endpoint_a.routing_instance == self.endpoint_z.routing_instance:
+            raise ValidationError("Peering between same routing instance not allowed")
+
+        if self.endpoint_a.local_ip == self.endpoint_z.local_ip:
+            raise ValidationError("Peering between same IPs not allowed")
 
 
 @extras_features(

@@ -338,7 +338,10 @@ class PeeringTestCase(TestCase):
 
     def test_str(self):
         """Test the string representation of a Peering."""
-        self.assertEqual("2.2.2.2/32 (AS 23456) ↔︎ 1.1.1.1/32 (AS 12345)", str(self.peering))
+        self.assertTrue(
+            str(self.peering)
+            in ["2.2.2.2/32 (AS 23456) ↔︎ 1.1.1.1/32 (AS 12345)", "1.1.1.1/32 (AS 12345) ↔︎ 2.2.2.2/32 (AS 23456)"]
+        )
 
     def test_update_peers(self):
         """Test update_peers to update peer on both endpoints."""

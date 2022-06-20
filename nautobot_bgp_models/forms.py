@@ -426,11 +426,16 @@ class PeerEndpointForm(
 
     secret = utilities_forms.DynamicModelChoiceField(queryset=Secret.objects.all(), required=False)
 
-    peering = forms.UUIDField(widget=forms.HiddenInput, required=False)
+    peering = utilities_forms.DynamicModelChoiceField(  # Hidden & optional - update peers manually for new peerings.
+        queryset=models.Peering.objects.all(),
+        widget=forms.HiddenInput(),
+        required=False,
+    )
 
     class Meta:
         model = models.PeerEndpoint
         fields = (
+            "peering",
             "routing_instance",
             "description",
             "enabled",
@@ -443,7 +448,6 @@ class PeerEndpointForm(
             "export_policy",
             "secret",
             "extra_attributes",
-            "peering",
         )
 
     def save(self, commit=True):

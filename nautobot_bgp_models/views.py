@@ -2,6 +2,7 @@
 
 
 from django import template
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import View
@@ -290,11 +291,11 @@ class PeerEndpointEditView(generic.ObjectEditView):
     queryset = models.PeerEndpoint.objects.all()
     model_form = forms.PeerEndpointForm
 
-    # def alter_obj(self, obj, request, url_args, url_kwargs):
-    #     """Inject peering object into form from url args."""
-    #     if "peering" in url_kwargs:
-    #         obj.peering = get_object_or_404(models.Peering, pk=url_kwargs["peering"])
-    #     return obj
+    def alter_obj(self, obj, request, url_args, url_kwargs):
+        """Inject peering object into form from url args."""
+        if "peering" in url_kwargs:
+            obj.peering = get_object_or_404(models.Peering, pk=url_kwargs["peering"])
+        return obj
 
     def get_return_url(self, request, obj, *args, **kwargs):
         """Return to main Peering page after edit."""
@@ -342,18 +343,24 @@ class PeeringAddView(generic.ObjectEditView):
         peerendpoint_a_form = forms.PeerEndpointForm(request.POST, prefix="peerendpoint_a")
         peerendpoint_z_form = forms.PeerEndpointForm(request.POST, prefix="peerendpoint_z")
 
-        if peering_form.is_valid() and peerendpoint_a_form.is_valid() and peerendpoint_z_form.is_valid():
-            with transaction.atomic():
-                peering = peering_form.save()
+        try:
+            if peering_form.is_valid() and peerendpoint_a_form.is_valid() and peerendpoint_z_form.is_valid():
+                with transaction.atomic():
+                    peering = peering_form.save()
 
-                endpoint_a = peerendpoint_a_form.save(commit=False)
-                endpoint_z = peerendpoint_z_form.save(commit=False)
+                    endpoint_a = peerendpoint_a_form.save(commit=False)
+                    endpoint_z = peerendpoint_z_form.save(commit=False)
 
-                for endpoint in [endpoint_a, endpoint_z]:
-                    endpoint.peering = peering
-                    endpoint.save()
+                    for endpoint in [endpoint_a, endpoint_z]:
+                        endpoint.peering = peering
+                        endpoint.save()
 
-            return redirect(peering.get_absolute_url())
+                    peering.validate_peers()
+                    peering.update_peers()
+
+                return redirect(peering.get_absolute_url())
+        except ValidationError as error:
+            peering_form.add_error(field=None, error=error.message)
 
         return render(
             request,
