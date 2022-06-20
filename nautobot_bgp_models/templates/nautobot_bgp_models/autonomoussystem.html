@@ -21,6 +21,12 @@
                             <span class="label" style="color: {{ object.status.color|fgcolor }}; background-color: #{{ object.status.color }}">{{ object.get_status_display }}</span>
                         </td>
                     </tr>
+                    <tr>
+                        <td>Provider</td>
+                        <td>
+                            {% include "nautobot_bgp_models/inc/native_property.html" with property=object.provider %}
+                        </td>
+                    </tr>
                 </table>
             </div>
 {% endblock content_left_page %}

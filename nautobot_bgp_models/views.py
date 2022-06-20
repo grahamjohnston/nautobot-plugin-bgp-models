@@ -291,11 +291,11 @@ class PeerEndpointEditView(generic.ObjectEditView):
     queryset = models.PeerEndpoint.objects.all()
     model_form = forms.PeerEndpointForm
 
-    def alter_obj(self, obj, request, url_args, url_kwargs):
-        """Inject peering object into form from url args."""
-        if "peering" in url_kwargs:
-            obj.peering = get_object_or_404(models.Peering, pk=url_kwargs["peering"])
-        return obj
+    # def alter_obj(self, obj, request, url_args, url_kwargs):
+    #     """Inject peering object into form from url args."""
+    #     if "peering" in url_kwargs:
+    #         obj.peering = get_object_or_404(models.Peering, pk=url_kwargs["peering"])
+    #     return obj
 
     def get_return_url(self, request, obj, *args, **kwargs):
         """Return to main Peering page after edit."""

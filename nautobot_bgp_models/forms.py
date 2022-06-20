@@ -421,7 +421,7 @@ class PeerEndpointForm(
 
     secret = utilities_forms.DynamicModelChoiceField(queryset=Secret.objects.all(), required=False)
 
-    peering = utilities_forms.DynamicModelChoiceField(queryset=models.Peering.objects.all(), widget=forms.MultipleHiddenInput, required=False)
+    peering = forms.UUIDField(widget=forms.HiddenInput, required=False)
 
     class Meta:
         model = models.PeerEndpoint

@@ -214,7 +214,7 @@ class PeerEndpointTable(BaseTable):
         )
 
 
-class PeeringTable(BaseTable):
+class PeeringTable(StatusTableMixin, BaseTable):
     """Table representation of Peering records."""
 
     # TODO(mzb): Add columns: Device_A, Device_B, Provider_A, Provider_Z

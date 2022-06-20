@@ -568,11 +568,6 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
             if not asn_value.provider:
                 raise ValidationError("ASN requires a specified Provider")
 
-        # Ensure Peer Group's routing instance is our routing instance:
-        if self.peer_group and self.routing_instance:
-            if self.peer_group.routing_instance != self.routing_instance:
-                raise ValidationError("Routing Instance mismatch (Peer-Group has different Routing Instance")
-
 
 @extras_features(
     "custom_fields",
@@ -622,6 +617,7 @@ class Peering(OrganizationalModel, StatusModel):
         endpoints[1].peer = endpoints[0]
         endpoints[0].validated_save()
         endpoints[1].validated_save()
+
         return True
 
 
