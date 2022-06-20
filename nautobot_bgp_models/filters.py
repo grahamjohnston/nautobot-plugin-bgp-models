@@ -195,7 +195,9 @@ class PeerEndpointFilterSet(BaseFilterSet):
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
-        return queryset.filter(Q(routing_instance__device__name__iexact=value) | Q(description__icontains=value)).distinct()
+        return queryset.filter(
+            Q(routing_instance__device__name__iexact=value) | Q(description__icontains=value)
+        ).distinct()
 
 
 class PeeringFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, StatusModelFilterSetMixin):

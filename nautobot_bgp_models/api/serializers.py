@@ -42,6 +42,7 @@ class InheritableFieldsSerializerMixin:
 
     def to_representation(self, instance):
         """Render the model instance to a Python dict.
+
         If `include_inherited` is specified as a request parameter, include inherited field values as appropriate.
         """
         req = self.context["request"]
@@ -58,9 +59,7 @@ class ExtraAttributesSerializerMixin(serializers.Serializer):  # pylint: disable
     extra_attributes = serializers.SerializerMethodField(read_only=True)
 
     def get_extra_attributes(self, instance):
-        """
-        Return either the `display` property of the instance or `str(instance)`
-        """
+        """Return either the `display` property of the instance or `str(instance)`."""
         req = self.context["request"]
 
         if hasattr(req, "query_params") and is_truthy(req.query_params.get("include_inherited", False)):

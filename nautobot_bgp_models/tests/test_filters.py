@@ -2,7 +2,8 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
-from nautobot.circuits.models import Provider
+
+# from nautobot.circuits.models import Provider
 from nautobot.dcim.choices import InterfaceTypeChoices
 from nautobot.dcim.models import Device, DeviceRole, DeviceType, Interface, Manufacturer, Site
 from nautobot.extras.models import Status
@@ -184,7 +185,9 @@ class PeerGroupTestCase(TestCase):
 
     def test_routing_instance(self):
         """Test Routing Instance."""
-        self.assertEqual(self.filterset({"routing_instance": self.bgp_routing_instance.pk}, self.queryset).qs.count(), 3)
+        self.assertEqual(
+            self.filterset({"routing_instance": self.bgp_routing_instance.pk}, self.queryset).qs.count(), 3
+        )
 
 
 class PeerEndpointTestCase(TestCase):
@@ -199,10 +202,10 @@ class PeerEndpointTestCase(TestCase):
         status_active = Status.objects.get(slug="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
 
-        provider = Provider.objects.create(name="Provider", slug="provider")
+        # provider = Provider.objects.create(name="Provider", slug="provider")
 
         asn = models.AutonomousSystem.objects.create(asn=4294967295, status=status_active)
-        asn_15521 = models.AutonomousSystem.objects.create(asn=15521, status=status_active, provider=provider)
+        # asn_15521 = models.AutonomousSystem.objects.create(asn=15521, status=status_active, provider=provider)
 
         peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
         manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
@@ -222,7 +225,6 @@ class PeerEndpointTestCase(TestCase):
             IPAddress.objects.create(address="1.1.1.1/32", status=status_active, assigned_object=interface),
             IPAddress.objects.create(address="1.1.1.2/32", status=status_active, assigned_object=interface),
             IPAddress.objects.create(address="1.1.1.3/32", status=status_active),
-            # IPAddress.objects.create(address="1.1.1.4/32", status=status_active),
         ]
 
         cls.bgp_routing_instance = models.BGPRoutingInstance.objects.create(
@@ -245,19 +247,17 @@ class PeerEndpointTestCase(TestCase):
             routing_instance=cls.bgp_routing_instance,
             source_ip=addresses[0],
             autonomous_system=asn,
-            peering=peering1
+            peering=peering1,
         )
         models.PeerEndpoint.objects.create(
             routing_instance=cls.bgp_routing_instance,
             source_ip=addresses[1],
             autonomous_system=asn,
-            # vrf=vrf,
             peer_group=cls.peergroup,
             peering=peering2,
         )
         models.PeerEndpoint.objects.create(
             source_ip=addresses[2],
-            # vrf=vrf,
             peer_group=cls.peergroup,
             enabled=False,
             peering=peering3,
@@ -318,7 +318,7 @@ class PeeringTestCase(TestCase):
             device_role=devicerole,
             name="device1",
             site=site,
-            status=status_active
+            status=status_active,
         )
         # device2 = Device.objects.create(
         #     device_type=devicetype,
@@ -348,7 +348,7 @@ class PeeringTestCase(TestCase):
             IPAddress.objects.create(
                 address="10.1.1.1/24",
                 status=status_active,
-                assigned_object=interfaces_device1[0]
+                assigned_object=interfaces_device1[0],
             ),
             IPAddress.objects.create(
                 address="10.1.1.2/24",
@@ -357,16 +357,16 @@ class PeeringTestCase(TestCase):
             IPAddress.objects.create(
                 address="10.1.1.3/24",
                 status=status_active,
-                assigned_object=interfaces_device1[1]
+                assigned_object=interfaces_device1[1],
             ),
             IPAddress.objects.create(
                 address="10.1.1.4/24",
-                status=status_reserved
+                status=status_reserved,
             ),
             IPAddress.objects.create(
                 address="10.1.1.5/24",
                 status=status_active,
-                assigned_object=interfaces_device1[2]
+                assigned_object=interfaces_device1[2],
             ),
             IPAddress.objects.create(
                 address="10.1.1.6/24",
@@ -386,34 +386,33 @@ class PeeringTestCase(TestCase):
         models.PeerEndpoint.objects.create(
             source_ip=addresses[0],
             peering=peerings[0],
-            autonomous_system=asn1
+            autonomous_system=asn1,
         )
         models.PeerEndpoint.objects.create(
             source_ip=addresses[1],
             peering=peerings[0],
-            autonomous_system=asn1
+            autonomous_system=asn1,
         )
 
         models.PeerEndpoint.objects.create(
             source_ip=addresses[2],
             peering=peerings[1],
-            autonomous_system=asn1
+            autonomous_system=asn1,
         )
         models.PeerEndpoint.objects.create(
             source_ip=addresses[3],
             peering=peerings[1],
-            autonomous_system=asn2
+            autonomous_system=asn2,
         )
-
         models.PeerEndpoint.objects.create(
             source_ip=addresses[4],
             peering=peerings[2],
-            autonomous_system=asn1
+            autonomous_system=asn1,
         )
         models.PeerEndpoint.objects.create(
             source_ip=addresses[5],
             peering=peerings[2],
-            autonomous_system=asn3
+            autonomous_system=asn3,
         )
 
     def test_id(self):
@@ -505,7 +504,7 @@ class AddressFamilyTestCase(TestCase):
         cls.peergroup = models.PeerGroup.objects.create(
             routing_instance=cls.bgp_routing_instance,
             name="Group B",
-            role=peeringrole
+            role=peeringrole,
         )
 
         peering = models.Peering.objects.create(status=status_active, role=peeringrole)

@@ -35,7 +35,6 @@ class InheritanceMixin(models.Model):
 
     def get_inherited_field(self, field_name, inheritance_path=None):
         """Returns value, inheritance_indicator, inheritance_source."""
-
         field_value = getattr(self, field_name, None)
         if field_value:
             return field_value, False, None
@@ -74,9 +73,7 @@ class InheritanceMixin(models.Model):
 
     @property
     def fields_inherited(self):
-        """
-        Wrapper intended to remove function call with attributes from within a jinja template
-        """
+        """Wrapper intended to remove function call with attributes from within a jinja template."""
         return self.get_fields(include_inherited=True)
 
     class Meta:
@@ -286,6 +283,7 @@ class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
     )
 
     def __str__(self):
+        """String."""
         return f"{self.name}"
 
     def get_absolute_url(self):
@@ -379,6 +377,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     )
 
     def __str__(self):
+        """String."""
         return f"{self.name}"
 
     def get_absolute_url(self):
@@ -390,6 +389,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         verbose_name = "BGP Peer Group"
 
     def clean(self):
+        """Clean."""
         # Ensure IP & Update source mutually exclusive:
         if self.source_ip and self.source_interface:
             raise ValidationError("Can not set both IP and Update source options")
@@ -527,6 +527,7 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     )
 
     def __str__(self):
+        """String."""
         if self.routing_instance and self.routing_instance.device:
             return f"{self.routing_instance.device}"
 
@@ -538,6 +539,8 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
     def clean(self):
         """
+        Clean Method.
+
         TODO(mzb):
          - add validation on PeerGroup while removing self.ipaddress -> check related Endpoints.
          - ensure self.peering has no more than > endpoints !.
@@ -673,10 +676,21 @@ class AddressFamily(OrganizationalModel):
         return reverse("plugins:nautobot_bgp_models:addressfamily", args=[self.pk])
 
     def validate_unique(self, exclude=None):
-        if not self.vrf and self.__class__.objects.exclude(id=self.id).filter(routing_instance=self.routing_instance, afi_safi=self.afi_safi, vrf__isnull=True).exists():
+        """Validate uniqueness."""
+        if (
+            not self.vrf
+            and self.__class__.objects.exclude(id=self.id)
+            .filter(routing_instance=self.routing_instance, afi_safi=self.afi_safi, vrf__isnull=True)
+            .exists()
+        ):
             raise ValidationError("Duplicate Address Family")
 
-        if self.vrf and self.__class__.objects.exclude(id=self.id).filter(routing_instance=self.routing_instance, afi_safi=self.afi_safi, vrf=self.vrf).exists():
+        if (
+            self.vrf
+            and self.__class__.objects.exclude(id=self.id)
+            .filter(routing_instance=self.routing_instance, afi_safi=self.afi_safi, vrf=self.vrf)
+            .exists()
+        ):
             raise ValidationError("Duplicate Address Family")
 
         super().validate_unique(exclude)

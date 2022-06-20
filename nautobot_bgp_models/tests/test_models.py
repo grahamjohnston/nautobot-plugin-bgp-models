@@ -125,7 +125,9 @@ class PeerGroupTestCase(TestCase):
 
     def setUp(self):
         """Per-test data setup."""
-        self.peergroup = models.PeerGroup.objects.create(name="Peer Group A", routing_instance=self.bgp_routing_instance)
+        self.peergroup = models.PeerGroup.objects.create(
+            name="Peer Group A", routing_instance=self.bgp_routing_instance
+        )
 
     def test_str(self):
         """Test string representation of a PeerGroup."""
@@ -175,7 +177,10 @@ class PeerEndpointTestCase(TestCase):
 
         provider = Provider.objects.create(name="Provider", slug="provider")
         cls.autonomous_system_23456 = models.AutonomousSystem.objects.create(
-            asn=23456, status=status_active, description="ASN 23456", provider=provider,
+            asn=23456,
+            status=status_active,
+            description="ASN 23456",
+            provider=provider,
         )
 
         bgp_routing_instance_1 = models.BGPRoutingInstance.objects.create(
@@ -221,13 +226,11 @@ class PeerEndpointTestCase(TestCase):
             source_ip=self.ipaddress_1,
             peer_group=self.peergroup_1,
             peering=self.peering,
-            routing_instance=self.bgp_routing_instance_1
+            routing_instance=self.bgp_routing_instance_1,
         )
         self.peerendpoint_1.clean()
         self.peerendpoint_2 = models.PeerEndpoint.objects.create(
-            source_ip=self.ipaddress_2,
-            autonomous_system=self.autonomous_system_23456,
-            peering=self.peering
+            source_ip=self.ipaddress_2, autonomous_system=self.autonomous_system_23456, peering=self.peering
         )
         self.peerendpoint_2.clean()
 
@@ -306,18 +309,32 @@ class PeeringTestCase(TestCase):
 
         provider = Provider.objects.create(name="Provider", slug="provider")
         cls.autonomous_system_12345 = models.AutonomousSystem.objects.create(
-            asn=12345, status=status_active, description="ASN 12345", provider=provider,
+            asn=12345,
+            status=status_active,
+            description="ASN 12345",
+            provider=provider,
         )
         cls.autonomous_system_23456 = models.AutonomousSystem.objects.create(
-            asn=23456, status=status_active, description="ASN 23456", provider=provider,
+            asn=23456,
+            status=status_active,
+            description="ASN 23456",
+            provider=provider,
         )
 
         cls.peering = models.Peering.objects.create(status=status_active, role=peeringrole_internal)
 
         address_1 = IPAddress.objects.create(address="1.1.1.1/32", status=status_active)
         address_2 = IPAddress.objects.create(address="2.2.2.2/32", status=status_active)
-        models.PeerEndpoint.objects.create(source_ip=address_1, peering=cls.peering, autonomous_system=cls.autonomous_system_12345)
-        models.PeerEndpoint.objects.create(source_ip=address_2, peering=cls.peering, autonomous_system=cls.autonomous_system_23456)
+        models.PeerEndpoint.objects.create(
+            source_ip=address_1,
+            peering=cls.peering,
+            autonomous_system=cls.autonomous_system_12345,
+        )
+        models.PeerEndpoint.objects.create(
+            source_ip=address_2,
+            peering=cls.peering,
+            autonomous_system=cls.autonomous_system_23456,
+        )
 
     def test_str(self):
         """Test the string representation of a Peering."""
@@ -371,7 +388,9 @@ class AddressFamilyTestCase(TestCase):
         )
 
         self.autonomous_system_12345 = models.AutonomousSystem.objects.create(
-            asn=123456, status=self.status_active, description="ASN 23456",
+            asn=123456,
+            status=self.status_active,
+            description="ASN 23456",
         )
 
         self.bgp_routing_instance_1 = models.BGPRoutingInstance.objects.create(
@@ -410,6 +429,7 @@ class AddressFamilyTestCase(TestCase):
         """Test the string representation of an AddressFamily."""
         self.assertEqual("ipv4_unicast AF - Device 1", str(self.addressfamily_1))
         self.assertEqual("ipv4_unicast AF (VRF global) Device 1", str(self.addressfamily_2))
+
 
 #     def test_peer_group_peer_endpoint_mutual_exclusion(self):
 #         addressfamily = models.AddressFamily(

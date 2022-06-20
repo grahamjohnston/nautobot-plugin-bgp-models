@@ -3,15 +3,12 @@
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
+from nautobot.circuits.models import Provider
 from nautobot.dcim.models import Device, DeviceRole, DeviceType, Interface, Manufacturer, Site
 from nautobot.extras.models import Status
 from nautobot.ipam.models import IPAddress
-from nautobot.virtualization.models import Cluster, ClusterType, VirtualMachine, VMInterface
 
 from nautobot_bgp_models import models, forms
-from nautobot.circuits.models import Provider
-
-from nautobot_bgp_models.choices import AFISAFIChoices
 
 
 class AutonomousSystemFormTestCase(TestCase):
@@ -144,6 +141,7 @@ class PeerGroupFormTestCase(TestCase):
         peergroup = models.PeerGroup.objects.get(name="Peer Group A")
         self.assertEqual(peergroup.source_ip, self.ip)
 
+
 # TODO Find a way to model alter_obj within the test case,
 # Currently all tests are failing because the peering object is missing
 class PeerEndpointFormTestCase(TestCase):
@@ -160,16 +158,9 @@ class PeerEndpointFormTestCase(TestCase):
         site = Site.objects.create(name="Site 1", slug="site-1")
         devicerole = DeviceRole.objects.create(name="Router", slug="router", color="ff0000")
         cls.device_1 = Device.objects.create(
-            device_type=devicetype,
-            device_role=devicerole,
-            name="Device 1",
-            site=site,
-            status=status_active
+            device_type=devicetype, device_role=devicerole, name="Device 1", site=site, status=status_active
         )
-        cls.interface_1 = Interface.objects.create(
-            device=cls.device_1,
-            name="Loopback1"
-        )
+        cls.interface_1 = Interface.objects.create(device=cls.device_1, name="Loopback1")
 
         cls.address_1 = IPAddress.objects.create(
             address="1.1.1.1/32",
@@ -222,8 +213,8 @@ class PeerEndpointFormTestCase(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertTrue(form.save())
 
-        self.peerendpoint = models.PeerEndpoint.objects.get(routing_instance=self.bgp_routing_instance)
-        self.assertEqual(self.peerendpoint.role, self.peeringrole)
+        peerendpoint = models.PeerEndpoint.objects.get(routing_instance=self.bgp_routing_instance)
+        self.assertEqual(peerendpoint.role, self.peeringrole)
 
     def test_source_interface_cannot_be_both(self):
         """Update source cannot be both an Interface and a VMInterface."""
@@ -254,7 +245,7 @@ class PeerEndpointFormTestCase(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertTrue(form.save())
 
-        self.peerendpoint = models.PeerEndpoint.objects.get(routing_instance=self.bgp_routing_instance)
+        peerendpoint = models.PeerEndpoint.objects.get(routing_instance=self.bgp_routing_instance)
 
         data = {
             "source_ip": self.address_2,
@@ -266,8 +257,8 @@ class PeerEndpointFormTestCase(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertTrue(form.save())
 
-        self.peerendpoint.refresh_from_db()
-        self.assertIsNotNone(self.peerendpoint.peer)
+        peerendpoint.refresh_from_db()
+        self.assertIsNotNone(peerendpoint.peer)
 
 
 class AddressFamilyFormTestCase(TestCase):
@@ -307,5 +298,5 @@ class AddressFamilyFormTestCase(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertTrue(form.save())
 
-        self.af = models.AddressFamily.objects.get(routing_instance=self.bgp_routing_instance, afi_safi="ipv4_unicast")
-        self.assertEqual(self.af.afi_safi, "ipv4_unicast")
+        _af = models.AddressFamily.objects.get(routing_instance=self.bgp_routing_instance, afi_safi="ipv4_unicast")
+        self.assertEqual(_af.afi_safi, "ipv4_unicast")

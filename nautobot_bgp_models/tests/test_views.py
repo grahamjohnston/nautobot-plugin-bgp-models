@@ -1,15 +1,14 @@
 """Unit test automation for Model classes in nautobot_bgp_models."""
 
 from django.contrib.contenttypes.models import ContentType
-
+from nautobot.circuits.models import Provider
 from nautobot.dcim.models import Device, DeviceRole, DeviceType, Interface, Manufacturer, Site
 from nautobot.extras.models import Status
-from nautobot.ipam.models import IPAddress, VRF
+from nautobot.ipam.models import IPAddress
 from nautobot.utilities.testing import ViewTestCases
 
 from nautobot_bgp_models import models
 from nautobot_bgp_models.choices import AFISAFIChoices
-from nautobot.circuits.models import Provider
 
 
 class AutonomousSystemTestCase(ViewTestCases.PrimaryObjectViewTestCase):
@@ -22,7 +21,9 @@ class AutonomousSystemTestCase(ViewTestCases.PrimaryObjectViewTestCase):
     test_bulk_import_objects_with_constrained_permission = None
 
     def _get_base_url(self):
-        return "plugins:{}:{}_{{}}".format(self.model._meta.app_label, self.model._meta.model_name)
+        return "plugins:{}:{}_{{}}".format(  # pylint: disable=consider-using-f-string
+            self.model._meta.app_label, self.model._meta.model_name
+        )
 
     @classmethod
     def setUpTestData(cls):
@@ -71,7 +72,9 @@ class PeeringRoleTestCase(ViewTestCases.OrganizationalObjectViewTestCase, ViewTe
     test_bulk_import_objects_with_constrained_permission = None
 
     def _get_base_url(self):
-        return "plugins:{}:{}_{{}}".format(self.model._meta.app_label, self.model._meta.model_name)
+        return "plugins:{}:{}_{{}}".format(  # pylint: disable=consider-using-f-string
+            self.model._meta.app_label, self.model._meta.model_name
+        )
 
     @classmethod
     def setUpTestData(cls):
@@ -114,7 +117,9 @@ class PeerGroupTestCase(
     test_create_object_with_constrained_permission = None  # TODO(mzb): FIXME
 
     def _get_base_url(self):
-        return "plugins:{}:{}_{{}}".format(self.model._meta.app_label, self.model._meta.model_name)
+        return "plugins:{}:{}_{{}}".format(  # pylint: disable=consider-using-f-string
+            self.model._meta.app_label, self.model._meta.model_name
+        )
 
     @classmethod
     def setUpTestData(cls):
@@ -143,10 +148,7 @@ class PeerGroupTestCase(
         models.PeerGroup.objects.create(routing_instance=bgp_routing_instance, name="Group B", role=peeringrole)
         models.PeerGroup.objects.create(routing_instance=bgp_routing_instance, name="Group C", role=peeringrole)
 
-        cls.form_data = {
-            "name": "Group D",
-            "routing_instance": bgp_routing_instance.pk
-        }
+        cls.form_data = {"name": "Group D", "routing_instance": bgp_routing_instance.pk}
 
         cls.bulk_edit_data = {"description": "Generic description"}
 
@@ -166,7 +168,9 @@ class PeerEndpointTestCase(
     maxDiff = None
 
     def _get_base_url(self):
-        return "plugins:{}:{}_{{}}".format(self.model._meta.app_label, self.model._meta.model_name)
+        return "plugins:{}:{}_{{}}".format(  # pylint: disable=consider-using-f-string
+            self.model._meta.app_label, self.model._meta.model_name
+        )
 
     @classmethod
     def setUpTestData(cls):  # pylint: disable=too-many-locals
@@ -196,14 +200,10 @@ class PeerEndpointTestCase(
         interface_2 = Interface.objects.create(name="Loopback2", device=device)
         # vrf = VRF.objects.create(name="red")
 
-        address_1 = IPAddress.objects.create(
-            address="1.1.1.1/32", status=status_active, assigned_object=interface
-        )
+        address_1 = IPAddress.objects.create(address="1.1.1.1/32", status=status_active, assigned_object=interface)
         address_3 = IPAddress.objects.create(address="3.3.3.3/32", status=status_active)
         address_2 = IPAddress.objects.create(address="2.2.2.2/32", status=status_active)
-        address_4 = IPAddress.objects.create(
-            address="4.4.4.4/32", status=status_active, assigned_object=interface_2
-        )
+        address_4 = IPAddress.objects.create(address="4.4.4.4/32", status=status_active, assigned_object=interface_2)
 
         peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
 
@@ -258,7 +258,9 @@ class PeeringTestCase(
     maxDiff = None
 
     def _get_base_url(self):
-        return "plugins:{}:{}_{{}}".format(self.model._meta.app_label, self.model._meta.model_name)
+        return "plugins:{}:{}_{{}}".format(  # pylint: disable=consider-using-f-string
+            self.model._meta.app_label, self.model._meta.model_name
+        )
 
     @classmethod
     def setUpTestData(cls):
@@ -293,7 +295,7 @@ class PeeringTestCase(
             "peerendpoint_a_autonomous_system": asn_1.pk,
             "peerendpoint_z_autonomous_system": asn_2.pk,
             "peerendpoint_a_source_ip": address_1.pk,
-            "peerendpoint_z_source_ip": address_2.pk
+            "peerendpoint_z_source_ip": address_2.pk,
         }
 
 
@@ -311,7 +313,9 @@ class AddressFamilyTestCase(
     maxDiff = None
 
     def _get_base_url(self):
-        return "plugins:{}:{}_{{}}".format(self.model._meta.app_label, self.model._meta.model_name)
+        return "plugins:{}:{}_{{}}".format(  # pylint: disable=consider-using-f-string
+            self.model._meta.app_label, self.model._meta.model_name
+        )
 
     @classmethod
     def setUpTestData(cls):
@@ -336,9 +340,15 @@ class AddressFamilyTestCase(
             device=device,
         )
 
-        models.AddressFamily.objects.create(routing_instance=bgp_routing_instance, afi_safi=AFISAFIChoices.AFI_IPV4_UNICAST)
-        models.AddressFamily.objects.create(routing_instance=bgp_routing_instance, afi_safi=AFISAFIChoices.AFI_IPV4_MULTICAST)
-        models.AddressFamily.objects.create(routing_instance=bgp_routing_instance, afi_safi=AFISAFIChoices.AFI_IPV4_FLOWSPEC)
+        models.AddressFamily.objects.create(
+            routing_instance=bgp_routing_instance, afi_safi=AFISAFIChoices.AFI_IPV4_UNICAST
+        )
+        models.AddressFamily.objects.create(
+            routing_instance=bgp_routing_instance, afi_safi=AFISAFIChoices.AFI_IPV4_MULTICAST
+        )
+        models.AddressFamily.objects.create(
+            routing_instance=bgp_routing_instance, afi_safi=AFISAFIChoices.AFI_IPV4_FLOWSPEC
+        )
 
         cls.form_data = {
             "routing_instance": bgp_routing_instance.pk,
