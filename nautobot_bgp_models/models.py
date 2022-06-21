@@ -626,7 +626,7 @@ class Peering(OrganizationalModel, StatusModel):
 
     def validate_peers(self):
         """Peer Sanity Checks."""
-        if self.endpoint_a.routing_instance == self.endpoint_z.routing_instance:
+        if self.endpoint_a.routing_instance and self.endpoint_a.routing_instance == self.endpoint_z.routing_instance:
             raise ValidationError("Peering between same routing instance not allowed")
 
         if self.endpoint_a.local_ip == self.endpoint_z.local_ip:
