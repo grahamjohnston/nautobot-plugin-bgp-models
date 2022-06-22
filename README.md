@@ -123,7 +123,6 @@ The device-specific `PeerEndpoint` custom modeling will be implemented in the fu
 ### Peering
 This model represents the shared configuration of a single BGP peer relationship between two endpoints. It has FKs to two `PeerEndpoint` records (representing the two devices involved in the peering), and additional fields including:
 - Status (FK to Nautobot `Status`)
-- Role (FK to `PeeringRole`)
 
 > The nature of a session as BGP “internal” or “external” is useful in the construction of queries and filters, but does not need to be stored as an actual database attribute (as it is implied by whether the ASNs of the two BGPPeerEndpoints involved are identical or different). It is implemented as a derived property of the `Peering` model.
 

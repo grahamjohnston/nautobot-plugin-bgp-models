@@ -206,13 +206,6 @@ class PeeringFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelF
     # TODO(mzb): Add in-memory filtering for Provider, ASN, IP Address, ...
     #  this requires to consider inheritance methods.
 
-    role = django_filters.ModelMultipleChoiceFilter(
-        field_name="role__slug",
-        queryset=models.PeeringRole.objects.all(),
-        to_field_name="slug",
-        label="Peering role (slug)",
-    )
-
     device = django_filters.ModelMultipleChoiceFilter(
         field_name="endpoints__routing_instance__device__name",
         queryset=Device.objects.all(),

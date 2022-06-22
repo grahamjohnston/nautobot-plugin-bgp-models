@@ -223,7 +223,6 @@ class PeeringSerializer(CustomFieldModelSerializer, StatusModelSerializerMixin):
         fields = [
             "id",
             "url",
-            "role",
             "status",
             "endpoints",
         ]

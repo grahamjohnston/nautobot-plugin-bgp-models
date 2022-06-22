@@ -141,7 +141,6 @@ class BGPRoutingInstanceFilterForm(utilities_forms.BootstrapMixin, extras_forms.
     field_order = [
         "q",
         "device",
-        "role",
         "router_id",
         "autonomous_system",
         "tag",
@@ -465,15 +464,9 @@ class PeeringForm(
 ):
     """Form for creating/updating Peering records."""
 
-    role = utilities_forms.DynamicModelChoiceField(queryset=models.PeeringRole.objects.all(), required=False)
-
     class Meta:
         model = models.Peering
-        fields = (
-            "role",
-            "status",
-            # "authentication_key",
-        )
+        fields = ("status",)
 
 
 class PeeringFilterForm(

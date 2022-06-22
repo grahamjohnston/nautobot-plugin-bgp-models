@@ -209,19 +209,15 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
 
         cls.peering = (
             models.Peering.objects.create(
-                role=cls.peeringrole,
                 status=cls.status_active,
             ),
             models.Peering.objects.create(
-                role=cls.peeringrole,
                 status=cls.status_active,
             ),
             models.Peering.objects.create(
-                role=cls.peeringrole,
                 status=cls.status_active,
             ),
             models.Peering.objects.create(
-                role=cls.peeringrole,
                 status=cls.status_active,
             ),
         )
@@ -414,7 +410,7 @@ class PeeringAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.Peering
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = ["display", "id", "role", "status", "url"]
+    brief_fields = ["display", "id", "status", "url"]
     choices_fields = ["status"]
 
     # Nautobot testing doesn't correctly handle the API representation of a Status as a slug instead of a PK yet.
@@ -439,19 +435,16 @@ class PeeringAPITestCase(APIViewTestCases.APIViewTestCase):
         provider = Provider.objects.create(name="Provider", slug="provider")
         asn = models.AutonomousSystem.objects.create(asn=15521, status=status_active, provider=provider)
 
-        peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="333333")
-        peeringrole_external = models.PeeringRole.objects.create(name="External", slug="external", color="0000ff")
+        # peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="333333")
+        # peeringrole_external = models.PeeringRole.objects.create(name="External", slug="external", color="0000ff")
 
         peering_1 = models.Peering.objects.create(
-            role=peeringrole_internal,
             status=status_active,
         )
         peering_2 = models.Peering.objects.create(
-            role=peeringrole_internal,
             status=status_active,
         )
         peering_3 = models.Peering.objects.create(
-            role=peeringrole_internal,
             status=status_active,
         )
         peerendpoints = (
@@ -474,23 +467,18 @@ class PeeringAPITestCase(APIViewTestCases.APIViewTestCase):
 
         cls.create_data = [
             {
-                "role": peeringrole_internal.pk,
-                "status": "active",
-                # "authentication_key": "my-secure-BGP-key",
-            },
-            {
-                "role": peeringrole_internal.pk,
                 "status": "active",
             },
             {
-                "role": peeringrole_internal.pk,
+                "status": "active",
+            },
+            {
                 "status": "active",
             },
         ]
 
         cls.bulk_update_data = {
-            "role": peeringrole_external.pk,
-            # "authentication_key": "",
+            "status": "provisioning",
         }
 
 
@@ -554,7 +542,7 @@ class AddressFamilyAPITestCase(APIViewTestCases.APIViewTestCase):
         #     routing_instance=bgp_routing_instance,
         # )
 
-        # peering = models.Peering.objects.create(role=peeringrole, status=status_active)
+        # peering = models.Peering.objects.create(status=status_active)
         # peerendpoint_1 = models.PeerEndpoint.objects.create(
         #     routing_instance=bgp_routing_instance,
         #     source_ip=addresses[0],

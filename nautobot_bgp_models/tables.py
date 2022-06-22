@@ -225,7 +225,6 @@ class PeeringTable(StatusTableMixin, BaseTable):
         args=[A("pk")],
         text=str,
     )
-    role = ColoredLabelColumn()
 
     endpoint_a = tables.LinkColumn(
         verbose_name="Endpoint", text=lambda x: str(x.endpoint_a.local_ip) if x.endpoint_a else None
@@ -241,7 +240,6 @@ class PeeringTable(StatusTableMixin, BaseTable):
         fields = (
             "pk",
             "peering",
-            "role",
             "endpoint_a",
             "endpoint_z",
             "status",

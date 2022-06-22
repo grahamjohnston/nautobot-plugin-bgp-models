@@ -239,9 +239,9 @@ class PeerEndpointTestCase(TestCase):
             routing_instance=cls.bgp_routing_instance,
         )
 
-        peering1 = models.Peering.objects.create(role=peeringrole, status=status_active)
-        peering2 = models.Peering.objects.create(role=peeringrole, status=status_active)
-        peering3 = models.Peering.objects.create(role=peeringrole, status=status_active)
+        peering1 = models.Peering.objects.create(status=status_active)
+        peering2 = models.Peering.objects.create(status=status_active)
+        peering3 = models.Peering.objects.create(status=status_active)
 
         models.PeerEndpoint.objects.create(
             routing_instance=cls.bgp_routing_instance,
@@ -374,13 +374,13 @@ class PeeringTestCase(TestCase):
             ),
         ]
 
-        peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
-        peeringrole_external = models.PeeringRole.objects.create(name="External", slug="external", color="ffffff")
+        # peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
+        # peeringrole_external = models.PeeringRole.objects.create(name="External", slug="external", color="ffffff")
 
         peerings = [
-            models.Peering.objects.create(status=status_active, role=peeringrole_internal),
-            models.Peering.objects.create(status=status_active, role=peeringrole_external),
-            models.Peering.objects.create(status=status_reserved, role=peeringrole_external),
+            models.Peering.objects.create(status=status_active),
+            models.Peering.objects.create(status=status_active),
+            models.Peering.objects.create(status=status_reserved),
         ]
 
         models.PeerEndpoint.objects.create(
@@ -420,10 +420,10 @@ class PeeringTestCase(TestCase):
         params = {"id": self.queryset.values_list("pk", flat=True)[:2]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
-    def test_role(self):
-        """Test filtering by role."""
-        params = {"role": ["external"]}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+    # def test_role(self):
+    #     """Test filtering by role."""
+    #     params = {"role": ["external"]}
+    #     self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_status(self):
         """Test filtering by status."""
@@ -507,7 +507,7 @@ class AddressFamilyTestCase(TestCase):
             role=peeringrole,
         )
 
-        peering = models.Peering.objects.create(status=status_active, role=peeringrole)
+        peering = models.Peering.objects.create(status=status_active)
         cls.endpoint = models.PeerEndpoint.objects.create(
             routing_instance=cls.bgp_routing_instance,
             source_ip=address,

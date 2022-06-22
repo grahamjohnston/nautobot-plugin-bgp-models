@@ -87,7 +87,7 @@ class NestedPeeringSerializer(WritableNestedSerializer):
 
     class Meta:
         model = models.Peering
-        fields = ["id", "url", "role", "status"]
+        fields = ["id", "url", "status"]
 
 
 class NestedAddressFamilySerializer(WritableNestedSerializer):

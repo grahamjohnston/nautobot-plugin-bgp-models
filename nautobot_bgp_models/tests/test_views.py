@@ -214,15 +214,12 @@ class PeerEndpointTestCase(
         )
 
         peering1 = models.Peering.objects.create(
-            role=peeringrole,
             status=status_active,
         )
         peering2 = models.Peering.objects.create(
-            role=peeringrole,
             status=status_active,
         )
         peering3 = models.Peering.objects.create(
-            role=peeringrole,
             status=status_active,
         )
 
@@ -268,12 +265,12 @@ class PeeringTestCase(
         status_active = Status.objects.get(slug="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.Peering))
 
-        peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="000000")
+        # peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="000000")
         peeringrole_customer = models.PeeringRole.objects.create(name="Customer", slug="customer", color="ffffff")
 
-        models.Peering.objects.create(status=status_active, role=peeringrole_internal)
-        models.Peering.objects.create(status=status_active, role=peeringrole_internal)
-        models.Peering.objects.create(status=status_active, role=peeringrole_internal)
+        models.Peering.objects.create(status=status_active)
+        models.Peering.objects.create(status=status_active)
+        models.Peering.objects.create(status=status_active)
 
         address_1 = IPAddress.objects.create(
             address="1.1.1.1/32",

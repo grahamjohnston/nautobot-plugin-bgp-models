@@ -191,7 +191,6 @@ class PeerEndpointFormTestCase(TestCase):
         cls.peeringrole = models.PeeringRole.objects.create(name="Internal", slug="internal", color="333333")
 
         cls.peering = models.Peering.objects.create(
-            role=cls.peeringrole,
             status=status_active,
         )
 

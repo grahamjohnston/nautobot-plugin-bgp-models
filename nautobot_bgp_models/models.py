@@ -88,6 +88,7 @@ class BGPExtraAttributesMixin(models.Model):
         blank=True,
         null=True,
         verbose_name="Extra Attributes",
+        help_text="Additional BGP attributes (JSON format)",
     )
 
     @property
@@ -584,8 +585,6 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 )
 class Peering(OrganizationalModel, StatusModel):
     """Linkage between two PeerEndpoint records."""
-
-    role = models.ForeignKey(to=PeeringRole, on_delete=models.PROTECT, blank=True, null=True)
 
     class Meta:
         verbose_name = "BGP Peering"

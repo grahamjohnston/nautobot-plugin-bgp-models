@@ -216,7 +216,7 @@ class PeerEndpointTestCase(TestCase):
     def setUp(self):
         """Per-test data setup."""
 
-        self.peering = models.Peering.objects.create(role=self.peeringrole_internal, status=self.status_active)
+        self.peering = models.Peering.objects.create(status=self.status_active)
 
         self.ipaddress_1 = IPAddress.objects.create(
             address="1.1.1.1/32", status=self.status_active, assigned_object=self.interface_1
@@ -305,7 +305,7 @@ class PeeringTestCase(TestCase):
         status_active = Status.objects.get(slug="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.Peering))
 
-        peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
+        # peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
 
         provider = Provider.objects.create(name="Provider", slug="provider")
         cls.autonomous_system_12345 = models.AutonomousSystem.objects.create(
@@ -321,7 +321,7 @@ class PeeringTestCase(TestCase):
             provider=provider,
         )
 
-        cls.peering = models.Peering.objects.create(status=status_active, role=peeringrole_internal)
+        cls.peering = models.Peering.objects.create(status=status_active)
 
         address_1 = IPAddress.objects.create(address="1.1.1.1/32", status=status_active)
         address_2 = IPAddress.objects.create(address="2.2.2.2/32", status=status_active)
@@ -410,7 +410,7 @@ class AddressFamilyTestCase(TestCase):
         #     role=self.peeringrole_internal,
         # )
 
-        # peering = models.Peering.objects.create(status=self.status_active, role=self.peeringrole_internal)
+        # peering = models.Peering.objects.create(status=self.status_active)
         # address = IPAddress.objects.create(address="1.1.1.1/32", status=self.status_active, assigned_object=interface)
         # self.peerendpoint = models.PeerEndpoint.objects.create(local_ip=address, peering=peering)
 
