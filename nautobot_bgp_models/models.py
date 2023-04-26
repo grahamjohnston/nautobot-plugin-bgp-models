@@ -138,7 +138,7 @@ class AutonomousSystem(PrimaryModel, StatusModel):
     description = models.CharField(max_length=200, blank=True)
     provider = models.ForeignKey(to=Provider, on_delete=models.PROTECT, blank=True, null=True)
 
-    csv_headers = ["asn", "description", "status"]
+    csv_headers = ["asn", "description", "status", "provider"]
 
     class Meta:
         ordering = ["asn"]
@@ -154,7 +154,7 @@ class AutonomousSystem(PrimaryModel, StatusModel):
 
     def to_csv(self):
         """Render an AutonomousSystem record to CSV fields."""
-        return self.asn, self.description, self.get_status_display()
+        return self.asn, self.description, self.get_status_display(), self.provider
 
 
 @extras_features(
@@ -189,7 +189,7 @@ class PeeringRole(OrganizationalModel):
 
     def to_csv(self):
         """Render a PeeringRole record to CSV fields."""
-        return (self.name, self.slug, self.color, self.description)
+        return self.name, self.slug, self.color, self.description
 
 
 @extras_features(
@@ -199,7 +199,7 @@ class PeeringRole(OrganizationalModel):
     "export_templates",
     "graphql",
     "relationships",
-    "statuses",
+    "statuses",  # TODO(mzb): @Glenn - should this be `StatusModel' too ?
     "webhooks",
 )
 class BGPRoutingInstance(PrimaryModel, BGPExtraAttributesMixin):
@@ -227,7 +227,7 @@ class BGPRoutingInstance(PrimaryModel, BGPExtraAttributesMixin):
         on_delete=models.PROTECT,
     )
 
-    csv_headers = ["device", "router_id", "autonomous_system"]
+    csv_headers = ["device", "description", "router_id", "autonomous_system"]
 
     def get_absolute_url(self):
         """Get the URL for detailed view of a single BGPRoutingInstance."""
@@ -243,7 +243,12 @@ class BGPRoutingInstance(PrimaryModel, BGPExtraAttributesMixin):
 
     def to_csv(self):
         """Render an BGPRoutingInstance record to CSV fields."""
-        return self.device.id, self.router_id, self.autonomous_system.id
+        return (
+            self.device.identifier if self.device else None,
+            self.description,
+            self.router_id,
+            self.autonomous_system,
+        )
 
 
 @extras_features(
@@ -397,7 +402,17 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
     def to_csv(self):
         """Export data."""
-        return (getattr(self, i) for i in self.csv_headers if i)
+        return (
+            self.name,
+            self.import_policy,
+            self.export_policy,
+            self.source_interface.name if self.source_interface else None,
+            self.source_ip.address if self.source_ip else None,
+            self.peergroup_template.name if self.peergroup_template else None,
+            self.enabled,
+            self.role.name if self.role else None,
+            self.routing_instance,
+        )
 
     def __str__(self):
         """String."""
@@ -513,11 +528,13 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         verbose_name="Source Interface",
     )
 
-    csv_headers = [k for k, v in property_inheritance.items()]
+    # TODO(mzb): FixMe
 
-    def to_csv(self):
-        """Export data."""
-        return (getattr(self, i) for i in self.csv_headers)
+    # csv_headers = [k for k, v in property_inheritance.items()]
+    #
+    # def to_csv(self):
+    #     """Export data."""
+    #     return (getattr(self, i) for i in self.csv_headers)
 
     @property
     def local_ip(self):
@@ -703,7 +720,14 @@ class AddressFamily(OrganizationalModel):
 
     def to_csv(self):
         """Export data."""
-        return (getattr(self, i) for i in self.csv_headers)
+        return (
+            self.afi_safi,
+            self.vrf.name if self.vrf else None,
+            self.routing_instance,
+            self.import_policy,
+            self.export_policy,
+            self.multipath,
+        )
 
     def __str__(self):
         """String representation of a single AddressFamily."""
