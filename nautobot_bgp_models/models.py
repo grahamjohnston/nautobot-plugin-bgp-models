@@ -529,12 +529,17 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     )
 
     # TODO(mzb): FixMe
+    csv_headers = [
+        "routing_instance",
+        "peer",
+    ]
 
-    # csv_headers = [k for k, v in property_inheritance.items()]
-    #
-    # def to_csv(self):
-    #     """Export data."""
-    #     return (getattr(self, i) for i in self.csv_headers)
+    def to_csv(self):
+        """Export data."""
+        return (
+            self.routing_instance,
+            self.peer,
+        )
 
     @property
     def local_ip(self):
