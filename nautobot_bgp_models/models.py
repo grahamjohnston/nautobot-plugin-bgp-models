@@ -246,8 +246,8 @@ class BGPRoutingInstance(PrimaryModel, BGPExtraAttributesMixin):
         return (
             self.device.identifier if self.device else None,
             self.description,
-            self.router_id,
-            self.autonomous_system,
+            self.router_id.address if self.router_id else None,
+            self.autonomous_system.asn if self.autonomous_system else None,
         )
 
 
@@ -293,6 +293,17 @@ class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
         null=True,
     )
     csv_headers = ["name", "import_policy", "export_policy", "autonomous_system", "enabled", "role"]
+
+    def to_csv(self):
+        """Render an BGPRoutingInstance record to CSV fields."""
+        return (
+            self.name,
+            self.import_policy,
+            self.export_policy,
+            self.autonomous_system.asn if self.autonomous_system else None,
+            self.enabled,
+            self.role.name if self.role else None,
+        )
 
     def __str__(self):
         """String."""
