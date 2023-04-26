@@ -83,7 +83,7 @@ class PeerGroupTemplateSerializer(CustomFieldModelSerializerMixin, ExtraAttribut
 
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:peergrouptemplate-detail")
 
-    autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)
+    autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)  # noqa: F405
     secret = NestedSecretSerializer(required=False, allow_null=True)
 
     class Meta:
@@ -114,9 +114,9 @@ class PeerGroupSerializer(
     source_ip = NestedIPAddressSerializer(required=False, allow_null=True)  # noqa: F405
     source_interface = NestedInterfaceSerializer(required=False, allow_null=True)  # noqa: F405
 
-    routing_instance = NestedRoutingInstanceSerializer(required=True)
+    routing_instance = NestedRoutingInstanceSerializer(required=True)  # noqa: F405
 
-    autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)
+    autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)  # noqa: F405
 
     peergroup_template = NestedPeerGroupTemplateSerializer(required=False, allow_null=True)
 
@@ -157,9 +157,9 @@ class PeerEndpointSerializer(
     source_interface = NestedInterfaceSerializer(required=False, allow_null=True)  # noqa: F405
     peer = NestedPeerEndpointSerializer(required=False, allow_null=True)  # noqa: F405
     peering = NestedPeeringSerializer(required=True, allow_null=True)  # noqa: F405
-    peer_group = NestedPeerGroupSerializer(required=False, allow_null=True)
-    routing_instance = NestedRoutingInstanceSerializer(required=False, allow_null=True)
-    autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)
+    peer_group = NestedPeerGroupSerializer(required=False, allow_null=True)  # noqa: F405
+    routing_instance = NestedRoutingInstanceSerializer(required=False, allow_null=True)  # noqa: F405
+    autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)  # noqa: F405
     secret = NestedSecretSerializer(required=False, allow_null=True)
 
     class Meta:
@@ -212,7 +212,7 @@ class BGPRoutingInstanceSerializer(CustomFieldModelSerializerMixin, ExtraAttribu
 
     device = NestedDeviceSerializer()
 
-    autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)
+    autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)  # noqa: F405
 
     router_id = NestedIPAddressSerializer(required=False, allow_null=True)  # noqa: F405
 
@@ -254,7 +254,7 @@ class AddressFamilySerializer(
 
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:addressfamily-detail")
 
-    routing_instance = NestedRoutingInstanceSerializer(required=True)
+    routing_instance = NestedRoutingInstanceSerializer(required=True)  # noqa: F405
 
     vrf = NestedVRFSerializer(required=False, allow_null=True)
 

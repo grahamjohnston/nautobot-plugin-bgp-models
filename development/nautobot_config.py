@@ -48,6 +48,8 @@ if DATABASES["default"]["ENGINE"] == "django.db.backends.mysql":
 
 DEBUG = True
 
+TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
+
 # Django Debug Toolbar
 DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda _request: DEBUG and not TESTING}
 
@@ -61,8 +63,6 @@ if DEBUG and "debug_toolbar.middleware.DebugToolbarMiddleware" not in MIDDLEWARE
 #
 
 LOG_LEVEL = "DEBUG" if DEBUG else "INFO"
-
-TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
 # Verbose logging during normal development operation, but quiet logging during unit test execution
 if not TESTING:
