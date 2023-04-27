@@ -10,6 +10,7 @@ from django.views.generic import View
 from nautobot.apps.views import NautobotUIViewSet
 from nautobot.core.views import mixins
 from nautobot.core.views import generic
+from nautobot.extras.utils import get_base_template
 
 from . import filters, forms, models, tables
 from .api import serializers
@@ -203,15 +204,7 @@ class BgpExtraAttributesView(View):
         else:
             obj = get_object_or_404(model, **kwargs)
 
-        # Default to using "<app>/<model>.html" as the template, if it exists. Otherwise,
-        # fall back to using base.html.
-        if self.base_template is None:
-            self.base_template = f"{model._meta.app_label}/{model._meta.model_name}.html"
-            # TODO: This can be removed once an object view has been established for every model.
-            try:
-                template.loader.get_template(self.base_template)
-            except template.TemplateDoesNotExist:
-                self.base_template = "base.html"
+        self.base_template = get_base_template(self.base_template, model)
 
         # Determine user's preferred output format
         if request.GET.get("format") in ["json", "yaml"]:
