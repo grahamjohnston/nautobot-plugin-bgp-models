@@ -101,6 +101,7 @@ class PeerEndpointUIViewSet(NautobotUIViewSet):
 
 class PeeringUIViewSet(  # pylint: disable=abstract-method
     mixins.ObjectDestroyViewMixin,
+    mixins.ObjectBulkDestroyViewMixin,
     mixins.ObjectEditViewMixin,
     mixins.ObjectListViewMixin,
     mixins.ObjectDetailViewMixin,
@@ -119,10 +120,10 @@ class PeeringUIViewSet(  # pylint: disable=abstract-method
 
 # TODO: This needs to be moved to the UIViewSet
 class PeeringAddView(generic.ObjectEditView):
-    """Create/edit view for a Peering."""
+    """Create view for a Peering."""
 
     queryset = models.Peering.objects.all()
-    template_name = "nautobot_bgp_models/peering_create.html"
+    template_name = "nautobot_bgp_models/peering_add.html"
 
     def post(self, request, *args, **kwargs):
         """Post Method."""

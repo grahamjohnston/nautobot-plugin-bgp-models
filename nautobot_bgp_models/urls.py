@@ -16,6 +16,7 @@ router.register("peerings", views.PeeringUIViewSet)
 router.register("address-families", views.AddressFamilyUIViewSet)
 
 urlpatterns = [
+    # Extra Attribute views.
     path(
         "routing-instances/<uuid:pk>/extra-attributes/",
         views.BgpExtraAttributesView.as_view(),
@@ -40,5 +41,6 @@ urlpatterns = [
         name="peerendpoint_extraattributes",
         kwargs={"model": models.PeerEndpoint},
     ),
+    path("peerings/add/", views.PeeringAddView.as_view(), name="peering_add"),
 ]
 urlpatterns += router.urls
