@@ -1,7 +1,5 @@
 """View classes for nautobot_bgp_models."""
 
-
-from django import template
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
@@ -106,6 +104,7 @@ class PeeringUIViewSet(  # pylint: disable=abstract-method
     mixins.ObjectListViewMixin,
     mixins.ObjectDetailViewMixin,
     mixins.ObjectChangeLogViewMixin,
+    mixins.ObjectNotesViewMixin,
 ):
     """UIViewset for Peering model."""
 

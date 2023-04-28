@@ -43,10 +43,12 @@ class AutonomousSystemFilterForm(NautobotFilterForm):
 
 class AutonomousSystemCSVForm(StatusModelCSVFormMixin, CSVModelForm):
     """Form for importing AutonomousSystems from CSV data."""
+
     provider = CSVModelChoiceField(
         queryset=Provider.objects.all(),
         to_field_name="name",
         help_text="Provider name",
+        required=False,
     )
 
     class Meta:
@@ -171,6 +173,7 @@ class BGPRoutingInstanceBulkEditForm(NautobotBulkEditForm):
 
 class BGPRoutingInstanceCSVForm(CSVModelForm):
     """Form for importing BGPRoutingInstance from CSV data."""
+
     device = CSVModelChoiceField(
         queryset=Device.objects.all(),
         to_field_name="name",
@@ -187,6 +190,7 @@ class BGPRoutingInstanceCSVForm(CSVModelForm):
         queryset=IPAddress.objects.all(),
         to_field_name="address",
         help_text="Router ID - IP Address",
+        required=False,
     )
 
     class Meta:
@@ -392,16 +396,19 @@ class PeerGroupTemplateFilterForm(NautobotFilterForm):
 
 class PeerGroupTemplateCSVForm(CSVModelForm):
     """Form for importing PeerGroupTemplate from CSV data."""
+
     role = CSVModelChoiceField(
         queryset=models.PeeringRole.objects.all(),
         to_field_name="name",
         help_text="Assigned Peering Role name",
+        required=False,
     )
 
     autonomous_system = CSVModelChoiceField(
         queryset=models.AutonomousSystem.objects.all(),
         to_field_name="asn",
         help_text="Assigned autonomous system number",
+        required=False,
     )
 
     class Meta:
@@ -411,34 +418,40 @@ class PeerGroupTemplateCSVForm(CSVModelForm):
 
 class PeerGroupCSVForm(CSVModelForm):
     """Form for importing PeerGroup from CSV data."""
+
     peergroup_template = CSVModelChoiceField(
         queryset=models.PeerGroupTemplate.objects.all(),
         to_field_name="name",
         help_text="Assigned peering group template name",
+        required=False,
     )
 
     autonomous_system = CSVModelChoiceField(
         queryset=models.AutonomousSystem.objects.all(),
         to_field_name="asn",
         help_text="Assigned autonomous system number",
+        required=False,
     )
 
     role = CSVModelChoiceField(
         queryset=models.PeeringRole.objects.all(),
         to_field_name="name",
         help_text="Assigned Peering Role name",
+        required=False,
     )
 
     source_interface = CSVModelChoiceField(
         queryset=Interface.objects.all(),
         to_field_name="name",
         help_text="Peer group source Interface name",
+        required=False,
     )
 
     source_ip = CSVModelChoiceField(
         queryset=IPAddress.objects.all(),
         to_field_name="name",
         help_text="Peer group source IP address",
+        required=False,
     )
 
     # TODO(mzb): @Glenn How do we approach `to_field_name' on the BGPRoutingInstance model ?

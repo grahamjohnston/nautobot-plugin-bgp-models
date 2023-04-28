@@ -422,7 +422,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
             self.peergroup_template.name if self.peergroup_template else None,
             self.enabled,
             self.role.name if self.role else None,
-            self.routing_instance,
+            # self.routing_instance, # TODO(mzb): @Glenn How should we csv this FK ?
         )
 
     def __str__(self):
@@ -739,7 +739,7 @@ class AddressFamily(OrganizationalModel):
         return (
             self.afi_safi,
             self.vrf.name if self.vrf else None,
-            self.routing_instance,
+            # self.routing_instance,  TODO(mzb): Check with @Glenn
             self.import_policy,
             self.export_policy,
             self.multipath,

@@ -32,7 +32,7 @@ class AutonomousSystemTestCase(TestCase):
 
     def test_to_csv(self):
         """Test CSV representation of an AutonomousSystem."""
-        self.assertEqual(self.autonomous_system.to_csv(), (15521, "Hi ex Premium Internet AS!", "Active"))
+        self.assertEqual(self.autonomous_system.to_csv(), (15521, "Hi ex Premium Internet AS!", "Active", None))
 
 
 class PeeringRoleTestCase(TestCase):
@@ -91,6 +91,10 @@ class BGPRoutingInstanceTestCase(TestCase):
         """Test string representation of a PeerGroup."""
         self.assertEqual(str(self.bgp_routing_instance), f"{self.device_1} - {self.autonomous_system_8545}")
 
+    def test_to_csv(self):
+        """Test CSV representation of a BGPRoutingInstance."""
+        self.assertEqual(self.bgp_routing_instance.to_csv(), ("Device 1", "Hello World!", None, 8545))
+
 
 class PeerGroupTestCase(TestCase):
     """Test the PeerGroup model."""
@@ -132,6 +136,10 @@ class PeerGroupTestCase(TestCase):
     def test_str(self):
         """Test string representation of a PeerGroup."""
         self.assertEqual(str(self.peergroup), f"{self.peergroup.name}")
+
+    def test_to_csv(self):
+        """Test CSV representation of a PeerGroup."""
+        self.assertEqual(self.peergroup.to_csv(), ("Peer Group A", "", "", None, None, None, True, None))
 
     # def test_vrf_fixup_from_router_id(self):
     #     """If VRF is None, but the router-id references a VRF, use that."""
@@ -432,6 +440,10 @@ class AddressFamilyTestCase(TestCase):
         """Test the string representation of an AddressFamily."""
         self.assertEqual("ipv4_unicast AF - Device 1", str(self.addressfamily_1))
         self.assertEqual("ipv4_unicast AF (VRF global) Device 1", str(self.addressfamily_2))
+
+    def test_to_csv(self):
+        """Test CSV representation of a AddressFamily."""
+        self.assertEqual(self.addressfamily_1.to_csv(), ("ipv4_unicast", None, "", "", None))
 
 
 #     def test_peer_group_peer_endpoint_mutual_exclusion(self):

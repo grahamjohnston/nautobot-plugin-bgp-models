@@ -1,6 +1,6 @@
 """Unit test automation for Model classes in nautobot_bgp_models."""
 
-from unittest import skip, skipIf
+from unittest import skipIf
 from packaging import version
 
 from django.contrib.contenttypes.models import ContentType
@@ -33,13 +33,13 @@ class AutonomousSystemTestCase(ViewTestCases.PrimaryObjectViewTestCase):
     test_bulk_import_objects_with_permission = None
     test_bulk_import_objects_with_constrained_permission = None
 
-    @skip("Route disabled in commit `c97f037f`")
-    def test_bulk_import_objects_with_permission_csv_file(self):
-        pass
-
-    @skip("Route disabled in commit `c97f037f`")
-    def test_get_object_notes(self):
-        pass
+    # @skip("Route disabled in commit `c97f037f`")
+    # def test_bulk_import_objects_with_permission_csv_file(self):
+    #     pass
+    #
+    # @skip("Route disabled in commit `c97f037f`")
+    # def test_get_object_notes(self):
+    #     pass
 
     @skipIf(_NAUTOBOT_VERSION in _FAILING_OBJECT_LIST_NAUTOBOT_VERSIONS, f"Skip Nautobot version {_NAUTOBOT_VERSION}")
     def test_list_objects_with_permission(self):
@@ -96,13 +96,13 @@ class PeeringRoleTestCase(ViewTestCases.OrganizationalObjectViewTestCase, ViewTe
     test_bulk_import_objects_with_permission = None
     test_bulk_import_objects_with_constrained_permission = None
 
-    @skip("Route disabled in commit `c97f037f`")
-    def test_bulk_import_objects_with_permission_csv_file(self):
-        pass
-
-    @skip("Route disabled in commit `c97f037f`")
-    def test_get_object_notes(self):
-        pass
+    # @skip("Route disabled in commit `c97f037f`")
+    # def test_bulk_import_objects_with_permission_csv_file(self):
+    #     pass
+    #
+    # @skip("Route disabled in commit `c97f037f`")
+    # def test_get_object_notes(self):
+    #     pass
 
     @skipIf(_NAUTOBOT_VERSION in _FAILING_OBJECT_LIST_NAUTOBOT_VERSIONS, f"Skip Nautobot version {_NAUTOBOT_VERSION}")
     def test_list_objects_with_permission(self):
