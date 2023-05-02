@@ -1,7 +1,8 @@
 """Unit tests for nautobot_bgp_models."""
 
-from django.contrib.contenttypes.models import ContentType
 from unittest import skip
+
+from django.contrib.contenttypes.models import ContentType
 
 from nautobot.circuits.models import Provider
 from nautobot.dcim.choices import InterfaceTypeChoices
