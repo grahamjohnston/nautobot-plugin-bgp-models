@@ -408,7 +408,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         "peergroup_template",
         "enabled",
         "role",
-        "routing_instance",
+        # "routing_instance",  # TODO(mzb): @Glenn How should we csv this FK ?
     ]
 
     def to_csv(self):
@@ -727,7 +727,7 @@ class AddressFamily(OrganizationalModel):
 
     multipath = models.BooleanField(blank=True, null=True)
 
-    csv_headers = ["afi_safi", "vrf", "routing_instance", "import_policy", "export_policy", "multipath"]
+    csv_headers = ["afi_safi", "vrf", "import_policy", "export_policy", "multipath"]
 
     class Meta:
         ordering = ["-routing_instance", "-vrf"]
