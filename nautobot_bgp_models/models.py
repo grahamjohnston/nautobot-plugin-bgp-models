@@ -199,7 +199,7 @@ class PeeringRole(OrganizationalModel):
     "export_templates",
     "graphql",
     "relationships",
-    "statuses",  # TODO(mzb): @Glenn - should this be `StatusModel' too ?
+    "statuses",  # TODO(mzb): Fix issue #97
     "webhooks",
 )
 class BGPRoutingInstance(PrimaryModel, BGPExtraAttributesMixin):
@@ -295,7 +295,7 @@ class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
     csv_headers = ["name", "import_policy", "export_policy", "autonomous_system", "enabled", "role"]
 
     def to_csv(self):
-        """Render an BGPRoutingInstance record to CSV fields."""
+        """Render a PeerGroupTemplate record to CSV fields."""
         return (
             self.name,
             self.import_policy,
@@ -401,6 +401,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
     csv_headers = [
         "name",
+        "device",
         "import_policy",
         "export_policy",
         "source_interface",
@@ -408,13 +409,14 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         "peergroup_template",
         "enabled",
         "role",
-        # "routing_instance",  # TODO(mzb): @Glenn How should we csv this FK ?
     ]
 
     def to_csv(self):
         """Export data."""
         return (
             self.name,
+            self.routing_instance.device.name if self.routing_instance else None,
+            # self.routing_instance.autonomous_system.asn if self.routing_instance else None,
             self.import_policy,
             self.export_policy,
             self.source_interface.name if self.source_interface else None,
@@ -422,7 +424,6 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
             self.peergroup_template.name if self.peergroup_template else None,
             self.enabled,
             self.role.name if self.role else None,
-            # self.routing_instance, # TODO(mzb): @Glenn How should we csv this FK ?
         )
 
     def __str__(self):

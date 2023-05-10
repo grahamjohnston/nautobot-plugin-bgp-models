@@ -14,9 +14,15 @@ router.register("peering-group-templates", views.PeerGroupTemplateUIViewSet)
 router.register("peer-endpoints", views.PeerEndpointUIViewSet)
 router.register("peerings", views.PeeringUIViewSet)
 router.register("address-families", views.AddressFamilyUIViewSet)
-
+from .forms import PeerGroupImportView
 urlpatterns = [
     # Extra Attribute views.
+
+    path(
+        "mzb/import/",
+        PeerGroupImportView.as_view(),
+        name="peergroup_import",
+    ),
     path(
         "routing-instances/<uuid:pk>/extra-attributes/",
         views.BgpExtraAttributesView.as_view(),

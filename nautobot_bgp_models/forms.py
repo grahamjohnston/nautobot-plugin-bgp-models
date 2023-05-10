@@ -415,9 +415,22 @@ class PeerGroupTemplateCSVForm(CSVModelForm):
         model = models.PeerGroupTemplate
         fields = models.PeerGroupTemplate.csv_headers
 
-
 class PeerGroupCSVForm(CSVModelForm):
     """Form for importing PeerGroup from CSV data."""
+
+    device = CSVModelChoiceField(
+        queryset=Device.objects.all(),
+        required=True,
+        to_field_name="name",
+        help_text="Parent device of assigned interface (if any)",
+    )
+
+    # routing_instance = CSVModelChoiceField(
+    #     queryset=models.BGPRoutingInstance.objects.all(),
+    #     # to_field_name="name",
+    #     help_text="Assigned routing instance",
+    #     required=False,
+    # )
 
     peergroup_template = CSVModelChoiceField(
         queryset=models.PeerGroupTemplate.objects.all(),
@@ -454,11 +467,28 @@ class PeerGroupCSVForm(CSVModelForm):
         required=False,
     )
 
+    def __init__(self, data=None, *args, **kwargs):
+        super().__init__(data, *args, **kwargs)
+        if data:
+            # Limit rack_group queryset by assigned site
+            params = {f"device__{self.fields['device'].to_field_name}": data.get("device")}
+            self.fields["routing_instance"].queryset = self.fields["routing_instance"].queryset.filter(**params)
+
     # TODO(mzb): @Glenn How do we approach `to_field_name' on the BGPRoutingInstance model ?
 
     class Meta:
         model = models.PeerGroup
         fields = models.PeerGroup.csv_headers
+
+
+from nautobot.core.views import generic
+from .tables import PeerGroupTable
+
+
+class PeerGroupImportView(generic.BulkImportView):
+    queryset = models.PeerGroup.objects.all()
+    model_form = PeerGroupCSVForm
+    table = PeerGroupTable
 
 
 class PeerEndpointForm(NautobotModelForm):
@@ -547,6 +577,7 @@ class PeerEndpointForm(NautobotModelForm):
             endpoint.peering.update_peers()
 
         return endpoint
+
 
 
 class PeerEndpointCSVForm(CSVModelForm):

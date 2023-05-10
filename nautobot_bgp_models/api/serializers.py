@@ -218,6 +218,7 @@ class BGPRoutingInstanceSerializer(NautobotModelSerializer, ExtraAttributesSeria
             "id",
             "url",
             "device",
+            "status",
             "description",
             "router_id",
             "autonomous_system",
