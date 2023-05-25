@@ -156,7 +156,7 @@ class PeerGroupTemplateTable(BaseTable):
             "import_policy",
             "export_policy",
             "secret",
-            "actions",
+            # "actions",
         )
 
 

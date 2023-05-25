@@ -415,6 +415,7 @@ class PeerGroupTemplateCSVForm(CSVModelForm):
         model = models.PeerGroupTemplate
         fields = models.PeerGroupTemplate.csv_headers
 
+
 class PeerGroupCSVForm(CSVModelForm):
     """Form for importing PeerGroup from CSV data."""
 
@@ -479,16 +480,6 @@ class PeerGroupCSVForm(CSVModelForm):
     class Meta:
         model = models.PeerGroup
         fields = models.PeerGroup.csv_headers
-
-
-from nautobot.core.views import generic
-from .tables import PeerGroupTable
-
-
-class PeerGroupImportView(generic.BulkImportView):
-    queryset = models.PeerGroup.objects.all()
-    model_form = PeerGroupCSVForm
-    table = PeerGroupTable
 
 
 class PeerEndpointForm(NautobotModelForm):

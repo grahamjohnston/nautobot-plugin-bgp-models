@@ -9,20 +9,14 @@ router = NautobotUIViewSetRouter()
 router.register("autonomous-systems", views.AutonomousSystemUIViewSet)
 router.register("routing-instances", views.BGPRoutingInstanceUIViewSet)
 router.register("peering-roles", views.PeeringRoleUIViewSet)
-router.register("peering-groups", views.PeerGroupUIViewSet)
-router.register("peering-group-templates", views.PeerGroupTemplateUIViewSet)
+router.register("peer-groups", views.PeerGroupUIViewSet)
+router.register("peer-group-templates", views.PeerGroupTemplateUIViewSet)
 router.register("peer-endpoints", views.PeerEndpointUIViewSet)
 router.register("peerings", views.PeeringUIViewSet)
 router.register("address-families", views.AddressFamilyUIViewSet)
-from .forms import PeerGroupImportView
+
 urlpatterns = [
     # Extra Attribute views.
-
-    path(
-        "mzb/import/",
-        PeerGroupImportView.as_view(),
-        name="peergroup_import",
-    ),
     path(
         "routing-instances/<uuid:pk>/extra-attributes/",
         views.BgpExtraAttributesView.as_view(),
@@ -48,5 +42,6 @@ urlpatterns = [
         kwargs={"model": models.PeerEndpoint},
     ),
     path("peerings/add/", views.PeeringAddView.as_view(), name="peering_add"),
+    path("peer-groups/import/", views.PeerGroupImportView.as_view(), name="peergroup_import"),
 ]
 urlpatterns += router.urls

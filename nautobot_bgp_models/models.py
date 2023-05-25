@@ -202,7 +202,7 @@ class PeeringRole(OrganizationalModel):
     "statuses",  # TODO(mzb): Fix issue #97
     "webhooks",
 )
-class BGPRoutingInstance(PrimaryModel, BGPExtraAttributesMixin):
+class BGPRoutingInstance(PrimaryModel, StatusModel, BGPExtraAttributesMixin):
     """BGP instance definition."""
 
     description = models.CharField(max_length=200, blank=True)

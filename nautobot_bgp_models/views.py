@@ -69,6 +69,13 @@ class PeerGroupUIViewSet(NautobotUIViewSet):
     table_class = tables.PeerGroupTable
 
 
+class PeerGroupImportView(generic.BulkImportView):
+    """Workaround for #."""
+    queryset = PeerGroupUIViewSet.table_class
+    model_form = PeerGroupUIViewSet.bulk_create_form_class
+    table = PeerGroupUIViewSet.table_class
+
+
 class PeerGroupTemplateUIViewSet(NautobotUIViewSet):
     """UIViewset for PeerGroupTemplate model."""
 
