@@ -94,7 +94,7 @@ class BGPRoutingInstanceTestCase(TestCase):
 
     def test_to_csv(self):
         """Test CSV representation of a BGPRoutingInstance."""
-        self.assertEqual(self.bgp_routing_instance.to_csv(), ("Device 1", "Hello World!", None, 8545, "active"))
+        self.assertEqual(self.bgp_routing_instance.to_csv(), ("Device 1", 8545, None, "Active", "Hello World!"))
 
 
 class PeerGroupTestCase(TestCase):

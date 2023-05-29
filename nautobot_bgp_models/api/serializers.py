@@ -77,7 +77,6 @@ class ExtraAttributesSerializerMixin(serializers.Serializer):  # pylint: disable
         return super().to_representation(instance)
 
 
-
 class PeerGroupTemplateSerializer(NautobotModelSerializer, ExtraAttributesSerializerMixin):
     """REST API serializer for PeerGroup records."""
 

@@ -227,7 +227,13 @@ class BGPRoutingInstance(PrimaryModel, StatusModel, BGPExtraAttributesMixin):
         on_delete=models.PROTECT,
     )
 
-    csv_headers = ["device", "description", "router_id", "autonomous_system", "status"]
+    csv_headers = [
+        "device",
+        "autonomous_system",
+        "router_id",
+        "status",
+        "description",
+    ]
 
     def get_absolute_url(self):
         """Get the URL for detailed view of a single BGPRoutingInstance."""
@@ -245,10 +251,10 @@ class BGPRoutingInstance(PrimaryModel, StatusModel, BGPExtraAttributesMixin):
         """Render an BGPRoutingInstance record to CSV fields."""
         return (
             self.device.identifier if self.device else None,
-            self.description,
-            self.router_id.address if self.router_id else None,
             self.autonomous_system.asn if self.autonomous_system else None,
+            self.router_id.address if self.router_id else None,
             self.get_status_display(),
+            self.description,
         )
 
 
@@ -330,14 +336,14 @@ class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
 class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     """BGP peer group information."""
 
-    extra_attributes_inheritance = ["template", "routing_instance"]
+    extra_attributes_inheritance = ["peergroup_template", "routing_instance"]
     property_inheritance = {
-        "autonomous_system": ["template", "routing_instance"],
-        "description": ["template"],
-        "enabled": ["template"],
-        "export_policy": ["template"],
-        "import_policy": ["template"],
-        "role": ["template"],
+        "autonomous_system": ["peergroup_template", "routing_instance"],
+        "description": ["peergroup_template"],
+        "enabled": ["peergroup_template"],
+        "export_policy": ["peergroup_template"],
+        "import_policy": ["peergroup_template"],
+        "role": ["peergroup_template"],
     }
 
     name = models.CharField(max_length=100)
@@ -468,16 +474,16 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     """BGP information about single endpoint of a peering."""
 
-    extra_attributes_inheritance = ["peer_group", "peer_group.template", "routing_instance"]
+    extra_attributes_inheritance = ["peer_group", "peer_group.peergroup_template", "routing_instance"]
     property_inheritance = {
-        "autonomous_system": ["peer_group", "peer_group.template", "routing_instance"],
-        "description": ["peer_group", "peer_group.template"],
-        "enabled": ["peer_group", "peer_group.template"],
-        "export_policy": ["peer_group", "peer_group.template"],
-        "import_policy": ["peer_group", "peer_group.template"],
+        "autonomous_system": ["peer_group", "peer_group.peergroup_template", "routing_instance"],
+        "description": ["peer_group", "peer_group.peergroup_template"],
+        "enabled": ["peer_group", "peer_group.peergroup_template"],
+        "export_policy": ["peer_group", "peer_group.peergroup_template"],
+        "import_policy": ["peer_group", "peer_group.peergroup_template"],
         "source_ip": ["peer_group"],
         "source_interface": ["peer_group"],
-        "role": ["peer_group.role", "peer_group.template.role"],
+        "role": ["peer_group.role", "peer_group.peergroup_template.role"],
     }
 
     description = models.CharField(max_length=200, blank=True)
@@ -730,19 +736,26 @@ class AddressFamily(OrganizationalModel):
 
     multipath = models.BooleanField(blank=True, null=True)
 
-    csv_headers = ["afi_safi", "vrf", "import_policy", "export_policy", "multipath"]
-
     class Meta:
         ordering = ["-routing_instance", "-vrf"]
         verbose_name = "BGP address family"
         verbose_name_plural = "BGP Address Families"
 
+    csv_headers = [
+        "device",
+        "vrf",
+        "afi_safi",
+        "import_policy",
+        "export_policy",
+        "multipath",
+    ]
+
     def to_csv(self):
         """Export data."""
         return (
-            self.afi_safi,
+            self.routing_instance.device.name if self.routing_instance else None,
             self.vrf.name if self.vrf else None,
-            # self.routing_instance,  TODO(mzb): Check with @Glenn
+            self.afi_safi,
             self.import_policy,
             self.export_policy,
             self.multipath,

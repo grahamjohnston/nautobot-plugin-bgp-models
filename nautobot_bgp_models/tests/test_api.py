@@ -183,6 +183,8 @@ class BGPRoutingInstanceAPITestCase(APIViewTestCases.APIViewTestCase):
         "description": "Glenn was here.",
     }
 
+    choices_fields = ["status"]
+
     # Nautobot testing doesn't correctly handle the API representation of a Status as a slug instead of a PK yet.
     validation_excluded_fields = ["status"]
 
@@ -190,6 +192,7 @@ class BGPRoutingInstanceAPITestCase(APIViewTestCases.APIViewTestCase):
     def setUpTestData(cls):  # pylint: disable=too-many-locals
         status_active = Status.objects.get(slug="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
+        status_active.content_types.add(ContentType.objects.get_for_model(models.BGPRoutingInstance))
 
         manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
         devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
@@ -230,6 +233,7 @@ class BGPRoutingInstanceAPITestCase(APIViewTestCases.APIViewTestCase):
                 "device": device_1.pk,
                 "router_id": address.pk,
                 "extra_attributes": {"key1": 1, "key2": {"nested_key2": "nested_value2", "nk2": 2}},
+                "status": "active",
             },
         ]
 

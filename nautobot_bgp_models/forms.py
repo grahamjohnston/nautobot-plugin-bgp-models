@@ -79,7 +79,7 @@ class BGPRoutingInstanceForm(NautobotModelForm):
 
         if self.initial.get("device"):
             self.fields["device"].disabled = True
-            self.fields.pop("template")
+            self.fields.pop("peergroup_template")
 
     device = DynamicModelChoiceField(
         queryset=Device.objects.all(),
@@ -98,7 +98,7 @@ class BGPRoutingInstanceForm(NautobotModelForm):
 
     tags = DynamicModelMultipleChoiceField(queryset=Tag.objects.all(), required=False)
 
-    template = DynamicModelMultipleChoiceField(
+    peergroup_template = DynamicModelMultipleChoiceField(
         queryset=models.PeerGroupTemplate.objects.all(),
         required=False,
         label="Peer Group Templates",
@@ -113,10 +113,10 @@ class BGPRoutingInstanceForm(NautobotModelForm):
         if commit:
             # Initiate local templates as indicated in the creation form.
             # Templates are only created during object creation.
-            for t in self.cleaned_data.get("template", []):  # pylint: disable=invalid-name
+            for t in self.cleaned_data.get("peergroup_template", []):  # pylint: disable=invalid-name
                 models.PeerGroup.objects.create(
                     name=t.name,
-                    template=t,
+                    peergroup_template=t,
                     routing_instance=obj,
                 )
 
@@ -124,7 +124,7 @@ class BGPRoutingInstanceForm(NautobotModelForm):
 
     class Meta:
         model = models.BGPRoutingInstance
-        fields = ("device", "autonomous_system", "description", "router_id", "template", "tags", "extra_attributes")
+        fields = ("device", "autonomous_system", "description", "router_id", "peergroup_template", "tags", "extra_attributes")
 
 
 class BGPRoutingInstanceFilterForm(NautobotFilterForm):
@@ -426,13 +426,6 @@ class PeerGroupCSVForm(CSVModelForm):
         help_text="Parent device of assigned interface (if any)",
     )
 
-    # routing_instance = CSVModelChoiceField(
-    #     queryset=models.BGPRoutingInstance.objects.all(),
-    #     # to_field_name="name",
-    #     help_text="Assigned routing instance",
-    #     required=False,
-    # )
-
     peergroup_template = CSVModelChoiceField(
         queryset=models.PeerGroupTemplate.objects.all(),
         to_field_name="name",
@@ -471,11 +464,9 @@ class PeerGroupCSVForm(CSVModelForm):
     def __init__(self, data=None, *args, **kwargs):
         super().__init__(data, *args, **kwargs)
         if data:
-            # Limit rack_group queryset by assigned site
+            # Limit peer_group queryset by assigned device
             params = {f"device__{self.fields['device'].to_field_name}": data.get("device")}
             self.fields["routing_instance"].queryset = self.fields["routing_instance"].queryset.filter(**params)
-
-    # TODO(mzb): @Glenn How do we approach `to_field_name' on the BGPRoutingInstance model ?
 
     class Meta:
         model = models.PeerGroup
@@ -691,3 +682,10 @@ class AddressFamilyCSVForm(CSVModelForm):
     class Meta:
         model = models.AddressFamily
         fields = models.AddressFamily.csv_headers
+
+    def __init__(self, data=None, *args, **kwargs):
+        super().__init__(data, *args, **kwargs)
+        if data:
+            # Limit AF queryset by assigned device
+            params = {f"device__{self.fields['device'].to_field_name}": data.get("device")}
+            self.fields["routing_instance"].queryset = self.fields["routing_instance"].queryset.filter(**params)

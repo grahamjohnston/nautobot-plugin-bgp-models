@@ -77,7 +77,7 @@ class NestedBGPRoutingInstanceSerializer(WritableNestedSerializer):
 
     class Meta:
         model = models.BGPRoutingInstance
-        fields = ["display", "id", "url", "status"]
+        fields = ["display", "id", "url"]
 
 
 class NestedPeeringSerializer(WritableNestedSerializer):
