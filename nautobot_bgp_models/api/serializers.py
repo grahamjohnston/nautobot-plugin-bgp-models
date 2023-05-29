@@ -253,7 +253,7 @@ class AddressFamilySerializer(NautobotModelSerializer):
 
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:addressfamily-detail")
 
-    routing_instance = NestedRoutingInstanceSerializer(required=True)  # noqa: F405
+    routing_instance = NestedBGPRoutingInstanceSerializer(required=True)  # noqa: F405
 
     vrf = NestedVRFSerializer(required=False, allow_null=True)
 
