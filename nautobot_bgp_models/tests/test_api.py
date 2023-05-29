@@ -243,14 +243,17 @@ class BGPRoutingInstanceAPITestCase(APIViewTestCases.APIViewTestCase):
             device=device_2,
             autonomous_system=asn_5616,
             extra_attributes={"key1": 1, "key2": {"nested_key2": "nested_value2", "nk2": 2}},
+            status=status_active,
         )
         models.BGPRoutingInstance.objects.create(
             device=device_3,
             autonomous_system=asn_8545,
+            status=status_active,
         )
         models.BGPRoutingInstance.objects.create(
             device=device_4,
             autonomous_system=asn_15521,
+            status=status_active,
         )
 
         cls.maxDiff = None
@@ -339,6 +342,7 @@ class PeerGroupAPITestCase(APIViewTestCases.APIViewTestCase):
             autonomous_system=asn_8545,
             device=device,
             extra_attributes={"ri_key": "ri_value", "ri_nk": {"ri_nk": "ri_nv", "ri_nk2": "ri_nv2"}},
+            status=status_active,
         )
 
         cls.create_data = [
@@ -390,7 +394,7 @@ class PeerGroupAPITestCase(APIViewTestCases.APIViewTestCase):
             role=peeringrole,
             routing_instance=bgp_routing_instance,
             extra_attributes={"pg_key": "pg_value", "ri_nk": {"pg_nk": "pg_nv", "ri_nk2": "pg_nv2"}},
-            template=pgt1,
+            peergroup_template=pgt1,
         )
 
         models.PeerGroup.objects.create(name="Group 2", role=peeringrole, routing_instance=bgp_routing_instance)
@@ -612,6 +616,7 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
             description="Hello World!",
             autonomous_system=cls.asn,
             device=device,
+            status=cls.status_active,
         )
 
         cls.pgt1 = models.PeerGroupTemplate.objects.create(
@@ -623,7 +628,7 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
             name="Group 1",
             role=cls.peeringrole,
             routing_instance=cls.bgp_routing_instance,
-            template=cls.pgt1,
+            peergroup_template=cls.pgt1,
             extra_attributes={"pg_key": "pg_value"},
             # vrf=cls.vrf,
             # router_id=cls.addresses[3],
@@ -927,6 +932,7 @@ class AddressFamilyAPITestCase(APIViewTestCases.APIViewTestCase):
             description="Hello World!",
             autonomous_system=asn_8545,
             device=device,
+            status=status_active,
         )
 
         # interface_1 = Interface.objects.create(device=device, name="Loopback1", type=InterfaceTypeChoices.TYPE_VIRTUAL)

@@ -126,6 +126,7 @@ class PeerGroupTestCase(TestCase):
             description="Hello World!",
             autonomous_system=autonomous_system_5616,
             device=device_1,
+            status=status_active,
         )
 
     def setUp(self):
@@ -196,6 +197,7 @@ class PeerEndpointTestCase(TestCase):
             description="BGP Routing Instance for device 1",
             autonomous_system=autonomous_system_12345,
             device=device_1,
+            status=status_active,
         )
         cls.bgp_routing_instance_1 = bgp_routing_instance_1
 
@@ -203,6 +205,7 @@ class PeerEndpointTestCase(TestCase):
             description="BGP Routing Instance for device 2",
             autonomous_system=autonomous_system_12345,
             device=device_2,
+            status=status_active,
         )
         cls.bgp_routing_instance_2 = bgp_routing_instance_2
 
@@ -409,6 +412,7 @@ class AddressFamilyTestCase(TestCase):
             description="BGP Routing Instance for device 1",
             autonomous_system=self.autonomous_system_12345,
             device=self.device,
+            status=self.status_active,
         )
 
         # interface = Interface.objects.create(device=self.device, name="Loopback1")

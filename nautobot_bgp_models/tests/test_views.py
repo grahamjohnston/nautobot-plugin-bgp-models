@@ -183,6 +183,7 @@ class PeerGroupTestCase(
             description="Hello World!",
             autonomous_system=asn_1,
             device=cls.device_1,
+            status=status_active,
         )
 
         models.PeerGroup.objects.create(routing_instance=bgp_routing_instance, name="Group A", role=peeringrole)
@@ -246,6 +247,7 @@ class PeerEndpointTestCase(
             description="Hello World!",
             autonomous_system=asn_1,
             device=device,
+            status=status_active,
         )
 
         interface = Interface.objects.create(name="Loopback1", device=device)
@@ -395,6 +397,7 @@ class AddressFamilyTestCase(
             description="Hello World!",
             autonomous_system=asn_1,
             device=device,
+            status=status_active,
         )
 
         models.AddressFamily.objects.create(
