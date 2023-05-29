@@ -679,6 +679,13 @@ class AddressFamilyFilterForm(NautobotFilterForm):
 class AddressFamilyCSVForm(CSVModelForm):
     """Form for importing AddressFamily from CSV data."""
 
+    device = CSVModelChoiceField(
+        queryset=Device.objects.all(),
+        required=True,
+        to_field_name="name",
+        help_text="Parent device of assigned interface (if any)",
+    )
+
     class Meta:
         model = models.AddressFamily
         fields = models.AddressFamily.csv_headers

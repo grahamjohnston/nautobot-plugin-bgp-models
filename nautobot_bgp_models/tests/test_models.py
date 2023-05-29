@@ -448,7 +448,7 @@ class AddressFamilyTestCase(TestCase):
 
     def test_to_csv(self):
         """Test CSV representation of a AddressFamily."""
-        self.assertEqual(self.addressfamily_1.to_csv(), ("ipv4_unicast", None, "", "", None))
+        self.assertEqual(self.addressfamily_1.to_csv(), ("Device 1", None, "ipv4_unicast", "", "", None))
 
 
 #     def test_peer_group_peer_endpoint_mutual_exclusion(self):
