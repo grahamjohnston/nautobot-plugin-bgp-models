@@ -70,8 +70,8 @@ class PeerGroupUIViewSet(NautobotUIViewSet):
 
 
 class PeerGroupImportView(generic.BulkImportView):
-    """Workaround for #."""
-    queryset = PeerGroupUIViewSet.table_class
+    """Workaround for #3809."""
+    queryset = PeerGroupUIViewSet.queryset
     model_form = PeerGroupUIViewSet.bulk_create_form_class
     table = PeerGroupUIViewSet.table_class
 
@@ -88,6 +88,13 @@ class PeerGroupTemplateUIViewSet(NautobotUIViewSet):
     queryset = models.PeerGroupTemplate.objects.all()
     serializer_class = serializers.PeerGroupTemplateSerializer
     table_class = tables.PeerGroupTemplateTable
+
+
+class PeerGroupTemplateImportView(generic.BulkImportView):
+    """Workaround for #3809."""
+    queryset = PeerGroupTemplateUIViewSet.queryset
+    model_form = PeerGroupTemplateUIViewSet.bulk_create_form_class
+    table = PeerGroupTemplateUIViewSet.table_class
 
 
 class PeerEndpointUIViewSet(NautobotUIViewSet):
@@ -196,6 +203,13 @@ class AddressFamilyUIViewSet(NautobotUIViewSet):
     queryset = models.AddressFamily.objects.all()
     serializer_class = serializers.AddressFamilySerializer
     table_class = tables.AddressFamilyTable
+
+
+class AddressFamilyImportView(generic.BulkImportView):
+    """Workaround for #3809."""
+    queryset = AddressFamilyUIViewSet.queryset
+    model_form = AddressFamilyUIViewSet.bulk_create_form_class
+    table = AddressFamilyUIViewSet.table_class
 
 
 class BgpExtraAttributesView(View):

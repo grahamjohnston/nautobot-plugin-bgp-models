@@ -42,6 +42,10 @@ urlpatterns = [
         kwargs={"model": models.PeerEndpoint},
     ),
     path("peerings/add/", views.PeeringAddView.as_view(), name="peering_add"),
-    path("peer-groups/import/", views.PeerGroupImportView.as_view(), name="peergroup_import"),
+
+    # These three urls are to be removed once #3809 is fixed.
+    path("peer-groups/import/", views.PeerGroupImportView.as_view(), name="peergroup_import"),  # Remove after #3809
+    path("peer-groups-templates/import/", views.PeerGroupTemplateImportView.as_view(), name="peergroup_template_import"),  # Remove after #3809
+    path("address-families/import/", views.AddressFamilyImportView.as_view(), name="addressfamily_import"),  # Remove after #3809
 ]
 urlpatterns += router.urls
