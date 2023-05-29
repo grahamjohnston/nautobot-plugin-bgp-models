@@ -199,7 +199,7 @@ class PeeringRole(OrganizationalModel):
     "export_templates",
     "graphql",
     "relationships",
-    "statuses",  # TODO(mzb): Fix issue #97
+    "statuses",
     "webhooks",
 )
 class BGPRoutingInstance(PrimaryModel, StatusModel, BGPExtraAttributesMixin):
@@ -248,6 +248,7 @@ class BGPRoutingInstance(PrimaryModel, StatusModel, BGPExtraAttributesMixin):
             self.description,
             self.router_id.address if self.router_id else None,
             self.autonomous_system.asn if self.autonomous_system else None,
+            self.get_status_display(),
         )
 
 
@@ -402,6 +403,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     csv_headers = [
         "name",
         "device",
+        "autonomous_system",
         "import_policy",
         "export_policy",
         "source_interface",
@@ -416,7 +418,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         return (
             self.name,
             self.routing_instance.device.name if self.routing_instance else None,
-            # self.routing_instance.autonomous_system.asn if self.routing_instance else None,
+            self.autonomous_system.asn if self.autonomous_system else None,
             self.import_policy,
             self.export_policy,
             self.source_interface.name if self.source_interface else None,

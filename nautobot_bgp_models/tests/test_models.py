@@ -85,6 +85,7 @@ class BGPRoutingInstanceTestCase(TestCase):
             description="Hello World!",
             autonomous_system=self.autonomous_system_8545,
             device=self.device_1,
+            status=self.status_active,
         )
 
     def test_str(self):
@@ -93,7 +94,7 @@ class BGPRoutingInstanceTestCase(TestCase):
 
     def test_to_csv(self):
         """Test CSV representation of a BGPRoutingInstance."""
-        self.assertEqual(self.bgp_routing_instance.to_csv(), ("Device 1", "Hello World!", None, 8545))
+        self.assertEqual(self.bgp_routing_instance.to_csv(), ("Device 1", "Hello World!", None, 8545, "active"))
 
 
 class PeerGroupTestCase(TestCase):
@@ -139,7 +140,7 @@ class PeerGroupTestCase(TestCase):
 
     def test_to_csv(self):
         """Test CSV representation of a PeerGroup."""
-        self.assertEqual(self.peergroup.to_csv(), ("Peer Group A", "", "", None, None, None, True, None))
+        self.assertEqual(self.peergroup.to_csv(), ("Peer Group A", "Device 1", None, "", "", None, None, None, True, None))
 
     # def test_vrf_fixup_from_router_id(self):
     #     """If VRF is None, but the router-id references a VRF, use that."""
