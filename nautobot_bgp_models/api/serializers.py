@@ -64,16 +64,18 @@ class InheritableFieldsSerializerMixin:
 class ExtraAttributesSerializerMixin(serializers.Serializer):  # pylint: disable=abstract-method
     """Common mixin for BGP Extra Attributes."""
 
-    extra_attributes = serializers.SerializerMethodField(read_only=True)
+    extra_attributes = serializers.JSONField(required=False, allow_null=True)
 
-    def get_extra_attributes(self, instance):
-        """Return either the `display` property of the instance or `str(instance)`."""
+    def to_representation(self, instance):
+        """Render the model instance to a Python dict.
+
+        If `include_inherited` is specified as a request parameter, include object's get_extra_attributes().
+        """
         req = self.context["request"]
-
         if hasattr(req, "query_params") and is_truthy(req.query_params.get("include_inherited", False)):
-            return instance.get_extra_attributes()
+            setattr(instance, "extra_attributes", instance.get_extra_attributes())
+        return super().to_representation(instance)
 
-        return instance.extra_attributes
 
 
 class PeerGroupTemplateSerializer(NautobotModelSerializer, ExtraAttributesSerializerMixin):
@@ -96,6 +98,7 @@ class PeerGroupTemplateSerializer(NautobotModelSerializer, ExtraAttributesSerial
             "autonomous_system",
             "import_policy",
             "export_policy",
+            "extra_attributes",
             "secret",
         ]
 
@@ -111,7 +114,7 @@ class PeerGroupSerializer(
     source_ip = NestedIPAddressSerializer(required=False, allow_null=True)  # noqa: F405
     source_interface = NestedInterfaceSerializer(required=False, allow_null=True)  # noqa: F405
 
-    routing_instance = NestedRoutingInstanceSerializer(required=True)  # noqa: F405
+    routing_instance = NestedBGPRoutingInstanceSerializer(required=True)  # noqa: F405
 
     autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)  # noqa: F405
 
@@ -154,7 +157,7 @@ class PeerEndpointSerializer(
     peer = NestedPeerEndpointSerializer(required=False, allow_null=True)  # noqa: F405
     peering = NestedPeeringSerializer(required=True, allow_null=True)  # noqa: F405
     peer_group = NestedPeerGroupSerializer(required=False, allow_null=True)  # noqa: F405
-    routing_instance = NestedRoutingInstanceSerializer(required=False, allow_null=True)  # noqa: F405
+    routing_instance = NestedBGPRoutingInstanceSerializer(required=False, allow_null=True)  # noqa: F405
     autonomous_system = NestedAutonomousSystemSerializer(required=False, allow_null=True)  # noqa: F405
     secret = NestedSecretSerializer(required=False, allow_null=True)
 
@@ -175,6 +178,7 @@ class PeerEndpointSerializer(
             "secret",
             "tags",
             "enabled",
+            "extra_attributes",
         ]
 
     def create(self, validated_data):
@@ -223,7 +227,7 @@ class BGPRoutingInstanceSerializer(NautobotModelSerializer, StatusModelSerialize
             "router_id",
             "autonomous_system",
             "endpoints",
-            "status",
+            "extra_attributes",
         ]
 
 
