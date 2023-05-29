@@ -56,6 +56,7 @@ class BGPRoutingInstanceTable(StatusTableMixin, BaseTable):
             "autonomous_system",
             "router_id",
             "actions",
+            "status",
         )
 
 

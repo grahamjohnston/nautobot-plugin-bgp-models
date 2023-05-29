@@ -197,7 +197,7 @@ class PeerEndpointSerializer(
         return result
 
 
-class BGPRoutingInstanceSerializer(NautobotModelSerializer, ExtraAttributesSerializerMixin):
+class BGPRoutingInstanceSerializer(NautobotModelSerializer, StatusModelSerializerMixin, ExtraAttributesSerializerMixin):
     """REST API serializer for Peering records."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -223,6 +223,7 @@ class BGPRoutingInstanceSerializer(NautobotModelSerializer, ExtraAttributesSeria
             "router_id",
             "autonomous_system",
             "endpoints",
+            "status",
         ]
 
 

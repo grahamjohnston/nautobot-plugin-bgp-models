@@ -227,7 +227,7 @@ class BGPRoutingInstance(PrimaryModel, StatusModel, BGPExtraAttributesMixin):
         on_delete=models.PROTECT,
     )
 
-    csv_headers = ["device", "description", "router_id", "autonomous_system"]
+    csv_headers = ["device", "description", "router_id", "autonomous_system", "status"]
 
     def get_absolute_url(self):
         """Get the URL for detailed view of a single BGPRoutingInstance."""

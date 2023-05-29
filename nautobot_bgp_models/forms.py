@@ -171,7 +171,7 @@ class BGPRoutingInstanceBulkEditForm(NautobotBulkEditForm):
         ]
 
 
-class BGPRoutingInstanceCSVForm(CSVModelForm):
+class BGPRoutingInstanceCSVForm(StatusModelCSVFormMixin, CSVModelForm):
     """Form for importing BGPRoutingInstance from CSV data."""
 
     device = CSVModelChoiceField(
