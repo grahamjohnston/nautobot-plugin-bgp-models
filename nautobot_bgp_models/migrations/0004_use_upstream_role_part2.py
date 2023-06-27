@@ -15,19 +15,21 @@ def create_roles(apps, schema_editor):
     pe_ct = ContentType.objects.get_for_model(PeerEndpoint)
     for role in PeeringRole.objects.all():
         nb_role, _ = NautobotRole.objects.get_or_create(
-            name=role.name, slug=role.slug, color=role.color, description=role.description
+            name=role.name,
+            color=role.color,
+            description=role.description,
         )
         nb_role.content_types.add(pg_ct)
         nb_role.content_types.add(pgt_ct)
         nb_role.content_types.add(pe_ct)
     for group in PeerGroup.objects.exclude(role__isnull=True, role__slug__exact=""):
-        group.role_new = NautobotRole.objects.get(slug=group.role.slug)
+        group.role_new = NautobotRole.objects.get(name=group.role.name)
         group.save()
     for group in PeerGroupTemplate.objects.exclude(role__isnull=True, role__slug__exact=""):
-        group.role_new = NautobotRole.objects.get(slug=group.role.slug)
+        group.role_new = NautobotRole.objects.get(name=group.role.name)
         group.save()
     for peer in PeerEndpoint.objects.exclude(role__isnull=True, role__slug__exact=""):
-        peer.role_new = NautobotRole.objects.get(slug=peer.role.slug)
+        peer.role_new = NautobotRole.objects.get(name=peer.role.name)
         peer.save()
 
 
@@ -39,7 +41,7 @@ def reverse_create_roles(apps, schema_editor):
     for group in PeerGroup.objects.exclude(role_new__isnull=True, role_new__slug__exact=""):
         group.role, _ = PeeringRole.objects.get_or_create(
             name=group.role_new.name,
-            slug=group.role_new.slug,
+            # slug=group.role_new.slug,
             color=group.role_new.color,
             description=group.role_new.description,
         )[0]
@@ -47,7 +49,7 @@ def reverse_create_roles(apps, schema_editor):
     for group in PeerGroupTemplate.objects.exclude(role_new__isnull=True, role_new__slug__exact=""):
         group.role, _ = PeeringRole.objects.get_or_create(
             name=group.role_new.name,
-            slug=group.role_new.slug,
+            # slug=group.role_new.slug,
             color=group.role_new.color,
             description=group.role_new.description,
         )[0]
@@ -55,7 +57,7 @@ def reverse_create_roles(apps, schema_editor):
     for peer in PeerEndpoint.objects.exclude(role_new__isnull=True, role_new__slug__exact=""):
         peer.role, _ = PeeringRole.objects.get_or_create(
             name=peer.role_new.name,
-            slug=peer.role_new.slug,
+            # slug=peer.role_new.slug,
             color=peer.role_new.color,
             description=peer.role_new.description,
         )[0]
@@ -65,7 +67,7 @@ def reverse_create_roles(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("extras", "0062_rename_configcontext_role"),
-        ("nautobot_bgp_models", "0002_use_upstream_role_part1"),
+        ("nautobot_bgp_models", "0003_use_upstream_role_part1"),
     ]
 
     operations = [

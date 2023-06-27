@@ -2,20 +2,20 @@
 
 from django.db import migrations
 import django.db.models.deletion
-import nautobot.extras.models.roles
+import nautobot.extras.models
 
 
 class Migration(migrations.Migration):
     dependencies = [
         ("extras", "0062_rename_configcontext_role"),
-        ("nautobot_bgp_models", "0001_initial"),
+        ("nautobot_bgp_models", "0002_viewsets_migration"),
     ]
 
     operations = [
         migrations.AddField(
             model_name="peergroup",
             name="role_new",
-            field=nautobot.extras.models.roles.RoleField(
+            field=nautobot.extras.models.RoleField(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.PROTECT,
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="peergrouptemplate",
             name="role_new",
-            field=nautobot.extras.models.roles.RoleField(
+            field=nautobot.extras.models.RoleField(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.PROTECT,
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="peerendpoint",
             name="role_new",
-            field=nautobot.extras.models.roles.RoleField(
+            field=nautobot.extras.models.RoleField(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.PROTECT,
