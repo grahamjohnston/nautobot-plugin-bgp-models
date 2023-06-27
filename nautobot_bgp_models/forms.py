@@ -3,13 +3,10 @@ from django import forms
 
 import nautobot.core.forms as utilities_forms
 from nautobot.apps.forms import (
-    CSVModelChoiceField,
-    CustomFieldModelCSVForm,
     DynamicModelMultipleChoiceField,
     DynamicModelChoiceField,
     NautobotModelForm,
     NautobotBulkEditForm,
-    StatusModelCSVFormMixin,
     TagFilterField,
     TagsBulkEditFormMixin,
 )
@@ -39,21 +36,6 @@ class AutonomousSystemFilterForm(NautobotFilterForm):
     model = models.AutonomousSystem
     field_order = ["status", "tag"]
     tag = TagFilterField(model)
-
-
-class AutonomousSystemCSVForm(StatusModelCSVFormMixin, CustomFieldModelCSVForm):
-    """Form for importing AutonomousSystems from CSV data."""
-
-    provider = CSVModelChoiceField(
-        queryset=Provider.objects.all(),
-        to_field_name="name",
-        help_text="Provider name",
-        required=False,
-    )
-
-    class Meta:
-        model = models.AutonomousSystem
-        fields = models.AutonomousSystem.csv_headers
 
 
 class AutonomousSystemBulkEditForm(TagsBulkEditFormMixin, NautobotBulkEditForm):
@@ -177,33 +159,6 @@ class BGPRoutingInstanceBulkEditForm(NautobotBulkEditForm):
         nullable_fields = [
             "description",
         ]
-
-
-class BGPRoutingInstanceCSVForm(StatusModelCSVFormMixin, CustomFieldModelCSVForm):
-    """Form for importing BGPRoutingInstance from CSV data."""
-
-    device = CSVModelChoiceField(
-        queryset=Device.objects.all(),
-        to_field_name="name",
-        help_text="Assigned device's name",
-    )
-
-    autonomous_system = CSVModelChoiceField(
-        queryset=models.AutonomousSystem.objects.all(),
-        to_field_name="asn",
-        help_text="Assigned autonomous system number",
-    )
-
-    router_id = CSVModelChoiceField(
-        queryset=IPAddress.objects.all(),
-        to_field_name="address",
-        help_text="Router ID - IP Address",
-        required=False,
-    )
-
-    class Meta:
-        model = models.BGPRoutingInstance
-        fields = models.BGPRoutingInstance.csv_headers
 
 
 class PeerGroupForm(NautobotModelForm):
@@ -351,64 +306,6 @@ class PeerGroupTemplateFilterForm(NautobotFilterForm, RoleModelFilterFormMixin):
     )
 
 
-class PeerGroupTemplateCSVForm(CustomFieldModelCSVForm):
-    """Form for importing PeerGroupTemplate from CSV data."""
-
-    autonomous_system = CSVModelChoiceField(
-        queryset=models.AutonomousSystem.objects.all(),
-        to_field_name="asn",
-        help_text="Assigned autonomous system number",
-        required=False,
-    )
-
-    class Meta:
-        model = models.PeerGroupTemplate
-        fields = models.PeerGroupTemplate.csv_headers
-
-
-class PeerGroupCSVForm(CustomFieldModelCSVForm):
-    """Form for importing PeerGroup from CSV data."""
-
-    peergroup_template = CSVModelChoiceField(
-        queryset=models.PeerGroupTemplate.objects.all(),
-        to_field_name="name",
-        help_text="Assigned peering group template name",
-        required=False,
-    )
-
-    autonomous_system = CSVModelChoiceField(
-        queryset=models.AutonomousSystem.objects.all(),
-        to_field_name="asn",
-        help_text="Assigned autonomous system number",
-        required=False,
-    )
-
-    role = CSVModelChoiceField(
-        queryset=models.PeeringRole.objects.all(),
-        to_field_name="name",
-        help_text="Assigned Peering Role name",
-        required=False,
-    )
-
-    source_interface = CSVModelChoiceField(
-        queryset=Interface.objects.all(),
-        to_field_name="name",
-        help_text="Peer group source Interface name",
-        required=False,
-    )
-
-    source_ip = CSVModelChoiceField(
-        queryset=IPAddress.objects.all(),
-        # to_field_name="name",
-        help_text="Peer group source IP address",
-        required=False,
-    )
-
-    class Meta:
-        model = models.PeerGroup
-        fields = models.PeerGroup.csv_headers
-
-
 class PeerEndpointForm(NautobotModelForm):
     """Form for creating/updating PeerEndpoint records."""
 
@@ -493,14 +390,6 @@ class PeerEndpointForm(NautobotModelForm):
             endpoint.peering.update_peers()
 
         return endpoint
-
-
-class PeerEndpointCSVForm(CustomFieldModelCSVForm):
-    """Form for importing PeerEndpoint from CSV data."""
-
-    class Meta:
-        model = models.PeerEndpoint
-        fields = models.PeerEndpoint.csv_headers
 
 
 class PeerEndpointFilterForm(NautobotFilterForm):
@@ -604,11 +493,3 @@ class AddressFamilyFilterForm(NautobotFilterForm):
     )
 
     vrf = DynamicModelMultipleChoiceField(queryset=VRF.objects.all(), required=False)
-
-
-class AddressFamilyCSVForm(CustomFieldModelCSVForm):
-    """Form for importing AddressFamily from CSV data."""
-
-    class Meta:
-        model = models.AddressFamily
-        fields = models.AddressFamily.csv_headers

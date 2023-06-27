@@ -17,7 +17,6 @@ from .api import serializers
 class AutonomousSystemUIViewSet(NautobotUIViewSet):
     """UIViewset for AutonomousSystem model."""
 
-    bulk_create_form_class = forms.AutonomousSystemCSVForm
     bulk_update_form_class = forms.AutonomousSystemBulkEditForm
     filterset_class = filters.AutonomousSystemFilterSet
     filterset_form_class = forms.AutonomousSystemFilterForm
@@ -31,7 +30,6 @@ class AutonomousSystemUIViewSet(NautobotUIViewSet):
 class BGPRoutingInstanceUIViewSet(NautobotUIViewSet):
     """UIViewset for BGPRoutingInstance model."""
 
-    bulk_create_form_class = forms.BGPRoutingInstanceCSVForm
     bulk_update_form_class = forms.BGPRoutingInstanceBulkEditForm
     filterset_class = filters.BGPRoutingInstanceFilterSet
     filterset_form_class = forms.BGPRoutingInstanceFilterForm
@@ -45,7 +43,6 @@ class BGPRoutingInstanceUIViewSet(NautobotUIViewSet):
 class PeeringRoleUIViewSet(NautobotUIViewSet):
     """UIViewset for PeeringRole model."""
 
-    bulk_create_form_class = forms.PeeringRoleCSVForm
     bulk_update_form_class = forms.PeeringRoleBulkEditForm
     filterset_class = filters.PeeringRoleFilterSet
     filterset_form_class = forms.PeeringRoleFilterForm
@@ -58,7 +55,6 @@ class PeeringRoleUIViewSet(NautobotUIViewSet):
 class PeerGroupUIViewSet(NautobotUIViewSet):
     """UIViewset for PeerGroup model."""
 
-    bulk_create_form_class = forms.PeerGroupCSVForm
     bulk_update_form_class = forms.PeerGroupBulkEditForm
     filterset_class = filters.PeerGroupFilterSet
     filterset_form_class = forms.PeerGroupFilterForm
@@ -80,7 +76,6 @@ class PeerGroupImportView(generic.BulkImportView):
 class PeerGroupTemplateUIViewSet(NautobotUIViewSet):
     """UIViewset for PeerGroupTemplate model."""
 
-    bulk_create_form_class = forms.PeerGroupTemplateCSVForm
     bulk_update_form_class = forms.PeerGroupTemplateBulkEditForm
     filterset_class = filters.PeerGroupTemplateFilterSet
     filterset_form_class = forms.PeerGroupTemplateFilterForm
@@ -102,7 +97,6 @@ class PeerGroupTemplateImportView(generic.BulkImportView):
 class PeerEndpointUIViewSet(NautobotUIViewSet):
     """UIViewset for PeerEndpoint model."""
 
-    bulk_create_form_class = forms.PeerEndpointCSVForm
     bulk_update_form_class = forms.PeerEndpointBulkEditForm
     filterset_class = filters.PeerEndpointFilterSet
     filterset_form_class = forms.PeerEndpointFilterForm
@@ -196,7 +190,6 @@ class PeeringAddView(generic.ObjectEditView):
 class AddressFamilyUIViewSet(NautobotUIViewSet):
     """UIViewset for AddressFamily model."""
 
-    bulk_create_form_class = forms.AddressFamilyCSVForm
     bulk_update_form_class = forms.AddressFamilyBulkEditForm
     filterset_class = filters.AddressFamilyFilterSet
     filterset_form_class = forms.AddressFamilyFilterForm
