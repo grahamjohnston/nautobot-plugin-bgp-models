@@ -35,16 +35,6 @@ class AutonomousSystemSerializer(
         fields = ["id", "url", "asn", "description", "status", "provider", "tags"]
 
 
-class PeeringRoleSerializer(NautobotModelSerializer):
-    """REST API serializer for PeeringRole records."""
-
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_bgp_models-api:peeringrole-detail")
-
-    class Meta:
-        model = models.PeeringRole
-        fields = ["id", "url", "name", "slug", "color", "description"]
-
-
 class InheritableFieldsSerializerMixin:
     """Common mixin for Serializers that support an additional `include_inherited` query parameter."""
 
@@ -177,6 +167,7 @@ class PeerEndpointSerializer(
             "secret",
             "tags",
             "enabled",
+            "role",
             "extra_attributes",
         ]
 

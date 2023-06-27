@@ -10,7 +10,7 @@ from django.urls import reverse
 from nautobot.circuits.models import Provider
 from nautobot.core.models.generics import PrimaryModel, OrganizationalModel
 from nautobot.dcim.fields import ASNField
-from nautobot.extras.models import StatusModel
+from nautobot.extras.models import StatusModel, RoleField
 from nautobot.extras.utils import extras_features
 from nautobot.ipam.models import IPAddress
 from nautobot.core.utils.data import deepmerge
@@ -161,41 +161,6 @@ class AutonomousSystem(PrimaryModel, StatusModel):
     "export_templates",
     "graphql",
     "relationships",
-    "webhooks",
-)
-class PeeringRole(OrganizationalModel):
-    """Role definition for use with a PeerGroup or PeerEndpoint."""
-
-    name = models.CharField(max_length=100, unique=True)
-    slug = AutoSlugField(populate_from="name")
-    color = ColorField(default=ColorChoices.COLOR_GREY)
-    description = models.CharField(max_length=200, blank=True)
-
-    csv_headers = ["name", "slug", "color", "description"]
-
-    class Meta:
-        verbose_name = "BGP Peering Role"
-
-    def __str__(self):
-        """String representation of a PeeringRole."""
-        return self.name
-
-    def get_absolute_url(self):
-        """Get the URL for a detailed view of a single PeeringRole."""
-        return reverse("plugins:nautobot_bgp_models:peeringrole", args=[self.slug])
-
-    def to_csv(self):
-        """Render a PeeringRole record to CSV fields."""
-        return self.name, self.slug, self.color, self.description
-
-
-@extras_features(
-    "custom_fields",
-    "custom_links",
-    "custom_validators",
-    "export_templates",
-    "graphql",
-    "relationships",
     "statuses",
     "webhooks",
 )
@@ -277,9 +242,7 @@ class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
 
     enabled = models.BooleanField(default=True)
 
-    role = models.ForeignKey(
-        to=PeeringRole, on_delete=models.PROTECT, related_name="peer_group_templates", blank=True, null=True
-    )
+    role = RoleField(blank=False, null=False)
 
     description = models.CharField(max_length=200, blank=True)
 
@@ -356,9 +319,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         to=PeerGroupTemplate, on_delete=models.PROTECT, related_name="peer_groups", blank=True, null=True
     )
 
-    role = models.ForeignKey(
-        to=PeeringRole, on_delete=models.PROTECT, related_name="peer_groups", blank=True, null=True
-    )
+    role = RoleField(blank=False, null=False)
 
     description = models.CharField(max_length=200, blank=True)
 
@@ -491,7 +452,7 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
     description = models.CharField(max_length=200, blank=True)
 
-    role = models.ForeignKey(to=PeeringRole, on_delete=models.PROTECT, related_name="endpoints", blank=True, null=True)
+    role = RoleField(blank=False, null=False)
 
     enabled = models.BooleanField(default=True)
 
