@@ -12,8 +12,8 @@ from nautobot.apps.forms import (
 )
 from nautobot.circuits.models import Provider
 from nautobot.dcim.models import Device, Interface
-from nautobot.extras.forms import NautobotFilterForm
-from nautobot.extras.models import Tag, Secret, Role
+from nautobot.extras.forms import NautobotFilterForm, RoleModelFilterFormMixin
+from nautobot.extras.models import Tag, Secret
 from nautobot.ipam.models import VRF, IPAddress
 
 from . import choices, models
@@ -306,7 +306,7 @@ class PeerGroupTemplateFilterForm(NautobotFilterForm, RoleModelFilterFormMixin):
     )
 
 
-class PeerEndpointForm(NautobotModelForm):
+class PeerEndpointForm(NautobotModelForm, RoleModelFilterFormMixin):
     """Form for creating/updating PeerEndpoint records."""
 
     def __init__(self, *args, **kwargs):
@@ -416,13 +416,12 @@ class PeeringForm(NautobotModelForm):
         fields = ("status",)
 
 
-class PeeringFilterForm(NautobotFilterForm, RoleModelFilterFormMixin):
+class PeeringFilterForm(NautobotFilterForm):
     """Form for filtering Peering records in combination with PeeringFilterSet."""
 
     model = models.Peering
     field_order = [
         "q",
-        "role",
         "status",
         "device",
     ]
