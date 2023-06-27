@@ -135,8 +135,6 @@ class AutonomousSystem(PrimaryModel, StatusModel):
     description = models.CharField(max_length=200, blank=True)
     provider = models.ForeignKey(to=Provider, on_delete=models.PROTECT, blank=True, null=True)
 
-    csv_headers = ["asn", "description", "status", "provider"]
-
     class Meta:
         ordering = ["asn"]
         verbose_name = "Autonomous system"
@@ -148,10 +146,6 @@ class AutonomousSystem(PrimaryModel, StatusModel):
     def get_absolute_url(self):
         """Get the URL for detailed view of a single AutonomousSystem."""
         return reverse("plugins:nautobot_bgp_models:autonomoussystem", args=[self.pk])
-
-    def to_csv(self):
-        """Render an AutonomousSystem record to CSV fields."""
-        return self.asn, self.description, self.get_status_display(), self.provider
 
 
 @extras_features(
@@ -189,14 +183,6 @@ class BGPRoutingInstance(PrimaryModel, StatusModel, BGPExtraAttributesMixin):
         on_delete=models.PROTECT,
     )
 
-    csv_headers = [
-        "device",
-        "autonomous_system",
-        "router_id",
-        "status",
-        "description",
-    ]
-
     def get_absolute_url(self):
         """Get the URL for detailed view of a single BGPRoutingInstance."""
         return reverse("plugins:nautobot_bgp_models:bgproutinginstance", args=[self.pk])
@@ -208,16 +194,6 @@ class BGPRoutingInstance(PrimaryModel, StatusModel, BGPExtraAttributesMixin):
     class Meta:
         verbose_name = "BGP Routing Instance"
         unique_together = [("device", "autonomous_system")]
-
-    def to_csv(self):
-        """Render an BGPRoutingInstance record to CSV fields."""
-        return (
-            self.device.identifier if self.device else None,
-            self.autonomous_system.asn if self.autonomous_system else None,
-            self.router_id.address if self.router_id else None,
-            self.get_status_display(),
-            self.description,
-        )
 
     def clean(self):
         """Clean."""
@@ -265,18 +241,6 @@ class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
         blank=True,
         null=True,
     )
-    csv_headers = ["name", "import_policy", "export_policy", "autonomous_system", "enabled", "role"]
-
-    def to_csv(self):
-        """Render a PeerGroupTemplate record to CSV fields."""
-        return (
-            self.name,
-            self.import_policy,
-            self.export_policy,
-            self.autonomous_system.asn if self.autonomous_system else None,
-            self.enabled,
-            self.role.name if self.role else None,
-        )
 
     def __str__(self):
         """String."""
@@ -369,34 +333,6 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         blank=True,
         null=True,
     )
-
-    csv_headers = [
-        "name",
-        "routing_instance",
-        "autonomous_system",
-        "import_policy",
-        "export_policy",
-        "source_interface",
-        "source_ip",
-        "peergroup_template",
-        "enabled",
-        "role",
-    ]
-
-    def to_csv(self):
-        """Export data."""
-        return (
-            self.name,
-            self.routing_instance.pk,
-            self.autonomous_system.asn if self.autonomous_system else None,
-            self.import_policy,
-            self.export_policy,
-            self.source_interface.name if self.source_interface else None,
-            self.source_ip.address if self.source_ip else None,
-            self.peergroup_template.name if self.peergroup_template else None,
-            self.enabled,
-            self.role.name if self.role else None,
-        )
 
     def __str__(self):
         """String."""
@@ -511,18 +447,6 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         related_name="bgp_peer_endpoints",
         verbose_name="Source Interface",
     )
-
-    csv_headers = [
-        "routing_instance",
-        "peer",
-    ]
-
-    def to_csv(self):
-        """Export data."""
-        return (
-            self.routing_instance,
-            self.peer,
-        )
 
     @property
     def local_ip(self):
@@ -703,26 +627,6 @@ class AddressFamily(OrganizationalModel):
         ordering = ["-routing_instance", "-vrf"]
         verbose_name = "BGP address family"
         verbose_name_plural = "BGP Address Families"
-
-    csv_headers = [
-        "routing_instance",
-        "vrf",
-        "afi_safi",
-        "import_policy",
-        "export_policy",
-        "multipath",
-    ]
-
-    def to_csv(self):
-        """Export data."""
-        return (
-            self.routing_instance.pk,
-            self.vrf.name if self.vrf else None,
-            self.afi_safi,
-            self.import_policy,
-            self.export_policy,
-            self.multipath,
-        )
 
     def __str__(self):
         """String representation of a single AddressFamily."""
