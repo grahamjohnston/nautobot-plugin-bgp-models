@@ -7,7 +7,6 @@ import nautobot.extras.models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("extras", "0062_rename_configcontext_role"),
         ("nautobot_bgp_models", "0002_viewsets_migration"),
     ]
 
