@@ -109,6 +109,7 @@ class BGPRoutingInstanceForm(NautobotModelForm):
         fields = (
             "device",
             "autonomous_system",
+            "status",
             "description",
             "router_id",
             "peergroup_template",
@@ -306,7 +307,7 @@ class PeerGroupTemplateFilterForm(NautobotFilterForm, RoleModelFilterFormMixin):
     )
 
 
-class PeerEndpointForm(NautobotModelForm, RoleModelFilterFormMixin):
+class PeerEndpointForm(NautobotModelForm):
     """Form for creating/updating PeerEndpoint records."""
 
     def __init__(self, *args, **kwargs):
@@ -392,7 +393,7 @@ class PeerEndpointForm(NautobotModelForm, RoleModelFilterFormMixin):
         return endpoint
 
 
-class PeerEndpointFilterForm(NautobotFilterForm):
+class PeerEndpointFilterForm(NautobotFilterForm, RoleModelFilterFormMixin):
     """Form for filtering PeerEndpoint records in combination with PeerEndpointFilterSet."""
 
     model = models.PeerEndpoint

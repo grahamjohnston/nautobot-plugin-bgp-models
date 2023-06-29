@@ -483,6 +483,9 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         null=True,
     )
 
+    class Meta:
+        verbose_name = "BGP Peer Endpoint"
+
     def __str__(self):
         """String."""
         if self.routing_instance and self.routing_instance.device:
