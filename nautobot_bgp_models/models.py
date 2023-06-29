@@ -545,13 +545,7 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 class Peering(OrganizationalModel, StatusModel):
     """Linkage between two PeerEndpoint records."""
 
-    """
-        AttributeError at /plugins/bgp/peerings/07a36886-9a43-4135-a31a-98048e400862
-        Unable to identify an intrinsic natural-key definition for Peering. If there isn't at 
-        least one UniqueConstraint, unique_together, or field with unique=True, you probably need
-        to explicitly declare the 'natural_key_field_names' for this model, or potentially override 
-        the default 'natural_key_field_lookups' implementation for this model.
-    """
+    natural_key_field_names = ["id"]
 
     class Meta:
         verbose_name = "BGP Peering"
