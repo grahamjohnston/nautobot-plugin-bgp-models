@@ -12,7 +12,7 @@ class IPAddressFilterExtension(PluginFilterExtension):
 
     filterset_fields = {
         "nautobot_bgp_models_ips_bgp_routing_instance": MultiValueCharFilter(
-            field_name="interface__device__bgp_routing_instances__id",
+            field_name="interfaces__device__bgp_routing_instances__id",
             label="Routing Instance UUID",
         ),
     }

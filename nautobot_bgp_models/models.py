@@ -525,7 +525,7 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
         # Ensure IP related to the routing instance
         if self.routing_instance:
-            if local_ip_value not in IPAddress.objects.filter(interface__device_id=self.routing_instance.device.id):
+            if local_ip_value not in IPAddress.objects.filter(interfaces__device_id=self.routing_instance.device.id):
                 raise ValidationError("Peer IP not associated with Routing Instance")
         else:
             if not asn_value.provider:
@@ -544,6 +544,14 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 )
 class Peering(OrganizationalModel, StatusModel):
     """Linkage between two PeerEndpoint records."""
+
+    """
+        AttributeError at /plugins/bgp/peerings/07a36886-9a43-4135-a31a-98048e400862
+        Unable to identify an intrinsic natural-key definition for Peering. If there isn't at 
+        least one UniqueConstraint, unique_together, or field with unique=True, you probably need
+        to explicitly declare the 'natural_key_field_names' for this model, or potentially override 
+        the default 'natural_key_field_lookups' implementation for this model.
+    """
 
     class Meta:
         verbose_name = "BGP Peering"
