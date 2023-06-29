@@ -19,7 +19,7 @@ class AutonomousSystemTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """One-time class data setup."""
-        status_active = Status.objects.get(slug="active")
+        status_active = Status.objects.get(name__iexact="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
 
         cls.autonomous_system = models.AutonomousSystem.objects.create(
@@ -41,12 +41,12 @@ class BGPRoutingInstanceTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """One-time class data setup."""
-        cls.status_active = Status.objects.get(slug="active")
+        cls.status_active = Status.objects.get(name__iexact="active")
 
-        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-        cls.devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-        cls.site = Site.objects.create(name="Site 1", slug="site-1")
-        cls.devicerole = Role.objects.create(name="Router", slug="router", color="ff0000")
+        manufacturer = Manufacturer.objects.create(name="Cisco")
+        cls.devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
+        cls.site = Site.objects.create(name="Site 1")
+        cls.devicerole = Role.objects.create(name="Router", color="ff0000")
         cls.devicerole.content_types.add(ContentType.objects.get_for_model(Device))
 
     def setUp(self):
@@ -85,12 +85,12 @@ class PeerGroupTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """One-time class data setup."""
-        status_active = Status.objects.get(slug="active")
+        status_active = Status.objects.get(name__iexact="active")
 
-        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-        site = Site.objects.create(name="Site 1", slug="site-1")
-        devicerole = Role.objects.create(name="Router", slug="router", color="ff0000")
+        manufacturer = Manufacturer.objects.create(name="Cisco")
+        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
+        site = Site.objects.create(name="Site 1")
+        devicerole = Role.objects.create(name="Router", color="ff0000")
         devicerole.content_types.add(ContentType.objects.get_for_model(Device))
 
         device_1 = Device.objects.create(
@@ -148,14 +148,14 @@ class PeerEndpointTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """One-time class data setup."""
-        status_active = Status.objects.get(slug="active")
+        status_active = Status.objects.get(name__iexact="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.Peering))
         cls.status_active = status_active
 
-        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-        site = Site.objects.create(name="Site 1", slug="site-1")
-        devicerole = Role.objects.create(name="Router", slug="router", color="ff0000")
+        manufacturer = Manufacturer.objects.create(name="Cisco")
+        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
+        site = Site.objects.create(name="Site 1")
+        devicerole = Role.objects.create(name="Router", color="ff0000")
         devicerole.content_types.add(ContentType.objects.get_for_model(Device))
         device_1 = Device.objects.create(
             device_type=devicetype, role=devicerole, name="Device 1", site=site, status=cls.status_active
@@ -165,14 +165,14 @@ class PeerEndpointTestCase(TestCase):
             device_type=devicetype, role=devicerole, name="Device 2", site=site, status=cls.status_active
         )
 
-        cls.peeringrole_internal = Role.objects.create(name="Internal", slug="internal", color="333333")
+        cls.peeringrole_internal = Role.objects.create(name="Internal", color="333333")
         cls.peeringrole_internal.content_types.add(ContentType.objects.get_for_model(models.PeerGroup))
 
         autonomous_system_12345 = models.AutonomousSystem.objects.create(
             asn=12345, status=status_active, description="ASN 12345"
         )
 
-        provider = Provider.objects.create(name="Provider", slug="provider")
+        provider = Provider.objects.create(name="Provider")
         cls.autonomous_system_23456 = models.AutonomousSystem.objects.create(
             asn=23456,
             status=status_active,
@@ -301,12 +301,12 @@ class PeeringTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """One-time class data setup."""
-        status_active = Status.objects.get(slug="active")
+        status_active = Status.objects.get(name__iexact="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.Peering))
 
         # peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
 
-        provider = Provider.objects.create(name="Provider", slug="provider")
+        provider = Provider.objects.create(name="Provider")
         cls.autonomous_system_12345 = models.AutonomousSystem.objects.create(
             asn=12345,
             status=status_active,
@@ -373,11 +373,11 @@ class AddressFamilyTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """One-time class data setup."""
-        cls.status_active = Status.objects.get(slug="active")
-        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-        cls.devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-        cls.site = Site.objects.create(name="Site 1", slug="site-1")
-        cls.devicerole = Role.objects.create(name="Router", slug="router", color="ff0000")
+        cls.status_active = Status.objects.get(name__iexact="active")
+        manufacturer = Manufacturer.objects.create(name="Cisco")
+        cls.devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
+        cls.site = Site.objects.create(name="Site 1")
+        cls.devicerole = Role.objects.create(name="Router", color="ff0000")
         cls.devicerole.content_types.add(ContentType.objects.get_for_model(Device))
         cls.vrf = VRF.objects.create(name="global")
 
@@ -404,7 +404,7 @@ class AddressFamilyTestCase(TestCase):
         )
 
         # interface = Interface.objects.create(device=self.device, name="Loopback1")
-        self.peeringrole_internal = Role.objects.create(name="Internal", slug="internal", color="333333")
+        self.peeringrole_internal = Role.objects.create(name="Internal", color="333333")
         self.peeringrole_internal.content_types.add(ContentType.objects.get_for_model(models.PeerGroup))
 
         # self.peergroup = models.PeerGroup.objects.create(

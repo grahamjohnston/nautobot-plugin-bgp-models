@@ -19,7 +19,7 @@ class AutonomousSystemFormTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Set up class-wide data for the test."""
-        cls.status_active = Status.objects.get(slug="active")
+        cls.status_active = Status.objects.get(name__iexact="active")
         cls.status_active.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
 
     def test_valid_asn(self):
@@ -54,12 +54,12 @@ class PeerGroupFormTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Set up class-wide data for the test."""
-        status_active = Status.objects.get(slug="active")
+        status_active = Status.objects.get(name__iexact="active")
 
-        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-        site = Site.objects.create(name="Site 1", slug="site-1")
-        devicerole = Role.objects.create(name="Router", slug="router", color="ff0000")
+        manufacturer = Manufacturer.objects.create(name="Cisco")
+        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
+        site = Site.objects.create(name="Site 1")
+        devicerole = Role.objects.create(name="Router", color="ff0000")
         devicerole.content_types.add(ContentType.objects.get_for_model(Device))
         cls.device_1 = Device.objects.create(
             device_type=devicetype, role=devicerole, name="Device 1", site=site, status=status_active
@@ -72,7 +72,7 @@ class PeerGroupFormTestCase(TestCase):
         # cls.virtualmachine_1 = VirtualMachine.objects.create(name="VM 1", cluster=cluster, status=status_active)
         # cls.vminterface_1 = VMInterface.objects.create(name="eth0", virtual_machine=cls.virtualmachine_1)
 
-        cls.peeringrole_internal = Role.objects.create(name="Internal", slug="internal", color="333333")
+        cls.peeringrole_internal = Role.objects.create(name="Internal", color="333333")
         cls.peeringrole_internal.content_types.add(ContentType.objects.get_for_model(models.PeerGroup))
 
         asn_1 = models.AutonomousSystem.objects.create(asn=4294967294, status=status_active)
@@ -155,11 +155,11 @@ class PeerEndpointFormTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Set up class-wide data for the test."""
-        status_active = Status.objects.get(slug="active")
-        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-        site = Site.objects.create(name="Site 1", slug="site-1")
-        devicerole = Role.objects.create(name="Router", slug="router", color="ff0000")
+        status_active = Status.objects.get(name__iexact="active")
+        manufacturer = Manufacturer.objects.create(name="Cisco")
+        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
+        site = Site.objects.create(name="Site 1")
+        devicerole = Role.objects.create(name="Router", color="ff0000")
         devicerole.content_types.add(ContentType.objects.get_for_model(Device))
         cls.device_1 = Device.objects.create(
             device_type=devicetype, role=devicerole, name="Device 1", site=site, status=status_active
@@ -178,7 +178,7 @@ class PeerEndpointFormTestCase(TestCase):
         )
 
         asn_1 = models.AutonomousSystem.objects.create(asn=4294967291, status=status_active)
-        provider = Provider.objects.create(name="Provider", slug="provider")
+        provider = Provider.objects.create(name="Provider")
         cls.asn_2 = models.AutonomousSystem.objects.create(asn=4294967292, status=status_active, provider=provider)
 
         cls.bgp_routing_instance = models.BGPRoutingInstance.objects.create(
@@ -193,7 +193,7 @@ class PeerEndpointFormTestCase(TestCase):
         # cls.virtualmachine_1 = VirtualMachine.objects.create(name="VM 1", cluster=cluster, status=status_active)
         # cls.vminterface_1 = VMInterface.objects.create(name="eth0", virtual_machine=cls.virtualmachine_1)
 
-        cls.peeringrole = Role.objects.create(name="Internal", slug="internal", color="333333")
+        cls.peeringrole = Role.objects.create(name="Internal", color="333333")
         cls.peeringrole.content_types.add(ContentType.objects.get_for_model(models.PeerEndpoint))
 
         cls.peering = models.Peering.objects.create(
@@ -274,13 +274,13 @@ class AddressFamilyFormTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Set up class-wide data for the test."""
-        status_active = Status.objects.get(slug="active")
+        status_active = Status.objects.get(name__iexact="active")
         cls.address = IPAddress.objects.create(address="1.1.1.1/32", status=status_active)
 
-        manufacturer = Manufacturer.objects.create(name="Cisco", slug="cisco")
-        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V", slug="csr1000v")
-        site = Site.objects.create(name="Site 1", slug="site-1")
-        devicerole = Role.objects.create(name="Router", slug="router", color="ff0000")
+        manufacturer = Manufacturer.objects.create(name="Cisco")
+        devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
+        site = Site.objects.create(name="Site 1")
+        devicerole = Role.objects.create(name="Router", color="ff0000")
         devicerole.content_types.add(ContentType.objects.get_for_model(Device))
         cls.device_1 = Device.objects.create(
             device_type=devicetype, role=devicerole, name="Device 1", site=site, status=status_active
