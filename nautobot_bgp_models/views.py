@@ -52,6 +52,10 @@ class PeerGroupUIViewSet(NautobotUIViewSet):
     serializer_class = serializers.PeerGroupSerializer
     table_class = tables.PeerGroupTable
 
+    def get_extra_context(self, request, instance):
+        """Return any additional context data for the template."""
+        return {"object_fields": instance.get_fields(include_inherited=True)}
+
 
 class PeerGroupTemplateUIViewSet(NautobotUIViewSet):
     """UIViewset for PeerGroupTemplate model."""
@@ -77,6 +81,10 @@ class PeerEndpointUIViewSet(NautobotUIViewSet):
     queryset = models.PeerEndpoint.objects.all()
     serializer_class = serializers.PeerEndpointSerializer
     table_class = tables.PeerEndpointTable
+
+    def get_extra_context(self, request, instance):
+        """Return any additional context data for the template."""
+        return {"object_fields": instance.get_fields(include_inherited=True)}
 
 
 class PeeringUIViewSet(  # pylint: disable=abstract-method
