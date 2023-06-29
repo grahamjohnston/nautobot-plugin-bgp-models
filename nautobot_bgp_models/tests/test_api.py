@@ -24,7 +24,6 @@ class AutonomousSystemAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.AutonomousSystem
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = ["asn", "display", "id", "url"]
     bulk_update_data = {
         "description": "Reserved for use in documentation/sample code",
     }
@@ -60,7 +59,6 @@ class PeeringRoleAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.PeeringRole
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = ["color", "display", "id", "name", "slug", "url"]
     create_data = [
         {"name": "Role 1", "slug": "role-1", "color": "ff0000"},
         {"name": "Role 2", "slug": "role-2", "color": "00ff00"},
@@ -82,7 +80,6 @@ class PeerGroupTemplateAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.PeerGroupTemplate
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = ["display", "id", "name", "url"]
 
     # TODO(mzb): Fix bulk update via #96 - ViewSets migration
     # bulk_update_data = {
@@ -178,7 +175,6 @@ class BGPRoutingInstanceAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.BGPRoutingInstance
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = ["display", "id", "url"]
     bulk_update_data = {
         "description": "Glenn was here.",
     }
@@ -303,7 +299,6 @@ class PeerGroupAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.PeerGroup
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = ["display", "enabled", "id", "name", "role", "url"]
     bulk_update_data = {
         "description": "Glenn was here.",
         "enabled": True,
@@ -519,11 +514,7 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.PeerEndpoint
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = [
-        "display",
-        "id",
-        "url",
-    ]
+
     bulk_update_data = {
         "enabled": False,
     }
@@ -828,7 +819,6 @@ class PeeringAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.Peering
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = ["display", "id", "status", "url"]
     choices_fields = ["status"]
 
     # Nautobot testing doesn't correctly handle the API representation of a Status as a slug instead of a PK yet.
@@ -905,12 +895,7 @@ class AddressFamilyAPITestCase(APIViewTestCases.APIViewTestCase):
 
     model = models.AddressFamily
     view_namespace = "plugins-api:nautobot_bgp_models"
-    brief_fields = [
-        "afi_safi",
-        "display",
-        "id",
-        "url",
-    ]
+
     choices_fields = ["afi_safi"]
 
     @classmethod

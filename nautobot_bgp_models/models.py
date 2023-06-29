@@ -218,7 +218,7 @@ class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
 
     enabled = models.BooleanField(default=True)
 
-    role = RoleField(blank=False, null=False)
+    role = RoleField(blank=True, null=True)
 
     description = models.CharField(max_length=200, blank=True)
 
@@ -283,7 +283,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
         to=PeerGroupTemplate, on_delete=models.PROTECT, related_name="peer_groups", blank=True, null=True
     )
 
-    role = RoleField(blank=False, null=False)
+    role = RoleField(blank=True, null=True)
 
     description = models.CharField(max_length=200, blank=True)
 
@@ -358,7 +358,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
         # Ensure IP related to the routing instance
         if self.routing_instance and self.source_ip:
-            if self.source_ip not in IPAddress.objects.filter(interface__device_id=self.routing_instance.device.id):
+            if self.source_ip not in IPAddress.objects.filter(interfaces__device_id=self.routing_instance.device.id):
                 raise ValidationError("Group IP not associated with Routing Instance")
 
 
@@ -388,7 +388,7 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
     description = models.CharField(max_length=200, blank=True)
 
-    role = RoleField(blank=False, null=False)
+    role = RoleField(blank=True, null=True)
 
     enabled = models.BooleanField(default=True)
 
@@ -604,6 +604,8 @@ class Peering(OrganizationalModel, StatusModel):
 )
 class AddressFamily(OrganizationalModel):
     """Address-family (AFI-SAFI) model."""
+
+    natural_key_field_names = ["id"]
 
     afi_safi = models.CharField(max_length=64, choices=AFISAFIChoices, verbose_name="AFI-SAFI")
 

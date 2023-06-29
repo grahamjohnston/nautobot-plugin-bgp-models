@@ -54,7 +54,10 @@ class PeerGroupUIViewSet(NautobotUIViewSet):
 
     def get_extra_context(self, request, instance):
         """Return any additional context data for the template."""
-        return {"object_fields": instance.get_fields(include_inherited=True)}
+        context = super().get_extra_context(request, instance)
+        if self.action == "retrieve":
+            context["object_fields"] = instance.get_fields(include_inherited=True)
+        return context
 
 
 class PeerGroupTemplateUIViewSet(NautobotUIViewSet):
@@ -84,7 +87,10 @@ class PeerEndpointUIViewSet(NautobotUIViewSet):
 
     def get_extra_context(self, request, instance):
         """Return any additional context data for the template."""
-        return {"object_fields": instance.get_fields(include_inherited=True)}
+        context = super().get_extra_context(request, instance)
+        if self.action == "retrieve":
+            context["object_fields"] = instance.get_fields(include_inherited=True)
+        return context
 
 
 class PeeringUIViewSet(  # pylint: disable=abstract-method
