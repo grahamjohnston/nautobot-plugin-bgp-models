@@ -201,7 +201,7 @@ class PeerEndpointTestCase(TestCase):
             IPAddress.objects.create(address="1.1.1.3/32", status=status_active, namespace=namespace),
         ]
 
-        interface.add_ip_addresses(addresses[0], addresses[1])
+        interface.add_ip_addresses([addresses[0], addresses[1]])
 
         cls.bgp_routing_instance = models.BGPRoutingInstance.objects.create(
             description="Hello World!",

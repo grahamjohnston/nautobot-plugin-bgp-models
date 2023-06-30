@@ -345,6 +345,7 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     class Meta:
         unique_together = [("name", "routing_instance")]
         verbose_name = "BGP Peer Group"
+        ordering = ["name"]
 
     def clean(self):
         """Clean."""

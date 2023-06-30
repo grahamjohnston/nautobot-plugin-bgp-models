@@ -636,7 +636,7 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
             ),
         )
 
-        interface.add_ip_addresses(cls.addresses[0], cls.addresses[1], cls.addresses[2])
+        interface.add_ip_addresses([cls.addresses[0], cls.addresses[1], cls.addresses[2]])
 
         cls.asn = models.AutonomousSystem.objects.create(asn=4294967294, status=cls.status_active)
 

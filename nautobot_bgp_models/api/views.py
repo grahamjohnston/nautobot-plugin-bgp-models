@@ -4,6 +4,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from nautobot.extras.api.views import NautobotModelViewSet
 from nautobot.core.api.utils import dynamic_import
+from rest_framework.filters import OrderingFilter
 
 from nautobot_bgp_models import filters
 from nautobot_bgp_models import models
@@ -55,7 +56,7 @@ class PeerGroupViewSet(InheritableFieldsViewSetMixin, NautobotModelViewSet):
 
     queryset = models.PeerGroup.objects.all()
     serializer_class = serializers.PeerGroupSerializer
-    filter_backends = [IncludeInheritedFilterBackend]
+    filter_backends = [IncludeInheritedFilterBackend, OrderingFilter]
     filterset_class = filters.PeerGroupFilterSet
 
 
@@ -72,7 +73,7 @@ class PeerEndpointViewSet(InheritableFieldsViewSetMixin, NautobotModelViewSet):
 
     queryset = models.PeerEndpoint.objects.all()
     serializer_class = serializers.PeerEndpointSerializer
-    filter_backends = [IncludeInheritedFilterBackend]
+    filter_backends = [IncludeInheritedFilterBackend, OrderingFilter]
     filterset_class = filters.PeerEndpointFilterSet
 
 
