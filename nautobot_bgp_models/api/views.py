@@ -11,21 +11,6 @@ from nautobot_bgp_models.api.filter_backends import IncludeInheritedFilterBacken
 from . import serializers
 
 
-# class PluginModelViewSet(NautobotModelViewSet):
-#     """Base class for all REST API viewsets in this plugin."""
-#
-#     def get_serializer_class(self):
-#         """Override the default ModelViewSet implementation as it doesn't handle plugins correctly."""
-#         app_label, model_name = self.queryset.model._meta.label.split(".")
-#         if self.brief:
-#             try:
-#                 return dynamic_import(f"{app_label}.api.serializers.Nested{model_name}Serializer")
-#             except AttributeError:
-#                 pass
-#
-#         return self.serializer_class
-
-
 class BGPRoutingInstanceViewSet(NautobotModelViewSet):
     """REST API viewset for BGPRoutingInstance records."""
 

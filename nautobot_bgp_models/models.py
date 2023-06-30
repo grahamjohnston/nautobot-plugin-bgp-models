@@ -374,6 +374,8 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     """BGP information about single endpoint of a peering."""
 
+    natural_key_field_names = ["id"]  # TODO: Glenn?
+
     extra_attributes_inheritance = ["peer_group", "peer_group.peergroup_template", "routing_instance"]
     property_inheritance = {
         "autonomous_system": ["peer_group", "peer_group.peergroup_template", "routing_instance"],
@@ -545,7 +547,7 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 class Peering(OrganizationalModel, StatusModel):
     """Linkage between two PeerEndpoint records."""
 
-    natural_key_field_names = ["id"]
+    natural_key_field_names = ["id"]  # TODO: Glenn?
 
     class Meta:
         verbose_name = "BGP Peering"
@@ -605,7 +607,7 @@ class Peering(OrganizationalModel, StatusModel):
 class AddressFamily(OrganizationalModel):
     """Address-family (AFI-SAFI) model."""
 
-    natural_key_field_names = ["id"]
+    natural_key_field_names = ["id"]  # TODO: Glenn?
 
     afi_safi = models.CharField(max_length=64, choices=AFISAFIChoices, verbose_name="AFI-SAFI")
 

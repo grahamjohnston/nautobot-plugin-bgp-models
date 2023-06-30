@@ -5,9 +5,9 @@ from django.test import TestCase
 
 # from nautobot.circuits.models import Provider
 from nautobot.dcim.choices import InterfaceTypeChoices
-from nautobot.dcim.models import Device, DeviceType, Interface, Manufacturer, Site
+from nautobot.dcim.models import Device, DeviceType, Interface, Manufacturer, Location, LocationType
 from nautobot.extras.models import Status, Role
-from nautobot.ipam.models import IPAddress
+from nautobot.ipam.models import IPAddress, Prefix, Namespace
 
 
 from nautobot_bgp_models import filters, models, choices
@@ -71,11 +71,13 @@ class PeerGroupTestCase(TestCase):
 
         manufacturer = Manufacturer.objects.create(name="Cisco")
         devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
-        site = Site.objects.create(name="Site 1")
+        location_type = LocationType.objects.create(name="site")
+        location_status = Status.objects.get_for_model(Location).first()
+        location = Location.objects.create(name="Site 1", location_type=location_type, status=location_status)
         devicerole = Role.objects.create(name="Router", color="ff0000")
         devicerole.content_types.add(ContentType.objects.get_for_model(Device))
         cls.device_1 = Device.objects.create(
-            device_type=devicetype, role=devicerole, name="Device 1", site=site, status=status_active
+            device_type=devicetype, role=devicerole, name="Device 1", location=location, status=status_active
         )
 
         cls.asn_1 = models.AutonomousSystem.objects.create(asn=4294967294, status=status_active)
@@ -137,7 +139,7 @@ class PeerGroupTestCase(TestCase):
 
     def test_role(self):
         """Test filtering by peering role."""
-        params = {"role": [self.peeringrole_internal.slug]}
+        params = {"role": [self.peeringrole_internal.name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_autonomous_system(self):
@@ -173,23 +175,33 @@ class PeerEndpointTestCase(TestCase):
         peeringrole.content_types.add(ContentType.objects.get_for_model(models.PeerGroup))
         manufacturer = Manufacturer.objects.create(name="Cisco")
         cls.devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
-        cls.site = Site.objects.create(name="Site 1")
+        location_type = LocationType.objects.create(name="site")
+        location_status = Status.objects.get_for_model(Location).first()
+        cls.location = Location.objects.create(name="Site 1", location_type=location_type, status=location_status)
         cls.devicerole = Role.objects.create(name="Router", color="ff0000")
         cls.devicerole.content_types.add(ContentType.objects.get_for_model(Device))
         device = Device.objects.create(
             device_type=cls.devicetype,
             role=cls.devicerole,
             name="Device 1",
-            site=cls.site,
+            location=cls.location,
             status=status_active,
         )
-        interface = Interface.objects.create(device=device, name="Loopback1", type=InterfaceTypeChoices.TYPE_VIRTUAL)
+        interface_status = Status.objects.get_for_model(Interface).first()
+        interface = Interface.objects.create(device=device, name="Loopback1", type=InterfaceTypeChoices.TYPE_VIRTUAL,
+                                             status=interface_status)
+
+        namespace = Namespace.objects.first()
+        prefix_status = Status.objects.get_for_model(Prefix).first()
+        Prefix.objects.create(prefix="1.0.0.0/8", namespace=namespace, status=prefix_status)
 
         addresses = [
-            IPAddress.objects.create(address="1.1.1.1/32", status=status_active, assigned_object=interface),
-            IPAddress.objects.create(address="1.1.1.2/32", status=status_active, assigned_object=interface),
-            IPAddress.objects.create(address="1.1.1.3/32", status=status_active),
+            IPAddress.objects.create(address="1.1.1.1/32", status=status_active, namespace=namespace),
+            IPAddress.objects.create(address="1.1.1.2/32", status=status_active, namespace=namespace),
+            IPAddress.objects.create(address="1.1.1.3/32", status=status_active, namespace=namespace),
         ]
+
+        interface.add_ip_addresses(addresses[0], addresses[1])
 
         cls.bgp_routing_instance = models.BGPRoutingInstance.objects.create(
             description="Hello World!",
@@ -276,21 +288,23 @@ class PeeringTestCase(TestCase):
 
         manufacturer = Manufacturer.objects.create(name="Cisco")
         devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
-        site = Site.objects.create(name="Site 1")
+        location_type = LocationType.objects.create(name="site")
+        location_status = Status.objects.get_for_model(Location).first()
+        location = Location.objects.create(name="Site 1", location_type=location_type, status=location_status)
         devicerole = Role.objects.create(name="Router", color="ff0000")
         devicerole.content_types.add(ContentType.objects.get_for_model(Device))
         device1 = Device.objects.create(
             device_type=devicetype,
             role=devicerole,
             name="device1",
-            site=site,
+            location=location,
             status=status_active,
         )
         # device2 = Device.objects.create(
         #     device_type=devicetype,
         #     role=devicerole,
         #     name="device2",
-        #     site=site,
+        #     location=location,
         #     status=status_active
         # )
         cls.bgp_routing_instance = models.BGPRoutingInstance.objects.create(
@@ -300,10 +314,11 @@ class PeeringTestCase(TestCase):
             status=status_active,
         )
 
+        interface_status = Status.objects.get_for_model(Interface).first()
         interfaces_device1 = [
-            Interface.objects.create(device=device1, name="Loopback0"),
-            Interface.objects.create(device=device1, name="Loopback1"),
-            Interface.objects.create(device=device1, name="Loopback2"),
+            Interface.objects.create(device=device1, name="Loopback0", status=interface_status),
+            Interface.objects.create(device=device1, name="Loopback1", status=interface_status),
+            Interface.objects.create(device=device1, name="Loopback2", status=interface_status),
         ]
         # interfaces_device2 = [
         #     Interface.objects.create(device=device2, name="Loopback0"),
@@ -311,35 +326,46 @@ class PeeringTestCase(TestCase):
         #     Interface.objects.create(device=device2, name="Loopback2"),
         # ]
 
+        namespace = Namespace.objects.first()
+        prefix_status = Status.objects.get_for_model(Prefix).first()
+        Prefix.objects.create(prefix="10.0.0.0/8", namespace=namespace, status=prefix_status)
+
         addresses = [
             IPAddress.objects.create(
                 address="10.1.1.1/24",
                 status=status_active,
-                assigned_object=interfaces_device1[0],
+                namespace=namespace,
             ),
             IPAddress.objects.create(
                 address="10.1.1.2/24",
                 status=status_active,
+                namespace=namespace,
             ),
             IPAddress.objects.create(
                 address="10.1.1.3/24",
                 status=status_active,
-                assigned_object=interfaces_device1[1],
+                namespace=namespace,
             ),
             IPAddress.objects.create(
                 address="10.1.1.4/24",
                 status=status_reserved,
+                namespace=namespace,
             ),
             IPAddress.objects.create(
                 address="10.1.1.5/24",
                 status=status_active,
-                assigned_object=interfaces_device1[2],
+                namespace=namespace,
             ),
             IPAddress.objects.create(
                 address="10.1.1.6/24",
                 status=status_reserved,
+                namespace=namespace,
             ),
         ]
+
+        interfaces_device1[0].add_ip_addresses(addresses[0])
+        interfaces_device1[1].add_ip_addresses(addresses[2])
+        interfaces_device1[2].add_ip_addresses(addresses[4])
 
         # peeringrole_internal = models.PeeringRole.objects.create(name="Internal", slug="internal", color="ffffff")
         # peeringrole_external = models.PeeringRole.objects.create(name="External", slug="external", color="ffffff")
@@ -450,14 +476,22 @@ class AddressFamilyTestCase(TestCase):
 
         manufacturer = Manufacturer.objects.create(name="Cisco")
         devicetype = DeviceType.objects.create(manufacturer=manufacturer, model="CSR 1000V")
-        site = Site.objects.create(name="Site 1")
+        location_type = LocationType.objects.create(name="site")
+        location_status = Status.objects.get_for_model(Location).first()
+        location = Location.objects.create(name="Site 1", location_type=location_type, status=location_status)
         devicerole = Role.objects.create(name="Router", color="ff0000")
         devicerole.content_types.add(ContentType.objects.get_for_model(Device))
         device1 = Device.objects.create(
-            device_type=devicetype, role=devicerole, name="Device 1", site=site, status=status_active
+            device_type=devicetype, role=devicerole, name="Device 1", location=location, status=status_active
         )
-        interface = Interface.objects.create(device=device1, name="Loopback1")
-        address = IPAddress.objects.create(address="1.1.1.1/32", status=status_active, assigned_object=interface)
+        interface_status = Status.objects.get_for_model(Interface).first()
+        interface = Interface.objects.create(device=device1, name="Loopback1", status=interface_status)
+
+        namespace = Namespace.objects.first()
+        prefix_status = Status.objects.get_for_model(Prefix).first()
+        Prefix.objects.create(prefix="1.0.0.0/8", namespace=namespace, status=prefix_status)
+
+        address = IPAddress.objects.create(address="1.1.1.1/32", status=status_active, namespace=namespace)
 
         peeringrole = Role.objects.create(name="Internal", color="ffffff")
         peeringrole.content_types.add(ContentType.objects.get_for_model(models.PeerGroup))
