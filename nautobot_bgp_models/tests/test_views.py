@@ -69,9 +69,9 @@ class AutonomousSystemTestCase(ViewTestCases.PrimaryObjectViewTestCase):
 
         cls.csv_data = (
             "asn,description,status",
-            "4200000003,asn3,active",
-            "4200000004,asn4,active",
-            "4200000005,asn5,active",
+            f"4200000003,asn3,{status_active.name}",
+            f"4200000004,asn4,{status_active.name}",
+            f"4200000005,asn5,{status_active.name}",
         )
 
         cls.bulk_edit_data = {

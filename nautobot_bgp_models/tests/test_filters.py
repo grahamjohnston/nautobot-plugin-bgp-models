@@ -25,20 +25,20 @@ class AutonomousSystemTestCase(TestCase):
         status_active = Status.objects.get(name__iexact="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
 
-        status_primary_asn = Status.objects.create(name="Primary ASN", color="FFFFFF")
-        status_primary_asn.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
+        cls.status_primary_asn = Status.objects.create(name="Primary ASN", color="FFFFFF")
+        cls.status_primary_asn.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
 
-        status_remote_asn = Status.objects.create(name="Remote ASN", color="FFFFFF")
-        status_remote_asn.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
+        cls.status_remote_asn = Status.objects.create(name="Remote ASN", color="FFFFFF")
+        cls.status_remote_asn.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
 
         models.AutonomousSystem.objects.create(
             asn=4200000000, status=status_active, description="Reserved for private use"
         )
         models.AutonomousSystem.objects.create(
-            asn=4200000001, status=status_primary_asn, description="Also reserved for private use"
+            asn=4200000001, status=cls.status_primary_asn, description="Also reserved for private use"
         )
         models.AutonomousSystem.objects.create(
-            asn=4200000002, status=status_remote_asn, description="Another reserved for private use"
+            asn=4200000002, status=cls.status_remote_asn, description="Another reserved for private use"
         )
 
     def test_id(self):
@@ -53,7 +53,7 @@ class AutonomousSystemTestCase(TestCase):
 
     def test_status(self):
         """Test filtering by status."""
-        params = {"status": ["primary-asn", "remote-asn"]}
+        params = {"status": [self.status_primary_asn.name, self.status_remote_asn.name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
 
@@ -276,6 +276,7 @@ class PeeringTestCase(TestCase):
     def setUpTestData(cls):  # pylint: disable=too-many-locals
         """One-time class setup to prepopulate required data for tests."""
         status_active = Status.objects.get(name__iexact="active")
+        cls.status_active = status_active
         status_active.content_types.add(ContentType.objects.get_for_model(models.Peering))
         status_active.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
 
@@ -420,7 +421,7 @@ class PeeringTestCase(TestCase):
 
     def test_status(self):
         """Test filtering by status."""
-        params = {"status": ["active"]}
+        params = {"status": [self.status_active.name]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_device(self):

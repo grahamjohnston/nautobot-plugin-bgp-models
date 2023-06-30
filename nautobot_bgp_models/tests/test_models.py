@@ -439,7 +439,7 @@ class AddressFamilyTestCase(TestCase):
     def test_str(self):
         """Test the string representation of an AddressFamily."""
         self.assertEqual("ipv4_unicast AF - Device 1", str(self.addressfamily_1))
-        self.assertEqual("ipv4_unicast AF (VRF global) Device 1", str(self.addressfamily_2))
+        self.assertEqual("ipv4_unicast AF (VRF Global: (global)) Device 1", str(self.addressfamily_2))
 
 
 #     def test_peer_group_peer_endpoint_mutual_exclusion(self):

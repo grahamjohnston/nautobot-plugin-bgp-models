@@ -34,7 +34,7 @@ class AutonomousSystemFilterForm(NautobotFilterForm):
     """Form for filtering AutonomousSystem records in combination with AutonomousSystemFilterSet."""
 
     model = models.AutonomousSystem
-    field_order = ["status", "tag"]
+    field_order = ["status", "tag", "status"]
     tag = TagFilterField(model)
 
 
@@ -145,6 +145,7 @@ class BGPRoutingInstanceFilterForm(NautobotFilterForm):
         "router_id",
         "autonomous_system",
         "tag",
+        "status",
     ]
 
 
