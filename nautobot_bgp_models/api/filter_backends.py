@@ -11,6 +11,7 @@ class IncludeInheritedFilterBackend(NautobotFilterBackend):
     """
 
     def get_filterset_kwargs(self, request, queryset, view):
+        """Pop include_inherited as it is not a valid filter field."""
         kwargs = super().get_filterset_kwargs(request, queryset, view)
         try:
             kwargs["data"].pop("include_inherited")

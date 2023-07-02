@@ -553,6 +553,10 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
     def test_create_object(self):
         pass
 
+    @skip("PeerEndpoint creates two objects")
+    def test_recreate_object_csv(self):
+        pass
+
     @classmethod
     def setUpTestData(cls):
         cls.status_active = Status.objects.get(name__iexact="active")

@@ -33,19 +33,19 @@ class NautobotBGPModelsConfig(PluginConfig):
     }
     caching_config = {}
 
-    # def ready(self):
-    #     """Callback invoked after the plugin is loaded."""
-    #     super().ready()
-    #
-    #     # Attempt to register versioned models & tables with Dolt if it is
-    #     # available.
-    #     from . import dolt_compat  # noqa pylint: disable=import-outside-toplevel, unused-import
-    #
-    #     from .signals import (  # pylint: disable=import-outside-toplevel
-    #         post_migrate_create_statuses,
-    #     )
-    #
-    #     post_migrate.connect(post_migrate_create_statuses, sender=self)
+    def ready(self):
+        """Callback invoked after the plugin is loaded."""
+        super().ready()
+
+        # Attempt to register versioned models & tables with Dolt if it is
+        # available.
+        from . import dolt_compat  # noqa pylint: disable=import-outside-toplevel, unused-import
+
+        from .signals import (  # pylint: disable=import-outside-toplevel
+            post_migrate_create_statuses,
+        )
+
+        post_migrate.connect(post_migrate_create_statuses, sender=self)
 
 
 config = NautobotBGPModelsConfig  # pylint:disable=invalid-name
