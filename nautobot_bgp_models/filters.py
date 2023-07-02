@@ -30,7 +30,7 @@ class AutonomousSystemFilterSet(
 
     tag = TagFilter()
 
-    def search(self, queryset, name, value):  # pylint: disable=unused-argument,no-self-use
+    def search(self, queryset, name, value):  # pylint: disable=unused-argument
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
@@ -76,7 +76,7 @@ class BGPRoutingInstanceFilterSet(
         model = models.BGPRoutingInstance
         fields = ["id", "autonomous_system"]
 
-    def search(self, queryset, name, value):  # pylint: disable=unused-argument,no-self-use
+    def search(self, queryset, name, value):  # pylint: disable=unused-argument
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
@@ -109,7 +109,7 @@ class PeerGroupFilterSet(RoleModelFilterSetMixin, BaseFilterSet):
         model = models.PeerGroup
         fields = ["id", "name", "enabled"]
 
-    def search(self, queryset, name, value):  # pylint: disable=unused-argument,no-self-use
+    def search(self, queryset, name, value):  # pylint: disable=unused-argument
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
@@ -135,7 +135,7 @@ class PeerGroupTemplateFilterSet(RoleModelFilterSetMixin, BaseFilterSet):
         model = models.PeerGroupTemplate
         fields = ["id", "name", "enabled"]
 
-    def search(self, queryset, name, value):  # pylint: disable=unused-argument,no-self-use
+    def search(self, queryset, name, value):  # pylint: disable=unused-argument
         """Free-text search method implementation."""
         if not value.strip():
             return queryset
@@ -173,7 +173,7 @@ class PeerEndpointFilterSet(RoleModelFilterSetMixin, BaseFilterSet):
         model = models.PeerEndpoint
         fields = ["id", "enabled"]
 
-    def search(self, queryset, name, value):  # pylint: disable=unused-argument,no-self-use
+    def search(self, queryset, name, value):  # pylint: disable=unused-argument
         """Free-text search method implementation."""
         if not value.strip():
             return queryset

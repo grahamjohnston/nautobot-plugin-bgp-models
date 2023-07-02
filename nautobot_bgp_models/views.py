@@ -52,7 +52,7 @@ class PeerGroupUIViewSet(NautobotUIViewSet):
     serializer_class = serializers.PeerGroupSerializer
     table_class = tables.PeerGroupTable
 
-    def get_extra_context(self, request, instance):
+    def get_extra_context(self, request, instance):  # pylint: disable=signature-differs
         """Return any additional context data for the template."""
         context = super().get_extra_context(request, instance)
         if self.action == "retrieve":
@@ -85,7 +85,7 @@ class PeerEndpointUIViewSet(NautobotUIViewSet):
     serializer_class = serializers.PeerEndpointSerializer
     table_class = tables.PeerEndpointTable
 
-    def get_extra_context(self, request, instance):
+    def get_extra_context(self, request, instance):  # pylint: disable=signature-differs
         """Return any additional context data for the template."""
         context = super().get_extra_context(request, instance)
         if self.action == "retrieve":
