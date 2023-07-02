@@ -6,7 +6,6 @@ from collections import OrderedDict
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.urls import reverse
 from nautobot.circuits.models import Provider
 from nautobot.core.models.generics import PrimaryModel, OrganizationalModel
 from nautobot.dcim.fields import ASNField
@@ -143,10 +142,6 @@ class AutonomousSystem(PrimaryModel, StatusModel):
         """String representation of an AutonomousSystem."""
         return f"AS {self.asn}"
 
-    def get_absolute_url(self):
-        """Get the URL for detailed view of a single AutonomousSystem."""
-        return reverse("plugins:nautobot_bgp_models:autonomoussystem", args=[self.pk])
-
 
 @extras_features(
     "custom_fields",
@@ -182,10 +177,6 @@ class BGPRoutingInstance(PrimaryModel, StatusModel, BGPExtraAttributesMixin):
         to=AutonomousSystem,
         on_delete=models.PROTECT,
     )
-
-    def get_absolute_url(self):
-        """Get the URL for detailed view of a single BGPRoutingInstance."""
-        return reverse("plugins:nautobot_bgp_models:bgproutinginstance", args=[self.pk])
 
     def __str__(self):
         """String representation of a BGPRoutingInstance."""
@@ -245,10 +236,6 @@ class PeerGroupTemplate(PrimaryModel, BGPExtraAttributesMixin):
     def __str__(self):
         """String."""
         return f"{self.name}"
-
-    def get_absolute_url(self):
-        """Get the URL for detailed view of a single PeerGroupTemplate."""
-        return reverse("plugins:nautobot_bgp_models:peergrouptemplate", args=[self.pk])
 
     class Meta:
         verbose_name = "BGP Peer Group Template"
@@ -337,10 +324,6 @@ class PeerGroup(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
     def __str__(self):
         """String."""
         return f"{self.name}"
-
-    def get_absolute_url(self):
-        """Get the URL for detailed view of a single PeerGroup."""
-        return reverse("plugins:nautobot_bgp_models:peergroup", args=[self.pk])
 
     class Meta:
         unique_together = [("name", "routing_instance")]
@@ -496,10 +479,6 @@ class PeerEndpoint(PrimaryModel, InheritanceMixin, BGPExtraAttributesMixin):
 
         return f"{self.local_ip} ({self.autonomous_system})"
 
-    def get_absolute_url(self):
-        """Get the URL for detailed view of a single PeerEndpoint."""
-        return reverse("plugins:nautobot_bgp_models:peerendpoint", args=[self.pk])
-
     def clean(self):
         """
         Clean Method.
@@ -566,10 +545,6 @@ class Peering(OrganizationalModel, StatusModel):
     def __str__(self):
         """String representation of a single Peering."""
         return f"{self.endpoint_a} ↔︎ {self.endpoint_z}"
-
-    def get_absolute_url(self):
-        """Get the URL for a detailed view of a single Peering."""
-        return reverse("plugins:nautobot_bgp_models:peering", args=[self.pk])
 
     def update_peers(self):
         """Update peer field for both PeerEndpoints."""
@@ -644,10 +619,6 @@ class AddressFamily(OrganizationalModel):
             return f"{self.afi_safi} AF (VRF {self.vrf}) {self.routing_instance.device}"
 
         return f"{self.afi_safi} AF - {self.routing_instance.device}"
-
-    def get_absolute_url(self):
-        """Get the URL for a detailed view of a single AddressFamily."""
-        return reverse("plugins:nautobot_bgp_models:addressfamily", args=[self.pk])
 
     def validate_unique(self, exclude=None):
         """Validate uniqueness."""
