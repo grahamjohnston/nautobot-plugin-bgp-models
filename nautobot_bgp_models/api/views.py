@@ -3,7 +3,6 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from nautobot.extras.api.views import NautobotModelViewSet
-from nautobot.core.api.utils import dynamic_import
 from rest_framework.filters import OrderingFilter
 
 from nautobot_bgp_models import filters

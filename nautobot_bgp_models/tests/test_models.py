@@ -135,7 +135,7 @@ class PeerEndpointTestCase(TestCase):
     """Test the PeerEndpoint model."""
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls):  # pylint: disable=too-many-locals
         """One-time class data setup."""
         status_active = Status.objects.get(name__iexact="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.Peering))

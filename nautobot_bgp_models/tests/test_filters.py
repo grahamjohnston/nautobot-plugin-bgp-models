@@ -161,7 +161,7 @@ class PeerEndpointTestCase(TestCase):
     filterset = filters.PeerEndpointFilterSet
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls):  # pylint: disable=too-many-locals
         """One-time class setup."""
         status_active = Status.objects.get(name__iexact="active")
         status_active.content_types.add(ContentType.objects.get_for_model(models.AutonomousSystem))
@@ -472,7 +472,7 @@ class AddressFamilyTestCase(TestCase):
     filterset = filters.AddressFamilyFilterSet
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls):  # pylint: disable=too-many-locals
         status_active = Status.objects.get(name__iexact="active")
 
         manufacturer = Manufacturer.objects.create(name="Cisco")
@@ -493,6 +493,8 @@ class AddressFamilyTestCase(TestCase):
         Prefix.objects.create(prefix="1.0.0.0/8", namespace=namespace, status=prefix_status)
 
         address = IPAddress.objects.create(address="1.1.1.1/32", status=status_active, namespace=namespace)
+
+        interface.add_ip_addresses(address)
 
         peeringrole = Role.objects.create(name="Internal", color="ffffff")
         peeringrole.content_types.add(ContentType.objects.get_for_model(models.PeerGroup))

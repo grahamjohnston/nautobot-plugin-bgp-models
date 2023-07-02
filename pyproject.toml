@@ -85,7 +85,6 @@ good-names = '''_,i,j,k,pk'''
 # too-few-public-methods: is just plain noise.
 # too-many-ancestors: is just a fact of life when dealing with Django and Nautobot inheritance hierarchies.
 disable = """,
-    bad-continuation,
     line-too-long,
     too-few-public-methods,
     too-many-ancestors,
