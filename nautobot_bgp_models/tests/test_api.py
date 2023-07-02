@@ -198,18 +198,18 @@ class BGPRoutingInstanceAPITestCase(APIViewTestCases.APIViewTestCase):
 
         interface_status = Status.objects.get_for_model(Interface).first()
         interface = Interface.objects.create(
-            device=device_1, name="Loopback1", type=InterfaceTypeChoices.TYPE_VIRTUAL,
+            device=device_1,
+            name="Loopback1",
+            type=InterfaceTypeChoices.TYPE_VIRTUAL,
             status=interface_status,
-            vrf=vrf
+            vrf=vrf,
         )
 
         namespace = Namespace.objects.first()
         prefix_status = Status.objects.get_for_model(Prefix).first()
         Prefix.objects.create(prefix="10.0.0.0/8", namespace=namespace, status=prefix_status)
 
-        address = IPAddress.objects.create(
-            address="10.1.1.1/24", status=status_active, namespace=namespace
-        )
+        address = IPAddress.objects.create(address="10.1.1.1/24", status=status_active, namespace=namespace)
 
         interface.add_ip_addresses(address)
 
@@ -341,9 +341,7 @@ class PeerGroupAPITestCase(APIViewTestCases.APIViewTestCase):
         prefix_status = Status.objects.get_for_model(Prefix).first()
         Prefix.objects.create(prefix="10.0.0.0/8", namespace=namespace, status=prefix_status)
 
-        address = IPAddress.objects.create(
-            address="10.1.1.1/24", status=status_active, namespace=namespace,
-        )
+        address = IPAddress.objects.create(address="10.1.1.1/24", status=status_active, namespace=namespace)
 
         interface.add_ip_addresses(address)
 
@@ -594,8 +592,12 @@ class PeerEndpointAPITestCase(APIViewTestCases.APIViewTestCase):
             status=cls.status_active,
         )
         interface_status = Status.objects.get_for_model(Interface).first()
-        interface = Interface.objects.create(device=device, name="Loopback1", type=InterfaceTypeChoices.TYPE_VIRTUAL,
-                                             status=interface_status)
+        interface = Interface.objects.create(
+            device=device,
+            name="Loopback1",
+            type=InterfaceTypeChoices.TYPE_VIRTUAL,
+            status=interface_status,
+        )
 
         # cls.vrf = VRF.objects.create(name="Ark B")
 
@@ -952,8 +954,13 @@ class AddressFamilyAPITestCase(APIViewTestCases.APIViewTestCase):
         location = Location.objects.create(name="Site 1", location_type=location_type, status=location_status)
         devicerole = Role.objects.create(name="Router", color="ff0000")
         devicerole.content_types.add(ContentType.objects.get_for_model(Device))
-        device = Device.objects.create(device_type=devicetype, role=devicerole, name="Device 1", location=location,
-                                       status=status_active)
+        device = Device.objects.create(
+            device_type=devicetype,
+            role=devicerole,
+            name="Device 1",
+            location=location,
+            status=status_active,
+        )
 
         asn_8545 = models.AutonomousSystem.objects.create(asn=8545, status=status_active, description="Hi ex PL-IX AS!")
 

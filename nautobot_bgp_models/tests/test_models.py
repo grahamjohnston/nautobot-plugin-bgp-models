@@ -215,7 +215,9 @@ class PeerEndpointTestCase(TestCase):
         self.peering = models.Peering.objects.create(status=self.status_active)
 
         self.ipaddress_1 = IPAddress.objects.create(
-            address="1.1.1.1/32", status=self.status_active, namespace=self.namespace,
+            address="1.1.1.1/32",
+            status=self.status_active,
+            namespace=self.namespace,
         )
 
         self.interface_1.add_ip_addresses(self.ipaddress_1)

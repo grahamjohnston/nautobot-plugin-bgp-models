@@ -188,8 +188,9 @@ class PeerEndpointTestCase(TestCase):
             status=status_active,
         )
         interface_status = Status.objects.get_for_model(Interface).first()
-        interface = Interface.objects.create(device=device, name="Loopback1", type=InterfaceTypeChoices.TYPE_VIRTUAL,
-                                             status=interface_status)
+        interface = Interface.objects.create(
+            device=device, name="Loopback1", type=InterfaceTypeChoices.TYPE_VIRTUAL, status=interface_status
+        )
 
         namespace = Namespace.objects.first()
         prefix_status = Status.objects.get_for_model(Prefix).first()

@@ -9,86 +9,100 @@ import nautobot.extras.models.statuses
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('extras', '0094_remove_slugs'),
-        ('nautobot_bgp_models', '0005_use_upstream_role_part3'),
+        ("extras", "0094_remove_slugs"),
+        ("nautobot_bgp_models", "0005_use_upstream_role_part3"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='addressfamily',
-            name='created',
+            model_name="addressfamily",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='autonomoussystem',
-            name='created',
+            model_name="autonomoussystem",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='autonomoussystem',
-            name='status',
-            field=nautobot.extras.models.statuses.StatusField(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='autonomous_systems', to='extras.status'),
+            model_name="autonomoussystem",
+            name="status",
+            field=nautobot.extras.models.statuses.StatusField(
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="autonomous_systems",
+                to="extras.status",
+            ),
         ),
         migrations.AlterField(
-            model_name='autonomoussystem',
-            name='tags',
-            field=nautobot.core.models.fields.TagsField(through='extras.TaggedItem', to='extras.Tag'),
+            model_name="autonomoussystem",
+            name="tags",
+            field=nautobot.core.models.fields.TagsField(through="extras.TaggedItem", to="extras.Tag"),
         ),
         migrations.AlterField(
-            model_name='bgproutinginstance',
-            name='created',
+            model_name="bgproutinginstance",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='bgproutinginstance',
-            name='status',
-            field=nautobot.extras.models.statuses.StatusField(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='bgp_routing_instances', to='extras.status'),
+            model_name="bgproutinginstance",
+            name="status",
+            field=nautobot.extras.models.statuses.StatusField(
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="bgp_routing_instances",
+                to="extras.status",
+            ),
         ),
         migrations.AlterField(
-            model_name='bgproutinginstance',
-            name='tags',
-            field=nautobot.core.models.fields.TagsField(through='extras.TaggedItem', to='extras.Tag'),
+            model_name="bgproutinginstance",
+            name="tags",
+            field=nautobot.core.models.fields.TagsField(through="extras.TaggedItem", to="extras.Tag"),
         ),
         migrations.AlterField(
-            model_name='peerendpoint',
-            name='created',
+            model_name="peerendpoint",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='peerendpoint',
-            name='tags',
-            field=nautobot.core.models.fields.TagsField(through='extras.TaggedItem', to='extras.Tag'),
+            model_name="peerendpoint",
+            name="tags",
+            field=nautobot.core.models.fields.TagsField(through="extras.TaggedItem", to="extras.Tag"),
         ),
         migrations.AlterField(
-            model_name='peergroup',
-            name='created',
+            model_name="peergroup",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='peergroup',
-            name='tags',
-            field=nautobot.core.models.fields.TagsField(through='extras.TaggedItem', to='extras.Tag'),
+            model_name="peergroup",
+            name="tags",
+            field=nautobot.core.models.fields.TagsField(through="extras.TaggedItem", to="extras.Tag"),
         ),
         migrations.AlterField(
-            model_name='peergrouptemplate',
-            name='created',
+            model_name="peergrouptemplate",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='peergrouptemplate',
-            name='tags',
-            field=nautobot.core.models.fields.TagsField(through='extras.TaggedItem', to='extras.Tag'),
+            model_name="peergrouptemplate",
+            name="tags",
+            field=nautobot.core.models.fields.TagsField(through="extras.TaggedItem", to="extras.Tag"),
         ),
         migrations.AlterField(
-            model_name='peering',
-            name='created',
+            model_name="peering",
+            name="created",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='peering',
-            name='status',
-            field=nautobot.extras.models.statuses.StatusField(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='bgp_peerings', to='extras.status'),
+            model_name="peering",
+            name="status",
+            field=nautobot.extras.models.statuses.StatusField(
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="bgp_peerings",
+                to="extras.status",
+            ),
         ),
     ]
