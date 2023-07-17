@@ -1,6 +1,6 @@
 """REST API URL registration for nautobot_bgp_models."""
 
-from nautobot.core.api.routers import OrderedDefaultRouter
+from nautobot.apps.api import OrderedDefaultRouter
 
 from . import views
 

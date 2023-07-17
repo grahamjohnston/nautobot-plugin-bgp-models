@@ -5,12 +5,12 @@ import django_filters
 from django.db.models import Q
 
 from nautobot.dcim.models import Device
-from nautobot.extras.filters import (
+from nautobot.apps.filters import (
     StatusModelFilterSetMixin,
-    CreatedUpdatedFilterSet,
-    CustomFieldModelFilterSet,
-    RoleModelFilterSetMixin,
+    CreatedUpdatedModelFilterSetMixin,
+    CustomFieldModelFilterSetMixin,
 )
+from nautobot.extras.filters.mixins import RoleModelFilterSetMixin
 from nautobot.ipam.models import VRF
 from nautobot.apps.filters import BaseFilterSet
 from nautobot.core.filters import TagFilter
@@ -19,7 +19,7 @@ from . import choices, models
 
 
 class AutonomousSystemFilterSet(
-    BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, StatusModelFilterSetMixin
+    BaseFilterSet, CreatedUpdatedModelFilterSetMixin, CustomFieldModelFilterSetMixin, StatusModelFilterSetMixin
 ):
     """Filtering of AutonomousSystem records."""
 
@@ -42,7 +42,7 @@ class AutonomousSystemFilterSet(
 
 
 class BGPRoutingInstanceFilterSet(
-    BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, StatusModelFilterSetMixin
+    BaseFilterSet, CreatedUpdatedModelFilterSetMixin, CustomFieldModelFilterSetMixin, StatusModelFilterSetMixin
 ):
     """Filtering of BGPRoutingInstance records."""
 
@@ -182,7 +182,12 @@ class PeerEndpointFilterSet(RoleModelFilterSetMixin, BaseFilterSet):
         ).distinct()
 
 
-class PeeringFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet, StatusModelFilterSetMixin):
+class PeeringFilterSet(
+    BaseFilterSet,
+    CreatedUpdatedModelFilterSetMixin,
+    CustomFieldModelFilterSetMixin,
+    StatusModelFilterSetMixin,
+):
     """Filtering of Peering records."""
 
     # TODO(mzb): Add in-memory filtering for Provider, ASN, IP Address, ...
@@ -200,7 +205,7 @@ class PeeringFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelF
         fields = ["id"]
 
 
-class AddressFamilyFilterSet(BaseFilterSet, CreatedUpdatedFilterSet, CustomFieldModelFilterSet):
+class AddressFamilyFilterSet(BaseFilterSet, CreatedUpdatedModelFilterSetMixin, CustomFieldModelFilterSetMixin):
     """Filtering of AddressFamily records."""
 
     afi_safi = django_filters.MultipleChoiceFilter(choices=choices.AFISAFIChoices)

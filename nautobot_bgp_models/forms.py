@@ -34,7 +34,7 @@ class AutonomousSystemFilterForm(NautobotFilterForm):
     """Form for filtering AutonomousSystem records in combination with AutonomousSystemFilterSet."""
 
     model = models.AutonomousSystem
-    field_order = ["status", "tag", "status"]
+    field_order = ["status", "tag"]
     tag = TagFilterField(model)
 
 

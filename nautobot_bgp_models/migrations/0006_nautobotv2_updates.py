@@ -10,7 +10,6 @@ import nautobot.extras.models.statuses
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("extras", "0094_remove_slugs"),
         ("nautobot_bgp_models", "0005_use_upstream_role_part3"),
     ]
 

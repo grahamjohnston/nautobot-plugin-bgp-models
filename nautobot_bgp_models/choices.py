@@ -1,6 +1,6 @@
 """ChoiceSet definitions for nautobot_bgp_models."""
 
-from nautobot.core.choices import ChoiceSet
+from nautobot.apps.choices import ChoiceSet
 
 
 class AFISAFIChoices(ChoiceSet):

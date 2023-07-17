@@ -3,7 +3,6 @@
 import django_tables2 as tables
 from django_tables2.utils import A
 
-from nautobot.extras.tables import StatusTableMixin
 from nautobot.apps.tables import (
     BaseTable,
     BooleanColumn,
@@ -11,6 +10,7 @@ from nautobot.apps.tables import (
     ColoredLabelColumn,
     TagColumn,
     ToggleColumn,
+    StatusTableMixin,
 )
 
 from . import models
